@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Web UI Kit &amp; Dashboard Template based on Bootstrap">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, web ui kit, dashboard template, admin template">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type = "text/css" href = "/src/css/style.css">
+	<link rel="shortcut icon" href="src/images/icons/icon-48x48.png" />
+
+	<title>分析主页</title>
+
+	<link href="src/css/app_default.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="main">
+			<nav class="navbar navbar-expand navbar-light navbar-bg">
+				<a class="sidebar-toggle d-flex">
+        </a>
+
+				<div class="form-inline d-none d-sm-inline-block">
+					brief introduction
+				</div>
+
+				<div class="navbar-collapse collapse">
+					<ul class="navbar-nav navbar-align">
+						<li class = 'list-group-item'><a href="/real_index">Home</a></li>
+                        <li class = 'list-group-item'><a href="/about_us">About Us</a></li>
+                        <li class = 'list-group-item'><a href="/contribution_from">Contribution</a></li>
+                        <li class = 'list-group-item'><a href="portfolio.html">Portfolio</a></li>
+                        <li class = 'list-group-item'><a href="/home">Blog</a></li>
+                        <li class = 'list-group-item'><a href="contact-us.html">Contact</a></li> 
+			</nav>
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3">brief introduction</h1>
+
+					<div class="row">
+						<div class="col-12">
+							<div class="card">
+								<div class="card-body m-sm-3 m-md-5">
+									<div class="mb-4">
+										Hello <strong>Dear User</strong>,
+										<br /> This is the brief introduction of repo:  <strong>{{url}}</strong> 
+									</div>
+
+									<div class="row">
+										<div class="col-md-6">
+											<div class="text-muted">Repository No.</div>
+											<strong>{{id}}</strong>
+										</div>
+										<div class="col-md-6 text-md-right">
+											<div class="text-muted">Create Date</div>
+											<strong>{{created_at}}</strong>
+										</div>
+									</div>
+
+									<hr class="my-4" >
+
+									<div class="row mb-4">
+										<div class="col-md-6">
+											<div class="text-muted">Owner</div>
+											<strong>
+              {{owner}}
+            </strong>
+											<p>
+												<img src={{avatar_url}}>
+											</p>
+												  <a href="{{html_url}}" class="btn btn-primary">访问</a>
+										</div>
+										<div class="col-md-6 text-md-right">
+											<div class="text-muted">Most recent committer</div>
+											<strong>
+              {{commit_users.0.user}}
+            </strong>
+											<p>
+												<img src={{commit_users.0.a_url}}>
+											</p>
+												<a href="{{commit_users.0.url}}" class="btn btn-primary">访问</a>
+										</div>
+									</div>
+
+									<table class="table table-sm">
+										<thead>
+											<tr>
+												<th>Items</th>
+												<th>description</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>项目简介</td>
+												<td >{{description}}</td>
+											</tr>
+											<tr>
+												<td> Stars</td>
+												<td>{{stargazers_count}}</td>
+											</tr>
+											<tr>
+												<td>topics</td>
+												<td>{%for item in topics%}{{item}}{% endfor %}</td>
+											</tr>
+											<!--<tr>
+												<th>&nbsp;</th>
+												<th>Subtotal </th>
+												<th class="text-right">$275.00</th>
+											</tr>
+											<tr>
+												<th>&nbsp;</th>
+												<th>Shipping </th>
+												<th class="text-right">$8.00</th>
+											</tr>
+											<tr>
+												<th>&nbsp;</th>
+												<th>Discount </th>
+												<th class="text-right">5%</th>
+											</tr>
+											<tr>
+												<th>&nbsp;</th>
+												<th>Total </th>
+												<th class="text-right">$268.85</th>
+											</tr>-->
+										</tbody>
+									</table>
+
+									<div class="text-center">
+										<p class="text-sm">
+											<strong>Extra note:</strong> This maybe a result from weeks ago for a quick access. Please set details manually.
+										</p>
+
+										<a href="/commit_from?a={{target}}" class="btn btn-primary">
+            view details
+          </a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			<div class="container">
+				Most recent committers
+				<div class="row">
+					{% for x in commit_users %}
+					<div class="col-sm-4">
+						<div class="card" style="width: 18rem;">
+							<img src="{{x.a_url}}" class="card-img-top" alt="...">
+							<div class="card-body">
+								<h5 class="card-title">{{ x.user }}</h5>
+								<p class="card-text">{{ x.user }}的GitHub</p>
+								<a href="{{ x.url }}" class="btn btn-primary">访问</a>
+							</div>
+						</div>
+						<br>
+					</div>
+					{% endfor %}
+				
+				</div>
+			</div>
+
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row text-muted">
+						<div class="col-6 text-left">
+							<p class="mb-0">
+								
+							</p>
+						</div>
+						<div class="col-6 text-right">
+							<ul class="list-inline">
+								<li class="list-inline-item">
+									<a class="text-muted" href="/about-us">About Us</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Help Center</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Privacy</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Terms</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+
+	<script src="src/js/vendor.js"></script>
+	<script src="src/js/app.js"></script>
+
+</body>
+
+</html>

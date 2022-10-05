@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Web UI Kit &amp; Dashboard Template based on Bootstrap">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, web ui kit, dashboard template, admin template">
+	<script src="/src/js/echarts.min.js"></script>
+    <script src="/src/js/jquery.js"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" type = "text/css" href = "/src/css/style.css">
+	<link rel="shortcut icon" href="src/images/icons/icon-48x48.png" />
+
+	<title>分析主页</title>
+	<style>
+		section.pie
+		{
+			margin-top:10%;
+			margin-left:30%；
+		}
+	</style>
+
+	<link href="src/css/app.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class="wrapper">
+		<div class="main">
+			<nav class="navbar navbar-expand navbar-light navbar-bg">
+				<a class="sidebar-toggle d-flex">
+        </a>
+
+				<div class="form-inline d-none d-sm-inline-block">
+					代码敲的都队
+				</div>
+
+				<div class="navbar-collapse collapse">
+					<ul class="navbar-nav navbar-align">
+						<li class = 'list-group-item'><a href="/real_index">Home</a></li>
+                        <li class = 'list-group-item'><a href="/about_us">About Us</a></li>
+                        <li class = 'list-group-item'><a href="/contribution_from">Contribution</a></li>
+                        <li class = 'list-group-item'><a href="portfolio.html">Portfolio</a></li>
+                        <li class = 'list-group-item'><a href="/home">Blog</a></li>
+                        <li class = 'list-group-item'><a href="contact-us.html">Contact</a></li>
+			</nav>
+
+			
+			</br>
+			</br>
+            
+            
+            <section id="Pie graph">
+                <div id="main" style="width: 800px;height:600px;" class="pie"></div>
+                <script type="text/javascript">
+                    // 基于准备好的dom，初始化echarts实例
+                    var myChart = echarts.init(document.getElementById('main'));
+         
+                    myChart.setOption({
+                        series : [
+                            {
+                                name: '贡献饼图',
+                                type: 'pie',    // 设置图表类型为饼图
+                                radius: '55%',  // 饼图的半径，外半径为可视区尺寸（容器高宽中较小一项）的 55% 长度。
+                                data:{{contribute_datas|safe}}          // 数据数组，name 为数据项名称，value 为数据项值
+                                //data:[{'value': 0, 'name': ''}]
+                            }
+                        ]
+                    })
+                </script>
+            </section><!--/#饼图-->
+
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row text-muted">
+						<div class="col-6 text-left">
+							<p class="mb-0">
+								
+							</p>
+						</div>
+						<div class="col-6 text-right">
+							<ul class="list-inline">
+								<li class="list-inline-item">
+									<a class="text-muted" href="/about-us">About Us</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Help Center</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Privacy</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Terms</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+
+</body>
+
+</html>
