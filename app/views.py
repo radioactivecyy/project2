@@ -89,10 +89,12 @@ def commit(request):
             print(date_newest)
             #插入数据库date_newest与u_list[3],u_list[4]
             for committer in api_ret:
-                if committer['author']['login']not in committer_dict.keys():
-                    committer_dict[committer['author']['login']] = 1
-                else:
-                    committer_dict[committer['author']['login']] = committer_dict[committer['author']['login']] + 1
+                if "author" in committer.keys():
+                    if "login" in committer.keys():
+                        if committer['author']['login']not in committer_dict.keys():
+                            committer_dict[committer['author']['login']] = 1
+                        else:
+                            committer_dict[committer['author']['login']] = committer_dict[committer['author']['login']] + 1
             print(committer_dict)
             sorted_dict = {}
             sorted_dict = sorted(committer_dict.items(), key = lambda kv:(kv[1], kv[0]),reverse = True)
