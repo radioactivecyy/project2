@@ -125,9 +125,8 @@ def commit(request):
                         if committer['author']['login']not in committer_dict.keys():
                             committer_dict[committer['author']['login']] = 1
                         else:
-                            committer_dict[committer['author']['login']
-                                           ] = committer_dict[committer['author']['login']] + 1
-                            print(committer_dict)
+                            committer_dict[committer['author']['login']] = committer_dict[committer['author']['login']] + 1
+            print(committer_dict)
             sorted_dict = {}
             sorted_dict = sorted(committer_dict.items(),
                                  key=lambda kv: (kv[1], kv[0]), reverse=True)
