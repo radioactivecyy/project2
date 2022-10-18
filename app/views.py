@@ -8,15 +8,19 @@ import requests
 from datetime import datetime
 from .models import Contributors,Commits,date01
 import json
+from django.http import JsonResponse
 headers = {"Authorization": "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"}
 
 # Create your views here.
 def real_index(request):
+    response={}
     panduan = date01.objects.filter(repo_name='2021-sr-bighw')#判断本地有没有记录
     if panduan.exists():#如果有就把时间打印出来
         # time01 = date01.date_lasttime  #没有成功获取到一条数据
-        return render(request,'home.html',{'time01':'2021-12-20 06:32:20'})#时间传回首页
-    return render(request,'home.html')
+        response['time01']='2022-10-18 22:22:22'
+        return JsonResponse(response)
+    response['time01']='null'#没有获取到时间，time01值为null
+    return JsonResponse(response)
 def about_us(request):
     commit_users = []
     commit_users.append({"name":"张济开","user":"Zhangjk2000","url":"https://github.com/Zhangjk2000","a_url":"https://avatars.githubusercontent.com/u/85881886?v=4"})
@@ -26,14 +30,21 @@ def about_us(request):
     commit_users.append({"name":"董博","user":"shenkongshiyi","url":"https://github.com/shenkongshiyi","a_url":"https://avatars.githubusercontent.com/u/81542105?v=4"})
     commit_users.append({"name": "陈奕宇", "user": "radioactivecyy", "url": "https://github.com/radioactivecyy",
                          "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
-
-    return render(request,'about-us.html',{"us":commit_users})
+    response={}
+    response['us']=commit_users
+    return JsonResponse(response)
 def notfound(request):
-    return render(request,'404.html')
+    #return render(request,'404.html')
+    response={}
+    return JsonResponse(response)
 def intro(request):
-    return render(request,'说明.html')
+    #return render(request,'说明.html')
+    response={}
+    return JsonResponse(response)
 def index(request):
-    return render(request,'brief_info.html',{})
+    #return render(request,'brief_info.html',{})
+    response={}
+    return JsonResponse(response)
 # 设置主页对应的页面 + 传到主页的数据内容
 
 
@@ -120,7 +131,20 @@ def commit(request):
             #         avatar_url_1 = user_info['avatar_url']
             #         commit_users.append({"user":sorted_dict[i][0],"url":commit_url,"a_url":avatar_url_1})
             #
-            return render(request,'brief_info.html',{"target":target,"id":id,"url":url,"owner":owner,"avatar_url":avatar_url,"html_url":html_url,"description":description,"topics":topics,"stargazers_count":stargazers_count,"created_at":created_at,"commit_users":commit_users,"date_newest":date_newest})
+            response={}
+            response['target']=target
+            response['id']=id
+            response['url']=url
+            response['owner']=owner
+            response['avatar_url']=avatar_url
+            response['html_url']=html_url
+            response['description']=description
+            response['topics']=topics
+            response['stargazers_count']=stargazers_count
+            response['created_at']=created_at
+            response['commit_users']=commit_users
+            response['date_newest']=date_newest
+            return JsonResponse(response)
 
 def user(request):
     # 获取搜索框中输入的内容，前端搜索框文本的名称为input_content
@@ -130,11 +154,15 @@ def user(request):
         user_request = requests.get(url='https://api.github.com/users/' + user_name)
         user_info = json.loads(user_request.content)
         # 返回函数包含两个数据，分别是要搜索的用户名和对应的用户信息
-        return render(request, 'user.html', {'input_contents': user_name, 'user_info': user_info})
+        response={'input_contents': user_name, 'user_info': user_info}
+        return JsonResponse(response)
+        #return render(request, 'user.html', {'input_contents': user_name, 'user_info': user_info})
     else:
         # 若搜索框内没有输入，则进行提示
         notfound = '请在搜索框中输入您需要查询的用户...'
-        return render(request, 'user.html', {'notfound': notfound})
+        response={'notfound':notfound}
+        return JsonResponse(response)
+        #return render(request, 'user.html', {'notfound': notfound})
 
 #class Contribution(View):
 #    def get(self,request):
