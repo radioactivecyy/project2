@@ -21,4 +21,29 @@ class date01(models.Model):
     date_local = models.DateTimeField(auto_now=True)#上回本地更新时间
     date_lasttime = models.DateTimeField()#上回爬到的数据的最新时间
 
+class stargazer_company(models.Model):
+    id=models.AutoField(primary_key=True)
+    node_id=models.CharField(max_length=32)
+    company=models.CharField(max_length=128)
+    get_time=models.DateTimeField()
+
+class stargazer_company_statistic(models.Model):
+    id = models.AutoField(primary_key=True)
+    company = models.CharField(max_length=128)
+    count=models.IntegerField()
+    total=models.IntegerField()
+    update_time=models.DateTimeField()
+
+class issue_company(models.Model):
+    id=models.AutoField(primary_key=True)
+    node_id=models.CharField(max_length=32)
+    company=models.CharField(max_length=128)
+    get_time=models.DateTimeField()
+
+class issue_company_statistic(models.Model):
+    id = models.AutoField(primary_key=True)
+    company = models.CharField(max_length=128)
+    count=models.IntegerField()
+    total=models.IntegerField()
+    update_time=models.DateTimeField()
 

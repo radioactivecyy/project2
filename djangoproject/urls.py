@@ -36,5 +36,7 @@ urlpatterns = [
     path('about_us',views.about_us),
     path('notfound',views.notfound),
     path('intro',views.intro),
-    path('commit_from',commit.commit_from)
+    path('commit_from',commit.commit_from),
+    path('star_gazer',views.star_gazer),
+    path('issue',views.issue),
 ]

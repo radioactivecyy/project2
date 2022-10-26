@@ -4,9 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="fix author bug">
+    <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/34376fec-b6a4-4306-9619-2322fd000d24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/34376fec-b6a4-4306-9619-2322fd000d24.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,9 +30,20 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="JupyterTrust" id="e84e3b6a-60bf-420a-9f28-e5a43f4cf49e" />
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectId" id="22BUDAK6Ry9jm1ENovhlEXJz6Ip" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -37,6 +52,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
@@ -106,7 +122,19 @@
       <workItem from="1664958345639" duration="886000" />
       <workItem from="1664967250640" duration="2180000" />
       <workItem from="1664970853607" duration="627000" />
-      <workItem from="1666091418577" duration="3812000" />
+      <workItem from="1666091418577" duration="8041000" />
+      <workItem from="1666165786905" duration="5482000" />
+      <workItem from="1666192485312" duration="2690000" />
+      <workItem from="1666266175077" duration="4971000" />
+      <workItem from="1666276581358" duration="4588000" />
+      <workItem from="1666358302508" duration="1615000" />
+      <workItem from="1666452836166" duration="686000" />
+      <workItem from="1666536489910" duration="2854000" />
+      <workItem from="1666579494609" duration="365000" />
+      <workItem from="1666696919047" duration="9383000" />
+      <workItem from="1666748791497" duration="6985000" />
+      <workItem from="1666767573146" duration="11681000" />
+      <workItem from="1666791849431" duration="3419000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>
@@ -115,7 +143,14 @@
       <option name="project" value="LOCAL" />
       <updated>1666021634554</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="replace render by Jsonresponse">
+      <created>1666104792599</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1666104792599</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,6 +169,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="fix author bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix author bug" />
+    <MESSAGE value="replace render by Jsonresponse" />
+    <option name="LAST_COMMIT_MESSAGE" value="replace render by Jsonresponse" />
   </component>
 </project>
