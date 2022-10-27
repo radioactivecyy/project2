@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/34376fec-b6a4-4306-9619-2322fd000d24.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/34376fec-b6a4-4306-9619-2322fd000d24.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
@@ -134,7 +132,11 @@
       <workItem from="1666696919047" duration="9383000" />
       <workItem from="1666748791497" duration="6985000" />
       <workItem from="1666767573146" duration="11681000" />
-      <workItem from="1666791849431" duration="3419000" />
+      <workItem from="1666791849431" duration="4021000" />
+      <workItem from="1666831252794" duration="2032000" />
+      <workItem from="1666835947800" duration="9339000" />
+      <workItem from="1666855497746" duration="8681000" />
+      <workItem from="1666874198670" duration="771000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>

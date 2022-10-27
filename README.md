@@ -18,3 +18,10 @@ cyy-10.26-commit:
   | company的名称 eg.Google | 该公司参与的人数                      |
   | total                   | 所有参与的且github中写明company的人数 |
   | update_time             | 这些数据的更新时间                    |
+
+cyy-10.27-commit:
+
+- 把committer的信息搞下来了，放在data文件夹对应数据库表名的.csv文件中
+- committer的公司信息全部搞了，总共5w多条，有公司信息的有2w多条，不知道为什么stargazer的就不让搞
+- 对committer信息按照之前的字段也建了两个表
+- 多建了一个total表，更新数据的时候用（虽然但是更新的函数还没写）

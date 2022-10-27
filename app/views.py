@@ -6,7 +6,8 @@ from django.http.response import HttpResponse
 from django.shortcuts import render
 import requests
 from datetime import datetime
-from .models import Contributors, Commits, date01, stargazer_company, stargazer_company_statistic, issue_company,issue_company_statistic
+from .models import Contributors, Commits, date01, stargazer_company, stargazer_company_statistic, issue_company, \
+    issue_company_statistic, committer_company, committer_company_statistic,total
 import json
 from django.http import JsonResponse
 from github import Github
@@ -54,13 +55,15 @@ def star_gazer(request):
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
     starcount = repo.stargazers_count
+    print(starcount)
     stargazers1 = repo.get_stargazers().reversed
     now_time = dt.datetime.now().strftime('%F %T')
     i = 0
     for people in stargazers1:
         i = i + 1
         print(i)
-        if i <= 38270:
+        if i>starcount-39990: break
+        if i <= 0:
             continue
         else:
             if people.company:
@@ -78,7 +81,7 @@ def star_gazer(request):
 
 
 def issue(request):
-    #------------------------------获取issue的assignee信息（可全部获取）
+    # ------------------------------获取issue的assignee信息（可全部获取）
     '''
     # cyy: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
     # jxx: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
@@ -100,9 +103,47 @@ def issue(request):
                     print(company_handle(issue.assignee.company))
                     issue_company.objects.create(node_id=issue.assignee.node_id, company=company_handle(issue.assignee.company),
                                                      get_time=now_time)'''
-    #-----------------------------------------------------------------------------
+    # -----------------------------------------------------------------------------
     response = {}
     for info in issue_company_statistic.objects.all():
+        # print(info.company)
+        # print(info.count)
+        response[info.company] = info.count
+        response['total'] = info.total
+        response['update_time'] = info.update_time
+    return JsonResponse(response)
+
+
+def committer(request):
+    # cyy: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
+    # jxx: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
+    # ---------------------------------全部获取53127条记录并筛出有公司的记录
+    '''g = Github("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")  # 自己获取的github token
+    repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
+    commits = repo.get_commits().reversed
+    print(type(commits))
+    now_time = dt.datetime.now().strftime('%F %T')
+    i = 0
+    print(commits.totalCount)
+    for commit in commits:
+        i = i + 1
+        print(i)
+        if i >= 6002:
+            break
+        if i<=5161:
+            continue
+        else:
+            if commit.author is None:
+                a = 1
+            else:
+                if commit.author.company:
+                    print(company_handle(commit.author.company))
+                    committer_company.objects.create(node_id=commit.author.node_id,
+                                                 company=company_handle(commit.author.company),
+                                                 get_time=now_time)'''
+    # ------------------------------------------------------------------------
+    response = {}
+    for info in committer_company_statistic.objects.all():
         # print(info.company)
         # print(info.count)
         response[info.company] = info.count
