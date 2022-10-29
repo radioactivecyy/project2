@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
-    </list>
+    <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -138,7 +134,7 @@
       <workItem from="1666874198670" duration="1249000" />
       <workItem from="1666962591316" duration="840000" />
       <workItem from="1666972020100" duration="602000" />
-      <workItem from="1667030677895" duration="5169000" />
+      <workItem from="1667030677895" duration="5497000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>
