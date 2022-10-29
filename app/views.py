@@ -7,7 +7,7 @@ from django.shortcuts import render
 import requests
 from datetime import datetime
 from .models import Contributors, Commits, date01, stargazer_company, stargazer_company_statistic, issue_company, \
-    issue_company_statistic, committer_company, committer_company_statistic,total
+    issue_company_statistic, committer_company, committer_company_statistic, total
 import json
 from django.http import JsonResponse
 from github import Github
@@ -149,6 +149,303 @@ def committer(request):
         response[info.company] = info.count
         response['total'] = info.total
         response['update_time'] = info.update_time
+    return JsonResponse(response)
+
+
+def update(request):
+    response = {}
+    g = Github("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")  # 自己获取的github token
+    repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
+    now_time = dt.datetime.now().strftime('%F %T')
+    # -------------------------------------------更新star_gazer的company信息
+    '''stargazer_formal = total.objects.get(source="stargazer").total
+    stargazer_now = repo.stargazers_count
+    stargazers1 = repo.get_stargazers().reversed
+    i = 0
+    count = 0
+    microsoft_star = 0
+    google_star = 0
+    facebook_star = 0
+    alibaba_star = 0
+    bytedance_star = 0
+    tencent_star = 0
+    thu_star = 0
+    pku_star = 0
+    baidu_star = 0
+    nvidia_star = 0
+    zju_star = 0
+    for people in stargazers1:
+        i = i + 1
+        print(i)
+        if i > stargazer_now - stargazer_formal: break
+        if people.company:
+            print(company_handle(people.company))
+            count = count + 1
+            if "MICROSOFT" in company_handle(people.company):
+                microsoft_star = microsoft_star + 1
+            if "GOOGLE" in company_handle(people.company):
+                google_star = google_star + 1
+            if "FACEBOOK" in company_handle(people.company):
+                facebook_star = facebook_star + 1
+            if "ALIBABA" in company_handle(people.company):
+                alibaba_star = alibaba_star + 1
+            if "BYTEDANCE" in company_handle(people.company):
+                bytedance_star = bytedance_star + 1
+            if "TENCENT" in company_handle(people.company):
+                tencent_star = tencent_star + 1
+            if "TSINGHUAUNIVERSITY" in company_handle(people.company):
+                thu_star = thu_star + 1
+            if "PEKINGUNIVERSITY" in company_handle(people.company):
+                pku_star = pku_star + 1
+            if "BAIDU" in company_handle(people.company):
+                baidu_star = baidu_star + 1
+            if "NVIDIA" in company_handle(people.company):
+                nvidia_star = nvidia_star + 1
+            if "ZHEJIANGUNIVERSITY" in company_handle(people.company):
+                zju_star = zju_star + 1
+            stargazer_company.objects.create(node_id=people.node_id, company=company_handle(people.company),
+                                             get_time=now_time)
+    formal_total = stargazer_company_statistic.objects.get(company="Microsoft").total
+    formal_total = count + formal_total
+    formal = stargazer_company_statistic.objects.get(company="Microsoft").count
+    stargazer_company_statistic.objects.filter(company="Microsoft").update(count=formal + microsoft_star,
+                                                                           total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="Google").count
+    stargazer_company_statistic.objects.filter(company="Google").update(count=formal + google_star, total=formal_total,
+                                                                        update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="Facebook").count
+    stargazer_company_statistic.objects.filter(company="Facebook").update(count=formal + facebook_star,
+                                                                          total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="Alibaba").count
+    stargazer_company_statistic.objects.filter(company="Alibaba").update(count=formal + alibaba_star,
+                                                                         total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="ByteDance").count
+    stargazer_company_statistic.objects.filter(company="ByteDance").update(count=formal + bytedance_star,
+                                                                           total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="Tencent").count
+    stargazer_company_statistic.objects.filter(company="Tencent").update(count=formal + tencent_star,
+                                                                         total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="TsinghuaUniversity").count
+    stargazer_company_statistic.objects.filter(company="TsinghuaUniversity").update(count=formal + thu_star,
+                                                                                    total=formal_total,
+                                                                                    update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="PekingUniversity").count
+    stargazer_company_statistic.objects.filter(company="PekingUniversity").update(count=formal + pku_star,
+                                                                                  total=formal_total,
+                                                                                  update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="Baidu").count
+    stargazer_company_statistic.objects.filter(company="Baidu").update(count=formal + baidu_star,
+                                                                       total=formal_total,
+                                                                       update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="NVIDIA").count
+    stargazer_company_statistic.objects.filter(company="NVIDIA").update(count=formal + nvidia_star,
+                                                                        total=formal_total,
+                                                                        update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(company="ZhejiangUniversity").count
+    stargazer_company_statistic.objects.filter(company="ZhejiangUniversity").update(count=formal + zju_star,
+                                                                                    total=formal_total,
+                                                                                    update_time=now_time)'''
+    # -----------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------更新issue的company信息
+    issue_formal = total.objects.get(source="issue").total
+    issue_now = repo.get_issues().totalCount
+    issues = repo.get_issues().reversed
+    i = 0
+    count = 0
+    microsoft_issue = 0
+    quansight_issue = 0
+    facebook_issue = 0
+    pytorch_issue = 0
+    meta_issue = 0
+    facebookai_issue = 0
+    googlellc_issue = 0
+    hhinc_issue = 0
+    intel_issue = 0
+    nvidia_issue = 0
+    for issue in issues:
+        i = i + 1
+        print(i)
+        if i > issue_now - issue_formal: break
+        if issue.assignee is None:
+            a = 1
+        else:
+            if issue.assignee.company:
+                print(company_handle(issue.assignee.company))
+                count = count + 1
+                if "MICROSOFT" in company_handle(issue.assignee.company):
+                    microsoft_issue = microsoft_issue + 1
+                if "QUANSIGHT" in company_handle(issue.assignee.company):
+                    quansight_issue = quansight_issue + 1
+                if "FACEBOOK" in company_handle(issue.assignee.company):
+                    facebook_issue = facebook_issue + 1
+                if "PYTORCH" in company_handle(issue.assignee.company):
+                    pytorch_issue = pytorch_issue + 1
+                if "META" in company_handle(issue.assignee.company):
+                    meta_issue = meta_issue + 1
+                if "FACEBOOKAI" in company_handle(issue.assignee.company):
+                    facebookai_issue = facebookai_issue + 1
+                if "GOOGLELLC" in company_handle(issue.assignee.company):
+                    googlellc_issue = googlellc_issue + 1
+                if "HOOFSANDHORNSINC" in company_handle(issue.assignee.company):
+                    hhinc_issue = hhinc_issue + 1
+                if "INTEL" in company_handle(issue.assignee.company):
+                    intel_issue = intel_issue + 1
+                if "NVIDIA" in company_handle(issue.assignee.company):
+                    nvidia_issue = nvidia_issue + 1
+                issue_company.objects.create(node_id=issue.assignee.node_id,
+                                             company=company_handle(issue.assignee.company),
+                                             get_time=now_time)
+    formal_total = issue_company_statistic.objects.get(company="Microsoft").total
+    formal_total = count + formal_total
+    formal = issue_company_statistic.objects.get(company="Microsoft").count
+    issue_company_statistic.objects.filter(company="Microsoft").update(count=formal + microsoft_issue,
+                                                                       total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Quansight").count
+    issue_company_statistic.objects.filter(company="Quansight").update(count=formal + quansight_issue,
+                                                                       total=formal_total,
+                                                                       update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Facebook").count
+    issue_company_statistic.objects.filter(company="Facebook").update(count=formal + facebook_issue,
+                                                                      total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Pytorch").count
+    issue_company_statistic.objects.filter(company="Pytorch").update(count=formal + pytorch_issue,
+                                                                     total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Meta").count
+    issue_company_statistic.objects.filter(company="Meta").update(count=formal + meta_issue,
+                                                                  total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="FacebookAI").count
+    issue_company_statistic.objects.filter(company="FacebookAI").update(count=formal + facebookai_issue,
+                                                                        total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="GoogleLLC").count
+    issue_company_statistic.objects.filter(company="GoogleLLC").update(count=formal + googlellc_issue,
+                                                                       total=formal_total,
+                                                                       update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Intel").count
+    issue_company_statistic.objects.filter(company="Intel").update(count=formal + intel_issue,
+                                                                   total=formal_total,
+                                                                   update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="NVIDIA").count
+    issue_company_statistic.objects.filter(company="NVIDIA").update(count=formal + nvidia_issue,
+                                                                    total=formal_total,
+                                                                    update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Hoofs&Horns,INC").count
+    issue_company_statistic.objects.filter(company="Hoofs&Horns,INC").update(count=formal + hhinc_issue,
+                                                                             total=formal_total,
+                                                                             update_time=now_time)
+    # ---------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------更新committer的company信息
+    committer_formal = total.objects.get(source="committer").total
+    committer_now = repo.get_commits().totalCount
+    i = 0
+    count = 0
+    alibabainc_committer = 0
+    quansight_committer = 0
+    facebook_committer = 0
+    pytorch_committer = 0
+    anduril_committer = 0
+    facebookai_committer = 0
+    facebookair_committer = 0
+    google_committer = 0
+    hhinc_committer = 0
+    intel_committer = 0
+    mitcsail_committer = 0
+    nvidia_committer = 0
+    onnx_committer = 0
+    commits = repo.get_commits().reversed
+    for commit in commits:
+        i = i + 1
+        print(i)
+        if i > committer_now - committer_formal:
+            break
+        else:
+            if commit.author is None:
+                a = 1
+            else:
+                if commit.author.company:
+                    print(company_handle(commit.author.company))
+                    count = count + 1
+                    if "ALIBABAINC" in company_handle(commit.author.company):
+                        alibabainc_committer = alibabainc_committer + 1
+                    if "QUANSIGHT" in company_handle(commit.author.company):
+                        quansight_committer = quansight_committer + 1
+                    if "FACEBOOK" in company_handle(commit.author.company):
+                        facebook_committer = facebook_committer + 1
+                    if "PYTORCH" in company_handle(commit.author.company):
+                        pytorch_committer = pytorch_committer + 1
+                    if "Anduril" in company_handle(commit.author.company):
+                        anduril_committer = anduril_committer + 1
+                    if "FACEBOOKAI" in company_handle(commit.author.company):
+                        facebookai_committer = facebookai_committer + 1
+                    if "FACEBOOKAIRESEARCH" in company_handle(commit.author.company):
+                        facebookair_committer = facebookair_committer + 1
+                    if "GOOGLE" in company_handle(commit.author.company):
+                        google_committer = google_committer + 1
+                    if "HOOFSANDHORNSINC" in company_handle(commit.author.company):
+                        hhinc_committer = hhinc_committer + 1
+                    if "INTEL" in company_handle(commit.author.company):
+                        intel_committer = intel_committer + 1
+                    if "MITCSAIL" in company_handle(commit.author.company):
+                        mitcsail_committer = mitcsail_committer + 1
+                    if "NVIDIA" in company_handle(commit.author.company):
+                        nvidia_committer = nvidia_committer + 1
+                    if "ONNX" in company_handle(commit.author.company):
+                        onnx_committer = onnx_committer + 1
+                    committer_company.objects.create(node_id=commit.author.node_id,
+                                                     company=company_handle(commit.author.company),
+                                                     get_time=now_time)
+    formal_total = committer_company_statistic.objects.get(company="Facebook").total
+    formal_total = count + formal_total
+    formal = committer_company_statistic.objects.get(company="Alibaba,INC").count
+    committer_company_statistic.objects.filter(company="Alibaba,INC").update(count=formal + alibabainc_committer,
+                                                                             total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Quansight").count
+    committer_company_statistic.objects.filter(company="Quansight").update(count=formal + quansight_committer,
+                                                                           total=formal_total,
+                                                                           update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Facebook").count
+    committer_company_statistic.objects.filter(company="Facebook").update(count=formal + facebook_committer,
+                                                                          total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Pytorch").count
+    committer_company_statistic.objects.filter(company="Pytorch").update(count=formal + pytorch_committer,
+                                                                         total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Anduril").count
+    committer_company_statistic.objects.filter(company="Anduril").update(count=formal + anduril_committer,
+                                                                         total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="FacebookAI").count
+    committer_company_statistic.objects.filter(company="FacebookAI").update(count=formal + facebookai_committer,
+                                                                            total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="FacebookAIResearch").count
+    committer_company_statistic.objects.filter(company="FacebookAIResearch").update(
+        count=formal + facebookair_committer,
+        total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Google").count
+    committer_company_statistic.objects.filter(company="Google").update(count=formal + google_committer,
+                                                                        total=formal_total,
+                                                                        update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Intel").count
+    committer_company_statistic.objects.filter(company="Intel").update(count=formal + intel_committer,
+                                                                       total=formal_total,
+                                                                       update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="MIT CSAIL").count
+    committer_company_statistic.objects.filter(company="MIT CSAIL").update(count=formal + mitcsail_committer,
+                                                                           total=formal_total,
+                                                                           update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="NVIDIA").count
+    committer_company_statistic.objects.filter(company="NVIDIA").update(count=formal + nvidia_committer,
+                                                                        total=formal_total,
+                                                                        update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="ONNX").count
+    committer_company_statistic.objects.filter(company="ONNX").update(count=formal + onnx_committer,
+                                                                      total=formal_total,
+                                                                      update_time=now_time)
+    formal = committer_company_statistic.objects.get(company="Hoofs&Horns,INC").count
+    committer_company_statistic.objects.filter(company="Hoofs&Horns,INC").update(count=formal + hhinc_committer,
+                                                                                 total=formal_total,
+                                                                                 update_time=now_time)
+    #---------------------------------------------------------------------------------------------------
+    #total.objects.filter(source='stargazer').update(total=stargazer_now)
+    total.objects.filter(source='issue').update(total=issue_now)
+    total.objects.filter(source='committer').update(total=committer_now)
     return JsonResponse(response)
 
 

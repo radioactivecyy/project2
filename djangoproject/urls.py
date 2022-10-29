@@ -40,4 +40,5 @@ urlpatterns = [
     path('star_gazer',views.star_gazer),
     path('issue',views.issue),
     path('committer',views.committer),
+    path('test_update',views.update),
 ]
