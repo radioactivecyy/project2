@@ -14,6 +14,7 @@ from github import Github
 import datetime as dt
 import github3
 import re
+import csv
 
 headers = {"Authorization": "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"}
 
@@ -80,13 +81,13 @@ def star_gazer(request):
     context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
     context['Content-Disposition'] = 'attachment; filename="stargazer_company_statistic.csv"'  # csv文件名，不影响
     writer = csv.writer(context)
-    writer.writerow(['company', 'count','total','update_time'])
+    writer.writerow(['company', 'count', 'total', 'update_time'])
     for info in stargazer_company_statistic.objects.all():
-        writer.writerow([info.company, info.count,info.total,info.update_time])
+        writer.writerow([info.company, info.count, info.total, info.update_time])
     # return response
     print(context)
     return context
-    #return JsonResponse(response)
+    # return JsonResponse(response)
 
 
 def issue(request):
@@ -113,14 +114,23 @@ def issue(request):
                     issue_company.objects.create(node_id=issue.assignee.node_id, company=company_handle(issue.assignee.company),
                                                      get_time=now_time)'''
     # -----------------------------------------------------------------------------
-    response = {}
+    '''response = {}
     for info in issue_company_statistic.objects.all():
         # print(info.company)
         # print(info.count)
         response[info.company] = info.count
         response['total'] = info.total
         response['update_time'] = info.update_time
-    return JsonResponse(response)
+    return JsonResponse(response)'''
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    context['Content-Disposition'] = 'attachment; filename="issue_company_statistic.csv"'  # csv文件名，不影响
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count', 'total', 'update_time'])
+    for info in issue_company_statistic.objects.all():
+        writer.writerow([info.company, info.count, info.total, info.update_time])
+    # return response
+    print(context)
+    return context
 
 
 def committer(request):
@@ -151,14 +161,23 @@ def committer(request):
                                                  company=company_handle(commit.author.company),
                                                  get_time=now_time)'''
     # ------------------------------------------------------------------------
-    response = {}
+    '''response = {}
     for info in committer_company_statistic.objects.all():
         # print(info.company)
         # print(info.count)
         response[info.company] = info.count
         response['total'] = info.total
         response['update_time'] = info.update_time
-    return JsonResponse(response)
+    return JsonResponse(response)'''
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    context['Content-Disposition'] = 'attachment; filename="committer_company_statistic.csv"'  # csv文件名，不影响
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count', 'total', 'update_time'])
+    for info in committer_company_statistic.objects.all():
+        writer.writerow([info.company, info.count, info.total, info.update_time])
+    # return response
+    print(context)
+    return context
 
 
 def update(request):
@@ -451,8 +470,8 @@ def update(request):
     committer_company_statistic.objects.filter(company="Hoofs&Horns,INC").update(count=formal + hhinc_committer,
                                                                                  total=formal_total,
                                                                                  update_time=now_time)
-    #---------------------------------------------------------------------------------------------------
-    #total.objects.filter(source='stargazer').update(total=stargazer_now)
+    # ---------------------------------------------------------------------------------------------------
+    # total.objects.filter(source='stargazer').update(total=stargazer_now)
     total.objects.filter(source='issue').update(total=issue_now)
     total.objects.filter(source='committer').update(total=committer_now)
     return JsonResponse(response)
