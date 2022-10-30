@@ -2,11 +2,12 @@
   <div class="dashboard-editor-container">
     <search />
     <!-- <cards /> -->
-    <el-row :gutter="60">
-      <el-col :span="10">
+    <el-row :gutter="20">
+      <el-col :span="1"><div class="grid-content ep-bg-purple" /></el-col>
+      <el-col :span="7">
         <tcards name="pytorch" stars="100" forks="50" />
       </el-col>
-      <el-col :span="12">
+      <el-col :span="10">
         <tcards />
       </el-col>
     </el-row>
@@ -43,7 +44,10 @@ export default {
     border: 0;
     right: 0;
   }
-
+  .grid-content {
+  border-radius: 4px;
+  min-height: 36px;
+}
   .chart-wrapper {
     background: #fff;
     padding: 16px 16px 0;

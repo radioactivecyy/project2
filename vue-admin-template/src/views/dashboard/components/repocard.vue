@@ -3,13 +3,14 @@
     <el-card class="box-card">
       <template #header>
         <div class="card-header">
-          <span>{{ name }}</span>
-          <el-button class="button" text @click="handle">Show details</el-button>
+          <h2>{{ name }}</h2>
+          <el-button class="button" text @click="handle">Details</el-button>
         </div>
       </template>
       <div class="l">
-        <p>stars:{{ stars }}</p>
-        <p>forks:{{ forks }}</p>
+         <p><svg-icon icon-class="star" /> {{stars }}</p>
+          <p><svg-icon icon-class="fork" /> {{forks }}</p>
+        
       </div>
 
       <!-- <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div> -->
@@ -52,6 +53,11 @@ export default {
 }
 </script>
 <style>
+
+.button {
+  float: right;
+  margin-top: 10px;
+}
 .card-header {
   display: flex;
   justify-content: space-between;
@@ -67,6 +73,15 @@ export default {
 }
 
 .box-card {
-  width: 480px;
+  width: 260px;
+}
+</style>
+<style scoped>
+.svg-icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.15em;
+  fill: #409EFF;
+  overflow: hidden;
 }
 </style>
