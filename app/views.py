@@ -70,14 +70,23 @@ def star_gazer(request):
                 print(company_handle(people.company))
                 stargazer_company.objects.create(node_id=people.node_id, company=company_handle(people.company), get_time=now_time)'''
     # --------------------------------------------------------------
-    response = {}
+    '''response = {}
     for info in stargazer_company_statistic.objects.all():
         # print(info.company)
         # print(info.count)
         response[info.company] = info.count
         response['total'] = info.total
-        response['update_time'] = info.update_time
-    return JsonResponse(response)
+        response['update_time'] = info.update_time'''
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    context['Content-Disposition'] = 'attachment; filename="stargazer_company_statistic.csv"'  # csv文件名，不影响
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count','total','update_time'])
+    for info in stargazer_company_statistic.objects.all():
+        writer.writerow([info.company, info.count,info.total,info.update_time])
+    # return response
+    print(context)
+    return context
+    #return JsonResponse(response)
 
 
 def issue(request):
