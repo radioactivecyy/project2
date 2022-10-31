@@ -1,25 +1,28 @@
 <template>
-  
   <div class="dashboard-editor-container">
-  <h1>Companies
-  </h1>
-  <p>company information about Stargazers, Issue creators, and Pull Request</p>
+    <h1>Companies</h1>
+    <p>company information about Stargazers, Issue creators, and Pull Request</p>
     <el-row :gutter="32">
-      <el-col :xs="44" :sm="44" :lg="88">
+      <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
-          <Bubble />
+          <Bubble  DataSource="/dev-api/api/issue"/>
         </div>
       </el-col>
-      </el-row>
+      <el-col :xs="14" :sm="14" :lg="8">
+        <List />
+      </el-col>
+    </el-row>
   </div>
 </template>
 
 <script>
 import Bubble from './components/company.vue'
+import List from './components/list.vue'
 export default {
   name: 'Pytorch',
   components: {
-    Bubble
+    Bubble,
+    List
   },
   mounted() {
     const msg = this.$route.query.name

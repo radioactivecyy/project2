@@ -1,16 +1,21 @@
 <template>
   <div>
     <!-- <table /> -->
-    <svg width="932" height="932" id="svgHTML" />
+    <svg width="332" height="330" id="svgHTML" />
   </div>
 </template>
 <script>
 import * as d3 from 'd3'
-import { getStar } from '@/api/bubble.js'
 const format = d3.format(',d')
 let current_circle = undefined
 export default {
   name: 'App',
+  props: {
+    DataSource: {
+      type: String, //表示是star issue 还是
+      default: '0'
+    }
+  },
   data() {
     return {
       // data是getdata()的返回结果
@@ -22,7 +27,6 @@ export default {
   },
   mounted() {
     this.BuildNameHeader()
-    this.test()
     this.CreateBubbleChart()
     this.DrawCircle()
   },
@@ -30,12 +34,25 @@ export default {
     // async 函数getdata()，用于获取数据
 
     async BuildNameHeader() {
-      const data_as_text = await d3.text(
-        'https://raw.githubusercontent.com/johnhaldeman/talk-on-d3-basics/master/Summary_sommaire_2017_2026.csv'
-      )
+      const data_as_text = await d3.text('/dev-api/api/issue')
       this.data_as_array = d3.csvParseRows(data_as_text)
+      // 如果DataSource为0，表示是star
+      // if (this.DataSource === 0) {
+      //   // 获取star数据
+      //   const data_as_text = await d3.text('/dev-api/api/star_gazer')
+      //   this.data_as_array = d3.csvParseRows(data_as_text)
+      // } else if (this.DataSource === 1) {
+      //   // 获取issue数据
+      //   const data_as_text = await d3.text('/dev-api/api/issue')
+      //   this.data_as_array = d3.csvParseRows(data_as_text)
+      //   // 将数据转换为数组
+      // } else if (this.DataSource === 2) {
+      //   // 获取pull request数据
+      //   const data_as_text = await d3.text('/dev-api/api/committer')
+      //   this.data_as_array = d3.csvParseRows(data_as_text)
+      // }
       // table为<table></table>
-
+      console.log('ttttttttttttttttttttttttttttttt')
       const table = <table></table>
 
       const tableObject = d3.select(table)
@@ -58,35 +75,21 @@ export default {
         .text(d => d)
     },
     flatNodeHeirarchy() {
-      const root = { children: this.data_as_json.slice(1) } // remove the first value from the dataset - which is an aggregate we don't need
-      return d3.hierarchy(root).sum(d => d.Employment)
+      const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
+      return d3.hierarchy(root).sum(d => d.count)
     },
     packedData() {
-      const width = 930
-      const height = 930
+      const width = 570
+      const height = 570
 
       const pack = d3.pack().size([width, height]).padding(3)
 
       return pack(this.flatNodeHeirarchy())
     },
-    async test() {
-      // getStar()
-      //   .then(res => {
-      //     console.log('rrrrrrrrrrrrrr',res)
-      //     console.log('type',typeof res)
-      //   })
-      //   .catch(err => {
-      //     console.log(err)
-      //   })
-      const a=await d3.csv('/dev-api/api/issue')
-      console.log(a)
-    },
-
     async CreateBubbleChart() {
-      this.data_as_json = await d3.csv(
-        'https://raw.githubusercontent.com/johnhaldeman/talk-on-d3-basics/master/Summary_sommaire_2017_2026.csv'
-      )
-    
+      // 初始化a的类型为Array
+      this.data_as_json = await d3.csv(this.DataSource)
+
       const width = 930
       const height = 930
       const pack = d3.pack().size([width, height]).padding(3)
@@ -94,11 +97,8 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      // const test=await d3.csv('http://192.168.56.1:8080/data/data.csv')
+      this.data_as_json = await d3.csv(this.DataSource)
 
-      this.data_as_json = await d3.csv(
-        'https://raw.githubusercontent.com/johnhaldeman/talk-on-d3-basics/master/Summary_sommaire_2017_2026.csv'
-      )
       this.svg = d3
         .select('body')
         .select('#svgHTML')
@@ -164,6 +164,13 @@ export default {
             )
             .attr('y', '80')
         })
+      const label = leaf
+        .append('text')
+        .attr('dy', '0.3em')
+        .text(d => d.data.company)
+        .attr('font-size', d => d.r / 4)
+        .attr('color', 'black')
+      console.log('label', label)
     }
   }
   //   buildnameheader
