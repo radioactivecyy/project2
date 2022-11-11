@@ -5,18 +5,19 @@
         <span>Top 10 Companies</span>
       </div>
     </template>
-    <!-- <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div> -->
-    <!-- 遍历company_name -->
-    <div v-for="o in this.company" :key = "o" class="text item"  ><pre>{{o.name}}                 {{o.count}}</pre></div>
+    <div v-for="o in this.company" :key = "o"  >
+<pre>{{o.name}}{{o.count}}</pre></div>
   </el-card>
 </template>
 <script>
 import * as d3 from 'd3'
 export default {
+  props: {
+    DataSource:String
+  },
   data() {
     return {
       company:[]
-      
     }
   },
   mounted() {
@@ -24,14 +25,24 @@ export default {
   },
   methods: {
     async getList() {
-      const data = await d3.csv('/dev-api/api/issue')
-      console.log('dddddddddddddddddddddddddddd',data)
+      console.log('Listtttttttttttttttttttttt',this.DataSource)
+      const blank="                                                      "
+      const data = await d3.csv(this.DataSource)
+      var del
+      var dels
+      var co
       // 遍历data，将每一行的company字段push到list中
       for (let i = 0; i < data.length; i++) {
-        this.company.push({ name: data[i].company, count: data[i].count })
+        del=24-data[i].company.length
+        co=data[i].company
+        console.log('ccccccccccccc',co)
+        for(let j=0;j<del;j++){
+          co=co.concat(' ')
+        }
+        console.log('del',del,'ccccccccc',co,'hhh')
+        this.company.push({name:co,count:data[i].count})
       }
       // 遍历list，统计每个公司出现的次数
-
     }
   }
 }
@@ -41,18 +52,26 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: 'Arial'; line-height: 200%;
 }
 
 .text {
-  font-size: 15px;
+  font-size: 13px;
+  line-height: 200%;
 }
-.text-item {
+.textItem {
   white-space: pre;
+  /* 字体设置为微软雅黑 */
+  font-family: 'Microsoft YaHei';
 }
 .item {
-  margin-bottom: 18px;
-}
+  margin-bottom: 13px;
 
+}
+.p{
+  font-size: 13px;
+  font-family: 'Microsoft YaHei';
+}
 .box-card {
   width: 280px;
 }

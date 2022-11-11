@@ -1,20 +1,19 @@
 <template>
   <div>
     <!-- <table /> -->
-    <svg width="332" height="330" id="svgHTML" />
+    <!-- <按钮 -->
+    <svg width="332" height="330" id="svgHTML_star"  />
   </div>
 </template>
 <script>
 import * as d3 from 'd3'
+
 const format = d3.format(',d')
 let current_circle = undefined
 export default {
   name: 'App',
   props: {
-    DataSource: {
-      type: String, //表示是star issue 还是
-      default: '0'
-    }
+
   },
   data() {
     return {
@@ -88,20 +87,18 @@ export default {
     },
     async CreateBubbleChart() {
       // 初始化a的类型为Array
-      this.data_as_json = await d3.csv(this.DataSource)
-
-      const width = 930
+      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
+            const width = 930
       const height = 930
       const pack = d3.pack().size([width, height]).padding(3)
 
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      this.data_as_json = await d3.csv(this.DataSource)
-
-      this.svg = d3
+      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
+            this.svg = d3
         .select('body')
-        .select('#svgHTML')
+        .select('#svgHTML_star')
         .style('width', '100%')
         .style('height', 'auto')
         .attr('font-size', 10)

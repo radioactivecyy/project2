@@ -5,11 +5,11 @@
     <el-row :gutter="20">
       <el-col :span="1"><div class="grid-content ep-bg-purple" /></el-col>
       <el-col :span="7">
-        <tcards name="pytorch" stars="100" forks="50" />
+        <tcards name="pytorch" stars="60.2k" forks="16.8k" />
       </el-col>
-      <el-col :span="10">
+      <!-- <el-col :span="10">
         <tcards />
-      </el-col>
+      </el-col> -->
     </el-row>
     <br></br>
     <!-- 图表 -->
