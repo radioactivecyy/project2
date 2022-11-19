@@ -3,6 +3,7 @@ from datetime import datetime
 
 from django.shortcuts import render
 import requests,json
+from django.http import JsonResponse
 
 def commit_from(request):
 
@@ -75,5 +76,6 @@ def commit_from(request):
         result2 = []
         result3 = []
         result4 = []
-
-    return render(request,'zhexian.html', {"target":target,"datas1": result1,"datas2":result2,"datas3":result3,"datas4":result4} )
+    response={"target":target,"datas1": result1,"datas2":result2,"datas3":result3,"datas4":result4}
+    return JsonResponse(response)
+    #return render(request,'zhexian.html', {"target":target,"datas1": result1,"datas2":result2,"datas3":result3,"datas4":result4} )

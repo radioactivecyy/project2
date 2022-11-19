@@ -1,13 +1,17 @@
 <template>
-  <div class="dashboard-editor-container">
+  <div class="dashboard-editor-container" id="pdfDom">
     <h1>Companies</h1>
-    <p>company information about Stargazers, Issue creators, and Pull Request</p>
+    <p>company information about Stargazers, Issue creators, and Pull Request.   Click here to download report <el-button class="bt-style" @click="getPdf(htmlTitle)"></el-button></p>
+    <!-- 按钮 -->
+    
+   
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <h2>Stargazers</h2> 
         </div>
-        <h2>Stargazers</h2>
+     
           <sBubble  />
         </div>
       </el-col>
@@ -54,6 +58,7 @@ export default {
   name: 'Pytorch',
   data() {
     return {
+      htmlTitle: 'Pytorch'
     }
   },
   components: {
@@ -65,6 +70,8 @@ export default {
   mounted() {
     const msg = this.$route.query.name
     console.log(msg)
+  },
+  methods: {
   }
 }
 </script>
@@ -93,4 +100,13 @@ export default {
     padding: 8px;
   }
 }
+.bt-style{
+background-repeat:no-repeat;
+background-image:url("./images/download.png");
+width: 6em;
+height: 3em;
+background-color: transparent;
+border-style: none;
+}
+
 </style>

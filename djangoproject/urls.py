@@ -36,5 +36,13 @@ urlpatterns = [
     path('about_us',views.about_us),
     path('notfound',views.notfound),
     path('intro',views.intro),
-    path('commit_from',commit.commit_from)
+    path('commit_from',commit.commit_from),
+    path('star_gazer',views.star_gazer),
+    path('issue',views.issue),
+    path('committer',views.committer),
+    path('test_update',views.update),
+    path('star1',views.pandas_star_gazer),
+    path('issue1',views.pandas_issue),
+    path('committer1',views.pandas_committer),
+    path('test1',views.pandas_update),
 ]

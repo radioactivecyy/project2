@@ -3,6 +3,7 @@
     <template #header>
       <div class="card-header">
         <span>Top 10 Companies</span>
+        <el-button class="bt-style" @click="getPdf(htmlTitle)"></el-button>
       </div>
     </template>
     <div v-for="o in this.company" :key = "o"  >
@@ -74,5 +75,13 @@ export default {
 }
 .box-card {
   width: 280px;
+}
+.bt-style{
+background-repeat:no-repeat;
+background-image:url("../images/down1.png");
+width: 6em;
+height: 3em;
+background-color: transparent;
+border-style: none;
 }
 </style>
