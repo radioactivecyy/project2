@@ -52,14 +52,47 @@ def star_gazer(request):
                 stargazer_company.objects.create(node_id=people.node_id, company=company_handle(people.company), get_time=now_time)'''
     # --------------------------------------------------------------
     context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
-    context['Content-Disposition'] = 'attachment; filename="stargazer_company_statistic.csv"'  # csv文件名，不影响
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="stargazer_company_statistic.csv"'
     writer = csv.writer(context)
-    writer.writerow(['company', 'count', 'total', 'update_time', 'duplicate', 'flag'])
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+
+    res = []
     for info in stargazer_company_statistic.objects.all():
-        writer.writerow([info.company, info.count, info.total, info.update_time, info.duplicate, info.flag])
-    print(context)
+        res.append([info.company, info.count, info.total,
+                    info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
     return context
 
+
+def pytorch_star(request):
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="stargazer_company_statistic.csv"'
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+    res = []
+    for info in stargazer_company_statistic.objects.all():
+        if (info.flag == 0):
+            # isPytorch
+            res.append([info.company, info.count, info.total,
+                        info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
+    return context
 
 
 def issue(request):
@@ -87,12 +120,45 @@ def issue(request):
                                                      get_time=now_time)'''
     # -----------------------------------------------------------------------------
     context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
-    context['Content-Disposition'] = 'attachment; filename="issue_company_statistic.csv"'  # csv文件名，不影响
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="issue_company_statistic.csv"'
     writer = csv.writer(context)
-    writer.writerow(['company', 'count', 'total', 'update_time', 'duplicate', 'flag'])
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+    res = []
     for info in issue_company_statistic.objects.all():
-        writer.writerow([info.company, info.count, info.total, info.update_time, info.duplicate, info.flag])
-    print(context)
+        res.append([info.company, info.count, info.total,
+                    info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
+    return context
+
+
+def pytorch_issue(request):
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="issue_company_statistic.csv"'
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+    res = []
+    for info in issue_company_statistic.objects.all():
+        if (info.flag == 0):
+            # isPytorch
+            res.append([info.company, info.count, info.total,
+                        info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
     return context
 
 
@@ -125,12 +191,47 @@ def committer(request):
                                                  get_time=now_time)'''
     # ------------------------------------------------------------------------
     context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
-    context['Content-Disposition'] = 'attachment; filename="committer_company_statistic.csv"'  # csv文件名，不影响
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="committer_company_statistic.csv"'
     writer = csv.writer(context)
-    writer.writerow(['company', 'count', 'total', 'update_time', 'duplicate', 'flag'])
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+    # 把数据从数据库中读出来
+    # 按照count排序
+    res = []
     for info in committer_company_statistic.objects.all():
-        writer.writerow([info.company, info.count, info.total, info.update_time, info.duplicate, info.flag])
-    print(context)
+        res.append([info.company, info.count, info.total,
+                    info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
+    return context
+
+
+def pytorch_committer(request):
+    context = HttpResponse(content_type='text/csv')  # 告诉浏览器是text/csv格式
+    # csv文件名，不影响
+    context['Content-Disposition'] = 'attachment; filename="committer_company_statistic.csv"'
+    writer = csv.writer(context)
+    writer.writerow(['company', 'count', 'total',
+                    'update_time', 'duplicate', 'flag'])
+    res = []
+    for info in committer_company_statistic.objects.all():
+        if (info.flag == 0):
+            # isPytorch
+            res.append([info.company, info.count, info.total,
+                        info.update_time, info.duplicate, info.flag])
+    # 对res中的数据进行排序
+    for i in range(len(res)):
+        for j in range(len(res) - 1):
+            if res[j][1] < res[j + 1][1]:
+                res[j], res[j + 1] = res[j + 1], res[j]
+    for info in res:
+        writer.writerow(info)
     return context
 
 
@@ -255,7 +356,8 @@ def update(request):
     for issue in issues:
         i = i + 1
         print(i)
-        if i > issue_now - issue_formal: break
+        if i > issue_now - issue_formal:
+            break
         if issue.assignee is None:
             a = 1
         else:
@@ -283,45 +385,55 @@ def update(request):
                 if "NVIDIA" in company_handle(issue.assignee.company):
                     nvidia_issue = nvidia_issue + 1
                 issue_company.objects.create(node_id=issue.assignee.node_id,
-                                             company=company_handle(issue.assignee.company),
+                                             company=company_handle(
+                                                 issue.assignee.company),
                                              get_time=now_time)
-    formal_total = issue_company_statistic.objects.get(company="Microsoft",flag=0).total
+    formal_total = issue_company_statistic.objects.get(
+        company="Microsoft", flag=0).total
     formal_total = count + formal_total
-    formal = issue_company_statistic.objects.get(company="Microsoft",flag=0).count
-    issue_company_statistic.objects.filter(company="Microsoft",flag=0).update(count=formal + microsoft_issue,
-                                                                       total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Quansight",flag=0).count
-    issue_company_statistic.objects.filter(company="Quansight",flag=0).update(count=formal + quansight_issue,
-                                                                       total=formal_total,
-                                                                       update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Facebook",flag=0).count
-    issue_company_statistic.objects.filter(company="Facebook",flag=0).update(count=formal + facebook_issue,
-                                                                      total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Pytorch",flag=0).count
-    issue_company_statistic.objects.filter(company="Pytorch",flag=0).update(count=formal + pytorch_issue,
-                                                                     total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Meta",flag=0).count
-    issue_company_statistic.objects.filter(company="Meta",flag=0).update(count=formal + meta_issue,
-                                                                  total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="FacebookAI",flag=0).count
-    issue_company_statistic.objects.filter(company="FacebookAI",flag=0).update(count=formal + facebookai_issue,
-                                                                        total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="GoogleLLC",flag=0).count
-    issue_company_statistic.objects.filter(company="GoogleLLC",flag=0).update(count=formal + googlellc_issue,
-                                                                       total=formal_total,
-                                                                       update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Intel",flag=0).count
-    issue_company_statistic.objects.filter(company="Intel",flag=0).update(count=formal + intel_issue,
-                                                                   total=formal_total,
-                                                                   update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="NVIDIA",flag=0).count
-    issue_company_statistic.objects.filter(company="NVIDIA",flag=0).update(count=formal + nvidia_issue,
-                                                                    total=formal_total,
-                                                                    update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Hoofs&Horns,INC",flag=0).count
-    issue_company_statistic.objects.filter(company="Hoofs&Horns,INC",flag=0).update(count=formal + hhinc_issue,
-                                                                             total=formal_total,
-                                                                             update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Microsoft", flag=0).count
+    issue_company_statistic.objects.filter(company="Microsoft", flag=0).update(count=formal + microsoft_issue,
+                                                                               total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Quansight", flag=0).count
+    issue_company_statistic.objects.filter(company="Quansight", flag=0).update(count=formal + quansight_issue,
+                                                                               total=formal_total,
+                                                                               update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Facebook", flag=0).count
+    issue_company_statistic.objects.filter(company="Facebook", flag=0).update(count=formal + facebook_issue,
+                                                                              total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Pytorch", flag=0).count
+    issue_company_statistic.objects.filter(company="Pytorch", flag=0).update(count=formal + pytorch_issue,
+                                                                             total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Meta", flag=0).count
+    issue_company_statistic.objects.filter(company="Meta", flag=0).update(count=formal + meta_issue,
+                                                                          total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="FacebookAI", flag=0).count
+    issue_company_statistic.objects.filter(company="FacebookAI", flag=0).update(count=formal + facebookai_issue,
+                                                                                total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="GoogleLLC", flag=0).count
+    issue_company_statistic.objects.filter(company="GoogleLLC", flag=0).update(count=formal + googlellc_issue,
+                                                                               total=formal_total,
+                                                                               update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Intel", flag=0).count
+    issue_company_statistic.objects.filter(company="Intel", flag=0).update(count=formal + intel_issue,
+                                                                           total=formal_total,
+                                                                           update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="NVIDIA", flag=0).count
+    issue_company_statistic.objects.filter(company="NVIDIA", flag=0).update(count=formal + nvidia_issue,
+                                                                            total=formal_total,
+                                                                            update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Hoofs&Horns,INC", flag=0).count
+    issue_company_statistic.objects.filter(company="Hoofs&Horns,INC", flag=0).update(count=formal + hhinc_issue,
+                                                                                     total=formal_total,
+                                                                                     update_time=now_time)
     # ---------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------更新committer的company信息
     committer_formal = total.objects.get(source="committer").total
@@ -381,57 +493,72 @@ def update(request):
                     if "ONNX" in company_handle(commit.author.company):
                         onnx_committer = onnx_committer + 1
                     committer_company.objects.create(node_id=commit.author.node_id,
-                                                     company=company_handle(commit.author.company),
+                                                     company=company_handle(
+                                                         commit.author.company),
                                                      get_time=now_time)
-    formal_total = committer_company_statistic.objects.get(company="Facebook",flag=0).total
+    formal_total = committer_company_statistic.objects.get(
+        company="Facebook", flag=0).total
     formal_total = count + formal_total
-    formal = committer_company_statistic.objects.get(company="Alibaba,INC",flag=0).count
-    committer_company_statistic.objects.filter(company="Alibaba,INC",flag=0).update(count=formal + alibabainc_committer,
-                                                                             total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Quansight",flag=0).count
-    committer_company_statistic.objects.filter(company="Quansight",flag=0).update(count=formal + quansight_committer,
-                                                                           total=formal_total,
-                                                                           update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Facebook",flag=0).count
-    committer_company_statistic.objects.filter(company="Facebook",flag=0).update(count=formal + facebook_committer,
-                                                                          total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Pytorch",flag=0).count
-    committer_company_statistic.objects.filter(company="Pytorch",flag=0).update(count=formal + pytorch_committer,
-                                                                         total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Anduril",flag=0).count
-    committer_company_statistic.objects.filter(company="Anduril",flag=0).update(count=formal + anduril_committer,
-                                                                         total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="FacebookAI",flag=0).count
-    committer_company_statistic.objects.filter(company="FacebookAI",flag=0).update(count=formal + facebookai_committer,
-                                                                            total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="FacebookAIResearch",flag=0).count
-    committer_company_statistic.objects.filter(company="FacebookAIResearch",flag=0).update(
+    formal = committer_company_statistic.objects.get(
+        company="Alibaba,INC", flag=0).count
+    committer_company_statistic.objects.filter(company="Alibaba,INC", flag=0).update(count=formal + alibabainc_committer,
+                                                                                     total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Quansight", flag=0).count
+    committer_company_statistic.objects.filter(company="Quansight", flag=0).update(count=formal + quansight_committer,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Facebook", flag=0).count
+    committer_company_statistic.objects.filter(company="Facebook", flag=0).update(count=formal + facebook_committer,
+                                                                                  total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Pytorch", flag=0).count
+    committer_company_statistic.objects.filter(company="Pytorch", flag=0).update(count=formal + pytorch_committer,
+                                                                                 total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Anduril", flag=0).count
+    committer_company_statistic.objects.filter(company="Anduril", flag=0).update(count=formal + anduril_committer,
+                                                                                 total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="FacebookAI", flag=0).count
+    committer_company_statistic.objects.filter(company="FacebookAI", flag=0).update(count=formal + facebookai_committer,
+                                                                                    total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="FacebookAIResearch", flag=0).count
+    committer_company_statistic.objects.filter(company="FacebookAIResearch", flag=0).update(
         count=formal + facebookair_committer,
         total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Google",flag=0).count
-    committer_company_statistic.objects.filter(company="Google",flag=0).update(count=formal + google_committer,
-                                                                        total=formal_total,
-                                                                        update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Intel",flag=0).count
-    committer_company_statistic.objects.filter(company="Intel",flag=0).update(count=formal + intel_committer,
-                                                                       total=formal_total,
-                                                                       update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="MIT CSAIL",flag=0).count
-    committer_company_statistic.objects.filter(company="MIT CSAIL",flag=0).update(count=formal + mitcsail_committer,
-                                                                           total=formal_total,
-                                                                           update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="NVIDIA",flag=0).count
-    committer_company_statistic.objects.filter(company="NVIDIA",flag=0).update(count=formal + nvidia_committer,
-                                                                        total=formal_total,
-                                                                        update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="ONNX",flag=0).count
-    committer_company_statistic.objects.filter(company="ONNX",flag=0).update(count=formal + onnx_committer,
-                                                                      total=formal_total,
-                                                                      update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Hoofs&Horns,INC",flag=0).count
-    committer_company_statistic.objects.filter(company="Hoofs&Horns,INC",flag=0).update(count=formal + hhinc_committer,
-                                                                                 total=formal_total,
-                                                                                 update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Google", flag=0).count
+    committer_company_statistic.objects.filter(company="Google", flag=0).update(count=formal + google_committer,
+                                                                                total=formal_total,
+                                                                                update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Intel", flag=0).count
+    committer_company_statistic.objects.filter(company="Intel", flag=0).update(count=formal + intel_committer,
+                                                                               total=formal_total,
+                                                                               update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="MIT CSAIL", flag=0).count
+    committer_company_statistic.objects.filter(company="MIT CSAIL", flag=0).update(count=formal + mitcsail_committer,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="NVIDIA", flag=0).count
+    committer_company_statistic.objects.filter(company="NVIDIA", flag=0).update(count=formal + nvidia_committer,
+                                                                                total=formal_total,
+                                                                                update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="ONNX", flag=0).count
+    committer_company_statistic.objects.filter(company="ONNX", flag=0).update(count=formal + onnx_committer,
+                                                                              total=formal_total,
+                                                                              update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Hoofs&Horns,INC", flag=0).count
+    committer_company_statistic.objects.filter(company="Hoofs&Horns,INC", flag=0).update(count=formal + hhinc_committer,
+                                                                                         total=formal_total,
+                                                                                         update_time=now_time)
     # ---------------------------------------------------------------------------------------------------
     # total.objects.filter(source='stargazer').update(total=stargazer_now)
     total.objects.filter(source='issue').update(total=issue_now)
@@ -541,7 +668,8 @@ def pandas_update(request):
     for people in stargazers1:
         i = i + 1
         print(i)
-        if i > stargazer_now - stargazer_formal: break
+        if i > stargazer_now - stargazer_formal:
+            break
         if people.company:
             print(company_handle(people.company))
             count = count + 1
@@ -575,63 +703,78 @@ def pandas_update(request):
                 zju_star = zju_star + 1
             pandas_stargazer_company.objects.create(node_id=people.node_id, company=company_handle(people.company),
                                                     get_time=now_time)
-    formal_total = stargazer_company_statistic.objects.get(company="Amazon",flag=1).total
+    formal_total = stargazer_company_statistic.objects.get(
+        company="Amazon", flag=1).total
     formal_total = count + formal_total
-    formal = stargazer_company_statistic.objects.get(company="Amazon",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Amazon",flag=1).update(count=formal + amazon_star,
-                                                                               total=formal_total, update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Google",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Google",flag=1).update(count=formal + google_star,
-                                                                               total=formal_total,
-                                                                               update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Facebook",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Facebook",flag=1).update(count=formal + facebook_star,
-                                                                                 total=formal_total,
-                                                                                 update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Alibaba",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Alibaba",flag=1).update(count=formal + alibaba_star,
+    formal = stargazer_company_statistic.objects.get(
+        company="Amazon", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Amazon", flag=1).update(count=formal + amazon_star,
+                                                                                total=formal_total, update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="Google", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Google", flag=1).update(count=formal + google_star,
                                                                                 total=formal_total,
                                                                                 update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="ByteDance",flag=1).count
-    stargazer_company_statistic.objects.filter(company="ByteDance",flag=1).update(count=formal + bytedance_star,
+    formal = stargazer_company_statistic.objects.get(
+        company="Facebook", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Facebook", flag=1).update(count=formal + facebook_star,
                                                                                   total=formal_total,
                                                                                   update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Tencent",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Tencent",flag=1).update(count=formal + tencent_star,
-                                                                                total=formal_total,
-                                                                                update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="IBM",flag=1).count
-    stargazer_company_statistic.objects.filter(company="IBM",flag=1).update(count=formal + ibm_star,
-                                                                            total=formal_total,
-                                                                            update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="PekingUniversity",flag=1).count
-    stargazer_company_statistic.objects.filter(company="PekingUniversity",flag=1).update(count=formal + pku_star,
-                                                                                         total=formal_total,
-                                                                                         update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Baidu",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Baidu",flag=1).update(count=formal + baidu_star,
-                                                                              total=formal_total,
-                                                                              update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Intel",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Intel",flag=1).update(count=formal + intel_star,
-                                                                              total=formal_total,
-                                                                              update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Meta",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Meta",flag=1).update(count=formal + meta_star,
+    formal = stargazer_company_statistic.objects.get(
+        company="Alibaba", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Alibaba", flag=1).update(count=formal + alibaba_star,
+                                                                                 total=formal_total,
+                                                                                 update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="ByteDance", flag=1).count
+    stargazer_company_statistic.objects.filter(company="ByteDance", flag=1).update(count=formal + bytedance_star,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="Tencent", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Tencent", flag=1).update(count=formal + tencent_star,
+                                                                                 total=formal_total,
+                                                                                 update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="IBM", flag=1).count
+    stargazer_company_statistic.objects.filter(company="IBM", flag=1).update(count=formal + ibm_star,
                                                                              total=formal_total,
                                                                              update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="Nubank",flag=1).count
-    stargazer_company_statistic.objects.filter(company="Nubank",flag=1).update(count=formal + nubank_star,
+    formal = stargazer_company_statistic.objects.get(
+        company="PekingUniversity", flag=1).count
+    stargazer_company_statistic.objects.filter(company="PekingUniversity", flag=1).update(count=formal + pku_star,
+                                                                                          total=formal_total,
+                                                                                          update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="Baidu", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Baidu", flag=1).update(count=formal + baidu_star,
                                                                                total=formal_total,
                                                                                update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="VMware",flag=1).count
-    stargazer_company_statistic.objects.filter(company="VMware",flag=1).update(count=formal + vm_star,
+    formal = stargazer_company_statistic.objects.get(
+        company="Intel", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Intel", flag=1).update(count=formal + intel_star,
                                                                                total=formal_total,
                                                                                update_time=now_time)
-    formal = stargazer_company_statistic.objects.get(company="ZhejiangUniversity",flag=1).count
-    stargazer_company_statistic.objects.filter(company="ZhejiangUniversity",flag=1).update(count=formal + zju_star,
-                                                                                           total=formal_total,
-                                                                                           update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="Meta", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Meta", flag=1).update(count=formal + meta_star,
+                                                                              total=formal_total,
+                                                                              update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="Nubank", flag=1).count
+    stargazer_company_statistic.objects.filter(company="Nubank", flag=1).update(count=formal + nubank_star,
+                                                                                total=formal_total,
+                                                                                update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="VMware", flag=1).count
+    stargazer_company_statistic.objects.filter(company="VMware", flag=1).update(count=formal + vm_star,
+                                                                                total=formal_total,
+                                                                                update_time=now_time)
+    formal = stargazer_company_statistic.objects.get(
+        company="ZhejiangUniversity", flag=1).count
+    stargazer_company_statistic.objects.filter(company="ZhejiangUniversity", flag=1).update(count=formal + zju_star,
+                                                                                            total=formal_total,
+                                                                                            update_time=now_time)
     # -----------------------------------------------------------------------------------------------------
     # --------------------------------------------------------更新issue的company信息
     issue_formal = pandas_total.objects.get(source="issue").total
@@ -649,7 +792,8 @@ def pandas_update(request):
     for issue in issues:
         i = i + 1
         print(i)
-        if i > issue_now - issue_formal: break
+        if i > issue_now - issue_formal:
+            break
         if issue.assignee is None:
             a = 1
         else:
@@ -671,34 +815,42 @@ def pandas_update(request):
                 if "ZYPPIO" in company_handle(issue.assignee.company):
                     zyppio_issue = zyppio_issue + 1
                 pandas_issue_company.objects.create(node_id=issue.assignee.node_id,
-                                                    company=company_handle(issue.assignee.company),
+                                                    company=company_handle(
+                                                        issue.assignee.company),
                                                     get_time=now_time)
-    formal_total = issue_company_statistic.objects.get(company="Farfetch",flag=1).total
+    formal_total = issue_company_statistic.objects.get(
+        company="Farfetch", flag=1).total
     formal_total = count + formal_total
-    formal = issue_company_statistic.objects.get(company="84.51°",flag=1).count
-    issue_company_statistic.objects.filter(company="84.51°",flag=1).update(count=formal + c8451_issue,
-                                                                           total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Factored AI",flag=1).count
-    issue_company_statistic.objects.filter(company="Factored AI",flag=1).update(count=formal + factor_issue,
-                                                                                total=formal_total,
-                                                                                update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Farfetch",flag=1).count
-    issue_company_statistic.objects.filter(company="Farfetch",flag=1).update(count=formal + farfetch_issue,
-                                                                             total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="PandasDev",flag=1).count
-    issue_company_statistic.objects.filter(company="PandasDev",flag=1).update(count=formal + pandas_issue1,
-                                                                              total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Voltron Data",flag=1).count
-    issue_company_statistic.objects.filter(company="Voltron Data",flag=1).update(count=formal + vol_issue,
+    formal = issue_company_statistic.objects.get(
+        company="84.51°", flag=1).count
+    issue_company_statistic.objects.filter(company="84.51°", flag=1).update(count=formal + c8451_issue,
+                                                                            total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Factored AI", flag=1).count
+    issue_company_statistic.objects.filter(company="Factored AI", flag=1).update(count=formal + factor_issue,
                                                                                  total=formal_total,
                                                                                  update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Zonos",flag=1).count
-    issue_company_statistic.objects.filter(company="Zonos",flag=1).update(count=formal + zonos_issue,
-                                                                          total=formal_total, update_time=now_time)
-    formal = issue_company_statistic.objects.get(company="Zyppio",flag=1).count
-    issue_company_statistic.objects.filter(company="Zyppio",flag=1).update(count=formal + zyppio_issue,
-                                                                           total=formal_total,
-                                                                           update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Farfetch", flag=1).count
+    issue_company_statistic.objects.filter(company="Farfetch", flag=1).update(count=formal + farfetch_issue,
+                                                                              total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="PandasDev", flag=1).count
+    issue_company_statistic.objects.filter(company="PandasDev", flag=1).update(count=formal + pandas_issue1,
+                                                                               total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Voltron Data", flag=1).count
+    issue_company_statistic.objects.filter(company="Voltron Data", flag=1).update(count=formal + vol_issue,
+                                                                                  total=formal_total,
+                                                                                  update_time=now_time)
+    formal = issue_company_statistic.objects.get(company="Zonos", flag=1).count
+    issue_company_statistic.objects.filter(company="Zonos", flag=1).update(count=formal + zonos_issue,
+                                                                           total=formal_total, update_time=now_time)
+    formal = issue_company_statistic.objects.get(
+        company="Zyppio", flag=1).count
+    issue_company_statistic.objects.filter(company="Zyppio", flag=1).update(count=formal + zyppio_issue,
+                                                                            total=formal_total,
+                                                                            update_time=now_time)
     # ---------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------更新committer的company信息
     committer_formal = pandas_total.objects.get(source="committer").total
@@ -761,61 +913,77 @@ def pandas_update(request):
                     if "WASHINGTONUNIVERSITYINSTLOUIS" in company_handle(commit.author.company):
                         was_committer = was_committer + 1
                     pandas_committer_company.objects.create(node_id=commit.author.node_id,
-                                                            company=company_handle(commit.author.company),
+                                                            company=company_handle(
+                                                                commit.author.company),
                                                             get_time=now_time)
-    formal_total = committer_company_statistic.objects.get(company="DLR",flag=1).total
+    formal_total = committer_company_statistic.objects.get(
+        company="DLR", flag=1).total
     formal_total = count + formal_total
-    formal = committer_company_statistic.objects.get(company="84.51°",flag=1).count
-    committer_company_statistic.objects.filter(company="84.51°",flag=1).update(count=formal + c8451_committer,
-                                                                               total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Quansight",flag=1).count
-    committer_company_statistic.objects.filter(company="Quansight",flag=1).update(count=formal + quansight_committer,
-                                                                                  total=formal_total,
-                                                                                  update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="DLR",flag=1).count
-    committer_company_statistic.objects.filter(company="DLR",flag=1).update(count=formal + dlr_committer,
-                                                                            total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="HCA Healthcare",flag=1).count
-    committer_company_statistic.objects.filter(company="HCA Healthcare",flag=1).update(count=formal + hca_committer,
-                                                                                       total=formal_total,
-                                                                                       update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Innobi",flag=1).count
-    committer_company_statistic.objects.filter(company="Innobi",flag=1).update(count=formal + innobi_committer,
-                                                                               total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Microsoft",flag=1).count
-    committer_company_statistic.objects.filter(company="Microsoft",flag=1).update(count=formal + microsoft_committer,
-                                                                                  total=formal_total,
-                                                                                  update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Palantir Technologies",flag=1).count
-    committer_company_statistic.objects.filter(company="Palantir Technologies",flag=1).update(
+    formal = committer_company_statistic.objects.get(
+        company="84.51°", flag=1).count
+    committer_company_statistic.objects.filter(company="84.51°", flag=1).update(count=formal + c8451_committer,
+                                                                                total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Quansight", flag=1).count
+    committer_company_statistic.objects.filter(company="Quansight", flag=1).update(count=formal + quansight_committer,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="DLR", flag=1).count
+    committer_company_statistic.objects.filter(company="DLR", flag=1).update(count=formal + dlr_committer,
+                                                                             total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="HCA Healthcare", flag=1).count
+    committer_company_statistic.objects.filter(company="HCA Healthcare", flag=1).update(count=formal + hca_committer,
+                                                                                        total=formal_total,
+                                                                                        update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Innobi", flag=1).count
+    committer_company_statistic.objects.filter(company="Innobi", flag=1).update(count=formal + innobi_committer,
+                                                                                total=formal_total, update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Microsoft", flag=1).count
+    committer_company_statistic.objects.filter(company="Microsoft", flag=1).update(count=formal + microsoft_committer,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Palantir Technologies", flag=1).count
+    committer_company_statistic.objects.filter(company="Palantir Technologies", flag=1).update(
         count=formal + palantir_committer,
         total=formal_total, update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Google",flag=1).count
-    committer_company_statistic.objects.filter(company="Google",flag=1).update(count=formal + google_committer,
-                                                                               total=formal_total,
-                                                                               update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Pythomation",flag=1).count
-    committer_company_statistic.objects.filter(company="Pythomation",flag=1).update(count=formal + pytho_committer,
-                                                                                    total=formal_total,
-                                                                                    update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="RAPIDS AI",flag=1).count
-    committer_company_statistic.objects.filter(company="RAPIDS AI",flag=1).update(count=formal + rapids_committer,
-                                                                                  total=formal_total,
-                                                                                  update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Tubi TV",flag=1).count
-    committer_company_statistic.objects.filter(company="Tubi TV",flag=1).update(count=formal + tubi_committer,
+    formal = committer_company_statistic.objects.get(
+        company="Google", flag=1).count
+    committer_company_statistic.objects.filter(company="Google", flag=1).update(count=formal + google_committer,
                                                                                 total=formal_total,
                                                                                 update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="Voltron Data",flag=1).count
-    committer_company_statistic.objects.filter(company="Voltron Data",flag=1).update(count=formal + vol_committer,
+    formal = committer_company_statistic.objects.get(
+        company="Pythomation", flag=1).count
+    committer_company_statistic.objects.filter(company="Pythomation", flag=1).update(count=formal + pytho_committer,
                                                                                      total=formal_total,
                                                                                      update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="PandasDev",flag=1).count
-    committer_company_statistic.objects.filter(company="PandasDev",flag=1).update(count=formal + pandas_committer1,
-                                                                                  total=formal_total,
-                                                                                  update_time=now_time)
-    formal = committer_company_statistic.objects.get(company="WashingtonUniversityinStLouis",flag=1).count
-    committer_company_statistic.objects.filter(company="WashingtonUniversityinStLouis",flag=1).update(
+    formal = committer_company_statistic.objects.get(
+        company="RAPIDS AI", flag=1).count
+    committer_company_statistic.objects.filter(company="RAPIDS AI", flag=1).update(count=formal + rapids_committer,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Tubi TV", flag=1).count
+    committer_company_statistic.objects.filter(company="Tubi TV", flag=1).update(count=formal + tubi_committer,
+                                                                                 total=formal_total,
+                                                                                 update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="Voltron Data", flag=1).count
+    committer_company_statistic.objects.filter(company="Voltron Data", flag=1).update(count=formal + vol_committer,
+                                                                                      total=formal_total,
+                                                                                      update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="PandasDev", flag=1).count
+    committer_company_statistic.objects.filter(company="PandasDev", flag=1).update(count=formal + pandas_committer1,
+                                                                                   total=formal_total,
+                                                                                   update_time=now_time)
+    formal = committer_company_statistic.objects.get(
+        company="WashingtonUniversityinStLouis", flag=1).count
+    committer_company_statistic.objects.filter(company="WashingtonUniversityinStLouis", flag=1).update(
         count=formal + was_committer,
         total=formal_total,
         update_time=now_time)
@@ -882,9 +1050,11 @@ def commit(request):
         url = request.POST['url']
         print(url)
         u_list = url.strip().split('/')
-        api_url = 'https://api.github.com/repos/' + u_list[3] + '/' + u_list[4] + '/commits'
+        api_url = 'https://api.github.com/repos/' + \
+            u_list[3] + '/' + u_list[4] + '/commits'
         print(api_url)
-        content_url = 'https://api.github.com/repos/' + u_list[3] + '/' + u_list[4]
+        content_url = 'https://api.github.com/repos/' + \
+            u_list[3] + '/' + u_list[4]
         api_request = requests.get(content_url, headers=headers)
         contents = json.loads(api_request.content)
         print(contents)
@@ -916,11 +1086,15 @@ def commit(request):
                 date_list.append(dd)
 
                 # 数据插入数据库,commits的数据
-                dbdic = {'o_name': u_list[3], 'r_name': u_list[4], 'c_name': committer['commit']['author']['name']}
-                Commits.objects.create(owner_name=dbdic['o_name'], repo_name=dbdic['r_name'], con_name=dbdic['c_name'])
+                dbdic = {'o_name': u_list[3], 'r_name': u_list[4],
+                         'c_name': committer['commit']['author']['name']}
+                Commits.objects.create(
+                    owner_name=dbdic['o_name'], repo_name=dbdic['r_name'], con_name=dbdic['c_name'])
                 # 获取并插入时间，对字符串处理一下存进数据库
-                date1 = committer['commit']['author']['date'][0:10] + ' ' + committer['commit']['author']['date'][11:19]
-                date01.objects.create(repo_name=dbdic['r_name'], date_newest=date1, date_lasttime=date1)
+                date1 = committer['commit']['author']['date'][0:10] + \
+                    ' ' + committer['commit']['author']['date'][11:19]
+                date01.objects.create(
+                    repo_name=dbdic['r_name'], date_newest=date1, date_lasttime=date1)
 
             sorted_date = sorted(date_list, reverse=True)
             print(sorted_date)
@@ -934,10 +1108,11 @@ def commit(request):
                             committer_dict[committer['author']['login']] = 1
                         else:
                             committer_dict[committer['author']['login']] = committer_dict[
-                                                                               committer['author']['login']] + 1
+                                committer['author']['login']] + 1
             print(committer_dict)
             sorted_dict = {}
-            sorted_dict = sorted(committer_dict.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
+            sorted_dict = sorted(committer_dict.items(),
+                                 key=lambda kv: (kv[1], kv[0]), reverse=True)
             print(sorted_dict)
             target = u_list[3] + '/' + u_list[4]
 
@@ -947,10 +1122,12 @@ def commit(request):
                 commit_url = 'https://github.com/' + test[0]
                 print('https://api.github.com/users/' + test[0])
                 print(commit_url)
-                api_request = requests.get('https://api.github.com/users/' + test[0], headers=headers)
+                api_request = requests.get(
+                    'https://api.github.com/users/' + test[0], headers=headers)
                 user_info = json.loads(api_request.content)
                 avatar_url_1 = user_info['avatar_url']
-                commit_users.append({"user": test[0], "url": commit_url, "a_url": avatar_url_1})
+                commit_users.append(
+                    {"user": test[0], "url": commit_url, "a_url": avatar_url_1})
             # for i in range(0,3):
             #     if sorted_dict[i]:
             #         commit_url = 'https://github.com/'+sorted_dict[i][0]
@@ -980,7 +1157,8 @@ def user(request):
     user_name = request.POST['input_content']
     if user_name:  # 输入内容不为空
         # 同home函数中获取api接口内容
-        user_request = requests.get(url='https://api.github.com/users/' + user_name)
+        user_request = requests.get(
+            url='https://api.github.com/users/' + user_name)
         user_info = json.loads(user_request.content)
         # 返回函数包含两个数据，分别是要搜索的用户名和对应的用户信息
         response = {'input_contents': user_name, 'user_info': user_info}
