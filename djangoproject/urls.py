@@ -41,8 +41,5 @@ urlpatterns = [
     path('issue',views.issue),
     path('committer',views.committer),
     path('test_update',views.update),
-    path('star1',views.pandas_star_gazer),
-    path('issue1',views.pandas_issue),
-    path('committer1',views.pandas_committer),
     path('test1',views.pandas_update),
 ]
