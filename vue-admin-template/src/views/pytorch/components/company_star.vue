@@ -2,7 +2,7 @@
   <div>
     <!-- <table /> -->
     <!-- <按钮 -->
-    <svg width="332" height="330" id="svgHTML_star"  />
+    <svg width="332" height="330" id="svgHTML_star" />
   </div>
 </template>
 <script>
@@ -12,9 +12,7 @@ const format = d3.format(',d')
 let current_circle = undefined
 export default {
   name: 'App',
-  props: {
-
-  },
+  props: {},
   data() {
     return {
       // data是getdata()的返回结果
@@ -25,54 +23,13 @@ export default {
     }
   },
   mounted() {
-    this.BuildNameHeader()
+    // this.data_as_array = this.BuildNameHeader()
     this.CreateBubbleChart()
     this.DrawCircle()
   },
   methods: {
     // async 函数getdata()，用于获取数据
 
-    async BuildNameHeader() {
-      const data_as_text = await d3.text('/dev-api/api/issue')
-      this.data_as_array = d3.csvParseRows(data_as_text)
-      // 如果DataSource为0，表示是star
-      // if (this.DataSource === 0) {
-      //   // 获取star数据
-      //   const data_as_text = await d3.text('/dev-api/api/star_gazer')
-      //   this.data_as_array = d3.csvParseRows(data_as_text)
-      // } else if (this.DataSource === 1) {
-      //   // 获取issue数据
-      //   const data_as_text = await d3.text('/dev-api/api/issue')
-      //   this.data_as_array = d3.csvParseRows(data_as_text)
-      //   // 将数据转换为数组
-      // } else if (this.DataSource === 2) {
-      //   // 获取pull request数据
-      //   const data_as_text = await d3.text('/dev-api/api/committer')
-      //   this.data_as_array = d3.csvParseRows(data_as_text)
-      // }
-      // table为<table></table>
-      console.log('ttttttttttttttttttttttttttttttt')
-      const table = <table></table>
-
-      const tableObject = d3.select(table)
-      tableObject
-        .append('tr') // 1. Append a <tr> element to the table
-        .selectAll('th') // 2. Select all <th> elements in the <tr> (there are none)
-        .data(this.data_as_array[0]) // 3. "Join" that selection to the first row in the CSV data we recieved (an array of string column headers)
-        .enter() // 4. Perform another selection - getting all elements that do not exist in the table header yet
-        .append('th') // 5. Take this selection (which is all the elements) and append a <th> element
-        .text(d => d)
-      tableObject
-        .selectAll('tr')
-        .data(this.data_as_array.slice(1, 15)) // Join the table rows to the rows in the CSV file (now a js array)
-        .enter()
-        .append('tr')
-        .selectAll('td')
-        .data(d => d) // Join the table values to the table data
-        .enter()
-        .append('td')
-        .text(d => d)
-    },
     flatNodeHeirarchy() {
       const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
       return d3.hierarchy(root).sum(d => d.count)
@@ -86,17 +43,21 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async CreateBubbleChart() {
+      const d = await d3.csv('/dev-api/api/pytorch_star')
+
       // 初始化a的类型为Array
-      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
-            const width = 930
+      this.data_as_json = await d3.csv('/dev-api/api/pytorch_star')
+
+      const width = 930
       const height = 930
       const pack = d3.pack().size([width, height]).padding(3)
 
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
-            this.svg = d3
+      this.data_as_json = await d3.csv('/dev-api/api/pytorch_star')
+
+      this.svg = d3
         .select('body')
         .select('#svgHTML_star')
         .style('width', '100%')
@@ -104,6 +65,8 @@ export default {
         .attr('font-size', 10)
         .attr('font-family', 'sans-serif')
         .attr('text-anchor', 'middle')
+      const Mysvg = this.svg
+      console.log('outMysvg', Mysvg)
       const leaf = this.svg
         .selectAll('g')
         .data(this.packedData().leaves())
@@ -115,51 +78,61 @@ export default {
         .append('circle')
         .attr('r', d => d.r)
         .attr('fill', d => '#aaccff')
-        .on('click', function (d) {
-          if (this.current_circle !== undefined) {
-            this.current_circle.attr('fill', d => '#bbccff')
-            this.svg.selectAll('#details-popup').remove()
+        .on('mouseover', function (d) {
+          if (current_circle !== undefined) {
+            current_circle.attr('fill', d => '#aaccff')
+            leaf.selectAll('text').remove()
           }
-
-          // select the circle
           current_circle = d3.select(this)
           current_circle.attr('fill', '#b2e1f9')
-
-          const textblock = this.svg
-            .selectAll('#details-popup')
-            .data([d])
-            .enter()
-            .append('g')
-            .attr('id', 'details-popup')
-            .attr('font-size', 14)
-            .attr('font-family', 'sans-serif')
-            .attr('text-anchor', 'start')
-            .attr('transform', d => `translate(0, 20)`)
-          // 原来之前的text是用来这个用处的 ，还得加回来
-          console.log('hhh')
-          textblock.append('text').text('Occupation Details:').attr('font-weight', 'bold')
-          textblock
+          console.log('current_circle', current_circle)
+          const thisr = current_circle.attr('r')
+          let labelx = 0
+          let labely = 0
+          let iii
+          circle.each(function (d, i) {
+            const thisr_num = Number(thisr)
+            const s = d.r === thisr_num
+            console.log('thisr', thisr_num, 'typetr', typeof thisr_num, 'same', s)
+            if (d.r === thisr_num) {
+              labelx = d.x
+              labely = d.y
+              iii = i
+              console.log('IIIII', i)
+            }
+          })
+          console.log('iii', iii)
+          const showlabel = leaf
             .append('text')
-            .text(d => 'Description: ' + d.data.Occupation_Name)
-            .attr('y', '16')
-          textblock
+            .attr('dy', '1.3em')
+            .text(function (d, i) {
+              if (iii === i) {
+                return d.data.count
+              }
+            })
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+          const label = leaf
             .append('text')
-            .text(d => 'Current Employment: ' + format(d.data.Employment))
-            .attr('y', '32')
-          textblock
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+        
+        }).on('mouseout', function (d) {
+          if (current_circle !== undefined) {
+            current_circle.attr('fill', d => '#aaccff')
+            leaf.selectAll('text').remove()
+          }
+          console.log('current_circle', current_circle)
+          // 删除原有文字重新渲染
+          leaf.selectAll('text').remove()
+          const label = leaf
             .append('text')
-            .text(d => 'Projected Growth: ' + format(d.data.Employment_Growth))
-            .attr('y', '48')
-          textblock
-            .append('text')
-            .text(d => 'Recent Labour Market Conditions: ' + d.data.Recent_Labour_Market_Conditions.toUpperCase())
-            .attr('y', '64')
-          textblock
-            .append('text')
-            .text(
-              d => 'Projected Future Labour Market Conditionsh: ' + d.data.Future_Labour_Market_Conditions.toUpperCase()
-            )
-            .attr('y', '80')
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
         })
       const label = leaf
         .append('text')
@@ -167,7 +140,6 @@ export default {
         .text(d => d.data.company)
         .attr('font-size', d => d.r / 4)
         .attr('color', 'black')
-      console.log('label', label)
     }
   }
   //   buildnameheader

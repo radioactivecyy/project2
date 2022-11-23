@@ -5,7 +5,7 @@
 <script>
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
-import resize from './mixins/resize'
+import resize from '../mixins/resize'
 
 export default {
   mixins: [resize],
@@ -66,72 +66,73 @@ export default {
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
       this.chart.setOption({
-        xAxis: {
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-          boundaryGap: false,
-          axisTick: {
-            show: false
-          }
-        },
-        grid: {
-          left: 10,
-          right: 10,
-          bottom: 20,
-          top: 30,
-          containLabel: true
-        },
         tooltip: {
           trigger: 'axis',
           axisPointer: {
-            type: 'cross'
-          },
-          padding: [5, 10]
-        },
-        yAxis: {
-          axisTick: {
-            show: false
+            type: 'shadow'
           }
         },
         legend: {
-          data: ['expected', 'actual']
+          data: ['Profit', 'Expenses', 'Income']
         },
-        series: [
-          {
-            name: 'expected',
-            itemStyle: {
-              normal: {
-                color: '#FF005A',
-                lineStyle: {
-                  color: '#FF005A',
-                  width: 2
-                }
-              }
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: [
+            {
+            type: 'category',
+            axisTick: {
+              show: false
             },
-            smooth: true,
-            type: 'line',
-            data: [1, 2, 3, 4, 5, 6, 7],
-            animationDuration: 2800,
-            animationEasing: 'cubicInOut'
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          }
+         
+        ],
+        yAxis: [
+            {
+            type: 'value'
+          }
+        ],
+        series: [
+        //   {
+        //     name: 'Profit',
+        //     type: 'bar',
+        //     label: {
+        //       show: true,
+        //       position: 'inside'
+        //     },
+        //     emphasis: {
+        //       focus: 'series'
+        //     },
+        //     data: [200, 170, 240, 244, 200, 220, 210]
+        //   },
+          {
+            name: 'Income',
+            type: 'bar',
+            stack: 'Total',
+            label: {
+              show: true
+            },
+            emphasis: {
+              focus: 'series'
+            },
+            data: [320, 302, 341, 374, 390, 450, 420]
           },
           {
-            name: 'actual',
-            smooth: true,
-            type: 'line',
-            itemStyle: {
-              normal: {
-                color: '#3888fa',
-                lineStyle: {
-                  color: '#3888fa',
-                  width: 2
-                },
-                areaStyle: {
-                  color: '#f3f8ff'
-                }
-              }
+            name: 'Expenses',
+            type: 'bar',
+            stack: 'Total',
+            label: {
+              show: true,
+              position: 'left'
             },
-            data: [7, 6, 5, 4, 3, 2, 1],
-            animationDuration: 2800,
-            animationEasing: 'quadraticOut'
+            emphasis: {
+              focus: 'series'
+            },
+            data: [-120, -132, -101, -134, -190, -230, -210]
           }
         ]
       })

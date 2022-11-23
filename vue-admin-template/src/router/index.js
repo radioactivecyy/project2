@@ -84,13 +84,13 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/user-profile',
+    path: '/compare',
     component: Layout,
-    redirect: '/user-profile/index',
+    redirect: '/compare/index',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/user-profile/index'),
+        component: () => import('@/views/compare/index'),
         name: 'User Profile',
         meta: { title: 'Compare', icon: 'example' }
       }

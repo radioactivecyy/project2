@@ -2,20 +2,19 @@
   <div>
     <!-- <table /> -->
     <!-- <按钮 -->
-    
-    <svg width="332" height="330" id="svgHTML_committer"  />
+    <svg id="legend_s" height="100" widtn="332"></svg>
+    <svg width="332" height="330" id="svgHTML_star" />
   </div>
 </template>
 <script>
 import * as d3 from 'd3'
-
 const format = d3.format(',d')
 let current_circle = undefined
+let draw_data = undefined
+let mychoosei = undefined
 export default {
   name: 'App',
-  props: {
- 
-  },
+  props: {},
   data() {
     return {
       // data是getdata()的返回结果
@@ -26,37 +25,13 @@ export default {
     }
   },
   mounted() {
-    this.BuildNameHeader()
     this.CreateBubbleChart()
     this.DrawCircle()
+    this.DrawLegend()
   },
   methods: {
     // async 函数getdata()，用于获取数据
 
-    async BuildNameHeader() {
-      const data_as_text = await d3.text('/dev-api/api/pytorch_committer')
-      this.data_as_array = d3.csvParseRows(data_as_text)
-      const table = <table></table>
-
-      const tableObject = d3.select(table)
-      tableObject
-        .append('tr') // 1. Append a <tr> element to the table
-        .selectAll('th') // 2. Select all <th> elements in the <tr> (there are none)
-        .data(this.data_as_array[0]) // 3. "Join" that selection to the first row in the CSV data we recieved (an array of string column headers)
-        .enter() // 4. Perform another selection - getting all elements that do not exist in the table header yet
-        .append('th') // 5. Take this selection (which is all the elements) and append a <th> element
-        .text(d => d)
-      tableObject
-        .selectAll('tr')
-        .data(this.data_as_array.slice(1, 15)) // Join the table rows to the rows in the CSV file (now a js array)
-        .enter()
-        .append('tr')
-        .selectAll('td')
-        .data(d => d) // Join the table values to the table data
-        .enter()
-        .append('td')
-        .text(d => d)
-    },
     flatNodeHeirarchy() {
       const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
       return d3.hierarchy(root).sum(d => d.count)
@@ -71,8 +46,7 @@ export default {
     },
     async CreateBubbleChart() {
       // 初始化a的类型为Array
-      this.data_as_json = await d3.csv('/dev-api/api/pytorch_committer')
-     
+      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
       const width = 930
       const height = 930
       const pack = d3.pack().size([width, height]).padding(3)
@@ -80,17 +54,19 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      this.data_as_json = await d3.csv('/dev-api/api/pytorch_committer')
+      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
+      draw_data = this.data_as_json
+      console.log('draw', draw_data)
+      // 给每条数据添加一个属性 asize
       this.svg = d3
         .select('body')
-        .select('#svgHTML_committer')
+        .select('#svgHTML_star')
         .style('width', '100%')
         .style('height', 'auto')
         .attr('font-size', 10)
         .attr('font-family', 'sans-serif')
         .attr('text-anchor', 'middle')
-        const Mysvg = this.svg
-      console.log('outMysvg', Mysvg)
+      const Mysvg = this.svg
       const leaf = this.svg
         .selectAll('g')
         .data(this.packedData().leaves())
@@ -101,32 +77,46 @@ export default {
       const circle = leaf
         .append('circle')
         .attr('r', d => d.r)
-        .attr('fill', d => '#aaccff')
-        .on('mouseover', function (d) {
+        // 根据下标判断是否是pytorch的数据，是的话就用红色，否则用蓝色
+        .attr('fill', (d, i) => {
+          //  console.log('d',d)
+          if (d.data.flag === '0') {
+            return '#aaccff'
+          } else {
+            return '#ff8a8a'
+          }
+        })
+        .attr('stroke', (d, i) => {
+          if (d.data.duplicate === '0') {
+            return '#aaccff'
+          } else {
+            return '#ff8a8a'
+          }
+        })
+        .on('mouseover', function (d, i) {
+         
+
+       
+          let iii
+          const thisI = i
+          
+          // 遍历leaf 找到目前选中的是哪个
+          leaf.each(function (d, i) {
+            if (d.x === thisI.x && d.y === thisI.y) {
+              iii = i
+            }
+          })
+
+          console.log('mmmiii', iii)
           if (current_circle !== undefined) {
-            current_circle.attr('fill', d => '#aaccff')
-            Mysvg.selectAll('#details-popup').remove()
+            // 全部重新渲染 然后改个目前选中的颜色
             leaf.selectAll('text').remove()
           }
           current_circle = d3.select(this)
+          // 如果原来颜色为#aaccff
+
           current_circle.attr('fill', '#b2e1f9')
-          console.log('current_circle', current_circle)
-          const thisr = current_circle.attr('r')
-          let labelx = 0
-          let labely = 0
-          let iii
-          circle.each(function (d, i) {
-            const thisr_num = Number(thisr)
-            const s = d.r === thisr_num
-            console.log('thisr', thisr_num, 'typetr', typeof thisr_num, 'same', s)
-            if (d.r === thisr_num) {
-              labelx = d.x
-              labely = d.y
-              iii = i
-              console.log('IIIII', i)
-            }
-          })
-          console.log('iii', iii)
+          // console.log('current_circle', current_circle
           const showlabel = leaf
             .append('text')
             .attr('dy', '1.3em')
@@ -143,13 +133,32 @@ export default {
             .text(d => d.data.company)
             .attr('font-size', d => d.r / 4)
             .attr('color', 'black')
-        
-        }).on('mouseout', function (d) {
-          if (current_circle !== undefined) {
-            current_circle.attr('fill', d => '#aaccff')
-            leaf.selectAll('text').remove()
+        })
+        .on('mouseout', function (d) {
+          //      // 全部重新渲染为初始状态
+          let mychoose = d3.select(this)
+          const thisr = mychoose.attr('r')
+          let labelx = 0
+          let labely = 0
+          let iii
+          circle.each(function (d, i) {
+            const thisr_num = Number(thisr)
+            const s = d.r === thisr_num
+            if (d.r === thisr_num) {
+              labelx = d.x
+              labely = d.y
+              iii = i
+            }
+          })
+          if (draw_data[iii].flag === '0') {
+            mychoose.attr('fill', '#aaccff')
+          } else {
+            mychoose.attr('fill', '#ff8a8a')
           }
-          console.log('current_circle', current_circle)
+          // console.log('this.data_as_json[iii]', draw_data)
+          Mysvg.selectAll('#details-popup').remove()
+          leaf.selectAll('text').remove()
+
           // 删除原有文字重新渲染
           leaf.selectAll('text').remove()
           const label = leaf

@@ -74,7 +74,7 @@ export default {
     },
     async CreateBubbleChart() {
       // 初始化a的类型为Array
-      this.data_as_json = await d3.csv('/dev-api/api/issue')
+      this.data_as_json = await d3.csv('/dev-api/api/pytorch_issue')
 
       const width = 930
       const height = 930
@@ -83,7 +83,7 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      this.data_as_json = await d3.csv('/dev-api/api/issue')
+      this.data_as_json = await d3.csv('/dev-api/api/pytorch_issue')
             this.svg = d3
         .select('body')
         .select('#svgHTML_issue')
@@ -92,6 +92,7 @@ export default {
         .attr('font-size', 10)
         .attr('font-family', 'sans-serif')
         .attr('text-anchor', 'middle')
+        const Mysvg = this.svg
       const leaf = this.svg
         .selectAll('g')
         .data(this.packedData().leaves())
@@ -103,51 +104,62 @@ export default {
         .append('circle')
         .attr('r', d => d.r)
         .attr('fill', d => '#aaccff')
-        .on('click', function (d) {
-          if (this.current_circle !== undefined) {
-            this.current_circle.attr('fill', d => '#bbccff')
-            this.svg.selectAll('#details-popup').remove()
+        .on('mouseover', function (d) {
+          if (current_circle !== undefined) {
+            current_circle.attr('fill', d => '#aaccff')
+            Mysvg.selectAll('#details-popup').remove()
+            leaf.selectAll('text').remove()
           }
-
-          // select the circle
           current_circle = d3.select(this)
           current_circle.attr('fill', '#b2e1f9')
-
-          const textblock = this.svg
-            .selectAll('#details-popup')
-            .data([d])
-            .enter()
-            .append('g')
-            .attr('id', 'details-popup')
-            .attr('font-size', 14)
-            .attr('font-family', 'sans-serif')
-            .attr('text-anchor', 'start')
-            .attr('transform', d => `translate(0, 20)`)
-          // 原来之前的text是用来这个用处的 ，还得加回来
-          console.log('hhh')
-          textblock.append('text').text('Occupation Details:').attr('font-weight', 'bold')
-          textblock
+          console.log('current_circle', current_circle)
+          const thisr = current_circle.attr('r')
+          let labelx = 0
+          let labely = 0
+          let iii
+          circle.each(function (d, i) {
+            const thisr_num = Number(thisr)
+            const s = d.r === thisr_num
+            console.log('thisr', thisr_num, 'typetr', typeof thisr_num, 'same', s)
+            if (d.r === thisr_num) {
+              labelx = d.x
+              labely = d.y
+              iii = i
+              console.log('IIIII', i)
+            }
+          })
+          console.log('iii', iii)
+          const showlabel = leaf
             .append('text')
-            .text(d => 'Description: ' + d.data.Occupation_Name)
-            .attr('y', '16')
-          textblock
+            .attr('dy', '1.3em')
+            .text(function (d, i) {
+              if (iii === i) {
+                return d.data.count
+              }
+            })
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+          const label = leaf
             .append('text')
-            .text(d => 'Current Employment: ' + format(d.data.Employment))
-            .attr('y', '32')
-          textblock
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+        
+        }).on('mouseout', function (d) {
+          if (current_circle !== undefined) {
+            current_circle.attr('fill', d => '#aaccff')
+            leaf.selectAll('text').remove()
+          }
+          console.log('current_circle', current_circle)
+          // 删除原有文字重新渲染
+          leaf.selectAll('text').remove()
+          const label = leaf
             .append('text')
-            .text(d => 'Projected Growth: ' + format(d.data.Employment_Growth))
-            .attr('y', '48')
-          textblock
-            .append('text')
-            .text(d => 'Recent Labour Market Conditions: ' + d.data.Recent_Labour_Market_Conditions.toUpperCase())
-            .attr('y', '64')
-          textblock
-            .append('text')
-            .text(
-              d => 'Projected Future Labour Market Conditionsh: ' + d.data.Future_Labour_Market_Conditions.toUpperCase()
-            )
-            .attr('y', '80')
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
         })
       const label = leaf
         .append('text')
@@ -155,7 +167,6 @@ export default {
         .text(d => d.data.company)
         .attr('font-size', d => d.r / 4)
         .attr('color', 'black')
-      console.log('label', label)
     }
   }
   //   buildnameheader

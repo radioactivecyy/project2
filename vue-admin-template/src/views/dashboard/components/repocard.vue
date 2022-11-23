@@ -47,7 +47,7 @@ export default {
     handle() {
       // 路径path对应在router目录下  定义的path属性值
       // , parmas: { 'name': this.name }
-      this.$router.push({ path: '/repo-detail', query: { name: this.name }})
+      this.$router.push({ path: '/pytorch', query: { name: this.name }})
     }
   }
 }

@@ -26,21 +26,21 @@ export default {
   },
   methods: {
     async getList() {
-      console.log('Listtttttttttttttttttttttt',this.DataSource)
+      // console.log('Listtttttttttttttttttttttt',this.DataSource)
       const blank="                                                      "
       const data = await d3.csv(this.DataSource)
       var del
       var dels
       var co
       // 遍历data，将每一行的company字段push到list中
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < 10; i++) {
         del=24-data[i].company.length
         co=data[i].company
-        console.log('ccccccccccccc',co)
+        // console.log('ccccccccccccc',co)
         for(let j=0;j<del;j++){
           co=co.concat(' ')
         }
-        console.log('del',del,'ccccccccc',co,'hhh')
+        // console.log('del',del,'ccccccccc',co,'hhh')
         this.company.push({name:co,count:data[i].count})
       }
       // 遍历list，统计每个公司出现的次数
