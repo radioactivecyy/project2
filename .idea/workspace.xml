@@ -5,11 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/committer_company_statistic.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/committer_company_statistic.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/issue_company_statistic.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/issue_company_statistic.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/pandas_committer_company_statistic.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/pandas_issue_company_statistic.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/pandas_stargazer_company_statistic.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/stargazer_company_statistic.csv" beforeDir="false" afterPath="$PROJECT_DIR$/data/stargazer_company_statistic.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/djangoproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/settings.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -150,7 +155,14 @@
       <workItem from="1667391327443" duration="4236000" />
       <workItem from="1667402287973" duration="1229000" />
       <workItem from="1667441028496" duration="8791000" />
-      <workItem from="1667473355462" duration="855000" />
+      <workItem from="1667473355462" duration="993000" />
+      <workItem from="1667474368349" duration="221000" />
+      <workItem from="1667960776281" duration="21000" />
+      <workItem from="1668351743509" duration="19000" />
+      <workItem from="1668424438475" duration="674000" />
+      <workItem from="1668429890925" duration="346000" />
+      <workItem from="1668929845467" duration="4653000" />
+      <workItem from="1668934726276" duration="3108000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>
