@@ -25,7 +25,8 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      msg: null
     }
   },
   mounted() {
@@ -125,12 +126,16 @@ export default {
             }
           ]
         }
-        console.log('chart', this.chart)
-        let C = this.chart
+        const C = this.chart
+        const T = this
         this.chart.on('updateAxisPointer', function (event) {
           const xAxisInfo = event.axesInfo[0]
-          console.log('hhdh', C)
+         
+        
+
           if (xAxisInfo) {
+            T.msg = xAxisInfo.value
+            T.$emit('func', T.msg)
             const dimension = xAxisInfo.value + 1
             C.setOption({
               series: {

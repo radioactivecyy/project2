@@ -11,7 +11,6 @@ import * as d3 from 'd3'
 const format = d3.format(',d')
 let current_circle = undefined
 let draw_data = undefined
-let mychoosei = undefined
 export default {
   name: 'App',
   props: {},
@@ -56,7 +55,7 @@ export default {
     async DrawCircle() {
       this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
       draw_data = this.data_as_json
-      console.log('draw', draw_data)
+   
       // 给每条数据添加一个属性 asize
       this.svg = d3
         .select('body')
@@ -79,7 +78,7 @@ export default {
         .attr('r', d => d.r)
         // 根据下标判断是否是pytorch的数据，是的话就用红色，否则用蓝色
         .attr('fill', (d, i) => {
-          //  console.log('d',d)
+        
           if (d.data.flag === '0') {
             return '#aaccff'
           } else {
@@ -94,81 +93,66 @@ export default {
           }
         })
         .on('mouseover', function (d, i) {
-         
-
-       
           let iii
           const thisI = i
-          
           // 遍历leaf 找到目前选中的是哪个
           leaf.each(function (d, i) {
             if (d.x === thisI.x && d.y === thisI.y) {
               iii = i
             }
           })
-
-          console.log('mmmiii', iii)
-          if (current_circle !== undefined) {
-            // 全部重新渲染 然后改个目前选中的颜色
-            leaf.selectAll('text').remove()
-          }
+          leaf.selectAll('text').remove()
           current_circle = d3.select(this)
-          // 如果原来颜色为#aaccff
-
+          // 设置为选中的颜色
           current_circle.attr('fill', '#b2e1f9')
-          // console.log('current_circle', current_circle
-          const showlabel = leaf
+          leaf
             .append('text')
-            .attr('dy', '1.3em')
+            .attr('dy', '1.6em')
             .text(function (d, i) {
               if (iii === i) {
                 return d.data.count
               }
             })
-            .attr('font-size', d => d.r / 4)
+            // 设置字体大小为定值
+            .attr('font-size', 13)
+            // .attr('font-size', d => d.r / 4)
             .attr('color', 'black')
-          const label = leaf
+          leaf
             .append('text')
             .attr('dy', '0.3em')
             .text(d => d.data.company)
             .attr('font-size', d => d.r / 4)
             .attr('color', 'black')
         })
-        .on('mouseout', function (d) {
+        .on('mouseout', function (d, i) {
           //      // 全部重新渲染为初始状态
-          let mychoose = d3.select(this)
-          const thisr = mychoose.attr('r')
-          let labelx = 0
-          let labely = 0
           let iii
-          circle.each(function (d, i) {
-            const thisr_num = Number(thisr)
-            const s = d.r === thisr_num
-            if (d.r === thisr_num) {
-              labelx = d.x
-              labely = d.y
+          const thisI = i
+
+          // 遍历leaf 找到目前选中的是哪个
+          leaf.each(function (d, i) {
+            if (d.x === thisI.x && d.y === thisI.y) {
               iii = i
             }
           })
+          const mychoose = d3.select(this)
+          // 设置为原始颜色
           if (draw_data[iii].flag === '0') {
             mychoose.attr('fill', '#aaccff')
           } else {
             mychoose.attr('fill', '#ff8a8a')
           }
-          // console.log('this.data_as_json[iii]', draw_data)
-          Mysvg.selectAll('#details-popup').remove()
-          leaf.selectAll('text').remove()
 
           // 删除原有文字重新渲染
           leaf.selectAll('text').remove()
-          const label = leaf
+          leaf
             .append('text')
             .attr('dy', '0.3em')
             .text(d => d.data.company)
             .attr('font-size', d => d.r / 4)
             .attr('color', 'black')
         })
-      const label = leaf
+      leaf
         .append('text')
         .attr('dy', '0.3em')
         .text(d => d.data.company)

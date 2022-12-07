@@ -90,7 +90,6 @@ export default {
         .attr('font-family', 'sans-serif')
         .attr('text-anchor', 'middle')
         const Mysvg = this.svg
-      console.log('outMysvg', Mysvg)
       const leaf = this.svg
         .selectAll('g')
         .data(this.packedData().leaves())
@@ -110,7 +109,6 @@ export default {
           }
           current_circle = d3.select(this)
           current_circle.attr('fill', '#b2e1f9')
-          console.log('current_circle', current_circle)
           const thisr = current_circle.attr('r')
           let labelx = 0
           let labely = 0

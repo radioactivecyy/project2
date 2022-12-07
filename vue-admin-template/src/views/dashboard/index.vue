@@ -11,8 +11,13 @@
         <tcards />
       </el-col> -->
     </el-row>
-    <linechart />
+    <!-- <linechart /> -->
     <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+    <br></br>
+
     <!-- 图表 -->
   </div>
 </template>

@@ -9,6 +9,7 @@
 import * as d3 from 'd3'
 const format = d3.format(',d')
 let current_circle = undefined
+let draw_data = undefined
 export default {
   name: 'App',
   props: {},
@@ -30,32 +31,7 @@ export default {
   },
   methods: {
     // async 函数getdata()，用于获取数据
-    async BuildNameHeader() {
-      const data_as_text = await d3.text('/dev-api/api/issue')
-      this.data_as_array = d3.csvParseRows(data_as_text)
-
-     
-      const table = <table></table>
-
-      const tableObject = d3.select(table)
-      tableObject
-        .append('tr') // 1. Append a <tr> element to the table
-        .selectAll('th') // 2. Select all <th> elements in the <tr> (there are none)
-        .data(this.data_as_array[0]) // 3. "Join" that selection to the first row in the CSV data we recieved (an array of string column headers)
-        .enter() // 4. Perform another selection - getting all elements that do not exist in the table header yet
-        .append('th') // 5. Take this selection (which is all the elements) and append a <th> element
-        .text(d => d)
-      tableObject
-        .selectAll('tr')
-        .data(this.data_as_array.slice(1, 15)) // Join the table rows to the rows in the CSV file (now a js array)
-        .enter()
-        .append('tr')
-        .selectAll('td')
-        .data(d => d) // Join the table values to the table data
-        .enter()
-        .append('td')
-        .text(d => d)
-    },
+   
     flatNodeHeirarchy() {
       const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
       return d3.hierarchy(root).sum(d => d.count)
@@ -71,6 +47,7 @@ export default {
     async CreateBubbleChart() {
       // 初始化a的类型为Array
       this.data_as_json = await d3.csv('/dev-api/api/committer')
+      draw_data = this.data_as_json
       const width = 930
       const height = 930
       const pack = d3.pack().size([width, height]).padding(3)
@@ -79,29 +56,7 @@ export default {
     },
     async DrawCircle() {
       this.data_as_json = await d3.csv('/dev-api/api/committer')
-      // 给每条数据添加一个属性 asize
-
-      // console.log('this.data_as_json111', this.data_as_json)
-      // 遍历data_as_json,如果有company出现两次，就把两个company的isRepeat都设置为1
-      for (var i = 0; i < this.data_as_json.length; i++) {
-        for (var j = i + 1; j < this.data_as_json.length; j++) {
-          if (this.data_as_json[i].company === this.data_as_json[j].company) {
-            this.data_as_json[i].isRepeat = '1'
-            this.data_as_json[j].isRepeat = '1'
-          }
-        }
-      }
-      // 把数组按照count大小排序，并且不改变原数组的大小
-
-      for (var i = 0; i < this.data_as_json.length; i++) {
-        for (var j = i + 1; j < this.data_as_json.length; j++) {
-          if (this.data_as_json[i].count < this.data_as_json[j].count) {
-            var temp = this.data_as_json[i]
-            this.data_as_json[i] = this.data_as_json[j]
-            this.data_as_json[j] = temp
-          }
-        }
-      }
+      
 
       this.svg = d3
         .select('body')
@@ -144,53 +99,67 @@ export default {
           }
         })
       
-        .on('click', function (d) {
-          if (this.current_circle !== undefined) {
-            this.current_circle.attr('fill', d => '#bbccff')
-            this.svg.selectAll('#details-popup').remove()
+        .on('mouseover', function (d, i) {
+          let iii
+          const thisI = i
+          // 遍历leaf 找到目前选中的是哪个
+          leaf.each(function (d, i) {
+            if (d.x === thisI.x && d.y === thisI.y) {
+              iii = i
+            }
+          })
+          leaf.selectAll('text').remove()
+          current_circle = d3.select(this)
+          // 设置为选中的颜色
+          current_circle.attr('fill', '#b2e1f9')
+          leaf
+            .append('text')
+            .attr('dy', '1.6em')
+            .text(function (d, i) {
+              if (iii === i) {
+                return d.data.count
+              }
+            })
+            // 设置字体大小为定值
+            .attr('font-size', 13)
+            // .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+          leaf
+            .append('text')
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
+        })
+        .on('mouseout', function (d, i) {
+          //      // 全部重新渲染为初始状态
+          let iii
+          const thisI = i
+
+          // 遍历leaf 找到目前选中的是哪个
+          leaf.each(function (d, i) {
+            if (d.x === thisI.x && d.y === thisI.y) {
+              iii = i
+            }
+          })
+          const mychoose = d3.select(this)
+          // 设置为原始颜色
+          if (draw_data[iii].flag === '0') {
+            mychoose.attr('fill', '#aaccff')
+          } else {
+            mychoose.attr('fill', '#ff8a8a')
           }
 
-          // select the circle
-          current_circle = d3.select(this)
-          current_circle.attr('fill', '#b2e1f9')
-
-          const textblock = this.svg
-            .selectAll('#details-popup')
-            .data([d])
-            .enter()
-            .append('g')
-            .attr('id', 'details-popup')
-            .attr('font-size', 14)
-            .attr('font-family', 'sans-serif')
-            .attr('text-anchor', 'start')
-            .attr('transform', d => `translate(0, 20)`)
-          // 原来之前的text是用来这个用处的 ，还得加回来
-        
-          textblock.append('text').text('Occupation Details:').attr('font-weight', 'bold')
-          textblock
+          // 删除原有文字重新渲染
+          leaf.selectAll('text').remove()
+          leaf
             .append('text')
-            .text(d => 'Description: ' + d.data.Occupation_Name)
-            .attr('y', '16')
-          textblock
-            .append('text')
-            .text(d => 'Current Employment: ' + format(d.data.Employment))
-            .attr('y', '32')
-          textblock
-            .append('text')
-            .text(d => 'Projected Growth: ' + format(d.data.Employment_Growth))
-            .attr('y', '48')
-          textblock
-            .append('text')
-            .text(d => 'Recent Labour Market Conditions: ' + d.data.Recent_Labour_Market_Conditions.toUpperCase())
-            .attr('y', '64')
-          textblock
-            .append('text')
-            .text(
-              d => 'Projected Future Labour Market Conditionsh: ' + d.data.Future_Labour_Market_Conditions.toUpperCase()
-            )
-            .attr('y', '80')
+            .attr('dy', '0.3em')
+            .text(d => d.data.company)
+            .attr('font-size', d => d.r / 4)
+            .attr('color', 'black')
         })
-      const label = leaf
+      leaf
         .append('text')
         .attr('dy', '0.3em')
         .text(d => d.data.company)

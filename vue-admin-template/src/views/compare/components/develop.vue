@@ -29,10 +29,10 @@ export default {
     //   type: Boolean,
     //   default: true
     // },
-    chartData: {
-      type: Object,
-      required: true
-    }
+    // chartData: {
+    //   type: Object,
+    //   required: true
+    // }
   },
   data() {
     return {
@@ -41,12 +41,12 @@ export default {
     }
   },
   watch: {
-    chartData: {
-      deep: true,
-      handler(val) {
-        this.setOptions(val)
-      }
-    }
+    // chartData: {
+    //   deep: true,
+    //   handler(val) {
+    //     this.setOptions(val)
+    //   }
+    // }
   },
   // 新建mounted 否则会出现init没有定义
   mounted() {

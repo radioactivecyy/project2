@@ -2,24 +2,48 @@
   <div>
     <!-- <table /> -->
     <!-- <按钮 -->
+    <!-- <h1>{{testData
+    }}</h1> -->
     <svg width="332" height="330" id="svgHTML_star" />
   </div>
 </template>
 <script>
 import * as d3 from 'd3'
 
+
 const format = d3.format(',d')
 let current_circle = undefined
 export default {
   name: 'App',
-  props: {},
+  props: {
+    dataAsJson: {
+      type: Array,
+      default: null
+    },
+    testData:{
+
+      type: Number,
+      default: 0
+    }
+  },
   data() {
     return {
-      // data是getdata()的返回结果
       data_as_array: [],
-      // data_as_json是异步的，所以需要在mounted()中赋值
-      data_as_json: {},
       svg: undefined
+    }
+  },
+  watch: {
+    dataAsJson: function (val) {
+      if(val === null) {
+        return
+      }
+      this.DrawCircle()
+    },
+    testData: function (val) {
+      if(val === null) {
+        return
+      }
+      this.DrawCircle()
     }
   },
   mounted() {
@@ -31,7 +55,7 @@ export default {
     // async 函数getdata()，用于获取数据
 
     flatNodeHeirarchy() {
-      const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
+      const root = { children: this.dataAsJson } // remove the first value from the dataset - which is an aggregate we don't need
       return d3.hierarchy(root).sum(d => d.count)
     },
     packedData() {
@@ -43,10 +67,10 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async CreateBubbleChart() {
-      const d = await d3.csv('/dev-api/api/pytorch_star')
+    
 
       // 初始化a的类型为Array
-      this.data_as_json = await d3.csv('/dev-api/api/pytorch_star')
+    
 
       const width = 930
       const height = 930
@@ -55,7 +79,6 @@ export default {
       return pack(this.flatNodeHeirarchy())
     },
     async DrawCircle() {
-      this.data_as_json = await d3.csv('/dev-api/api/pytorch_star')
 
       this.svg = d3
         .select('body')
@@ -66,7 +89,6 @@ export default {
         .attr('font-family', 'sans-serif')
         .attr('text-anchor', 'middle')
       const Mysvg = this.svg
-      console.log('outMysvg', Mysvg)
       const leaf = this.svg
         .selectAll('g')
         .data(this.packedData().leaves())
@@ -85,7 +107,6 @@ export default {
           }
           current_circle = d3.select(this)
           current_circle.attr('fill', '#b2e1f9')
-          console.log('current_circle', current_circle)
           const thisr = current_circle.attr('r')
           let labelx = 0
           let labely = 0
@@ -93,15 +114,12 @@ export default {
           circle.each(function (d, i) {
             const thisr_num = Number(thisr)
             const s = d.r === thisr_num
-            console.log('thisr', thisr_num, 'typetr', typeof thisr_num, 'same', s)
             if (d.r === thisr_num) {
               labelx = d.x
               labely = d.y
               iii = i
-              console.log('IIIII', i)
             }
           })
-          console.log('iii', iii)
           const showlabel = leaf
             .append('text')
             .attr('dy', '1.3em')
@@ -118,13 +136,12 @@ export default {
             .text(d => d.data.company)
             .attr('font-size', d => d.r / 4)
             .attr('color', 'black')
-        
-        }).on('mouseout', function (d) {
+        })
+        .on('mouseout', function (d) {
           if (current_circle !== undefined) {
             current_circle.attr('fill', d => '#aaccff')
             leaf.selectAll('text').remove()
           }
-          console.log('current_circle', current_circle)
           // 删除原有文字重新渲染
           leaf.selectAll('text').remove()
           const label = leaf

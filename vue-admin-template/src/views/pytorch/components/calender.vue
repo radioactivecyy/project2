@@ -83,8 +83,6 @@ export default {
       this.setOptions()
     },
     getVirtualData(year) {
-      console.log('yyy')
-      console.log(year)
 
       const date = +echarts.number.parseDate(year + '-01-01')
       const end = +echarts.number.parseDate(+year + 1 + '-01-01')
@@ -94,12 +92,10 @@ export default {
       for (let time = date; time < end; time += dayTime) {
         data.push([echarts.format.formatTime('yyyy-MM-dd', time), Math.floor(Math.random() * 10000)])
       }
-      console.log('cccdata', data)
       return data
     },
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
-      console.log('thisssss',this.Year)
       this.chart.setOption({
         title: {
           top: 30,

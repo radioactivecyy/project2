@@ -1,46 +1,51 @@
 <template>
   <div class="dashboard-editor-container" id="pdfDom">
-    <h1>Companies</h1>
+    <h1><svg-icon icon-class="pytorch" /> Pytorch</h1>
+    <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
+    <h2>Companies</h2>
     <p>
       company information about Stargazers, Issue creators, and Pull Request. Click here to download report
       <el-button class="bt-style" @click="getPdf(htmlTitle)"></el-button>
     </p>
-  
+
     <!-- 按钮 -->
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <ins_del  />
+            <ins_del />
           </div>
         </div>
       </el-col>
       <el-row>
-    <el-col :span="4"><div class="grid-content ep-bg-purple" /></el-col>
-    <el-col :span="4"><div class="grid-content ep-bg-purple-light" /></el-col>
-    <el-col :span="5"><div class="grid-content ep-bg-purple" /></el-col>
-    <el-col :span="2"><div class="grid-content ep-bg-purple-light" />
-      <el-select v-model="year" class="m-2" placeholder="Select" size="small" @change="$forceUpdate()">
-    <el-option 
-    
-      v-for="item in this.yearoption"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
-    />
-  </el-select></el-col>
-    <el-col :span="4"><div class="grid-content ep-bg-purple" />
-    </el-col>
-    <el-col :span="4"><div class="grid-content ep-bg-purple-light" />
-   </el-col>
-  </el-row>
-   
+        <el-col :span="4">
+          <div class="grid-content ep-bg-purple" />
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content ep-bg-purple-light" />
+        </el-col>
+        <el-col :span="5">
+          <div class="grid-content ep-bg-purple" />
+        </el-col>
+        <el-col :span="2">
+          <div class="grid-content ep-bg-purple-light" />
+          <el-select v-model="year" class="m-2" placeholder="Select" size="small" @change="$forceUpdate()">
+            <el-option v-for="item in this.yearoption" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content ep-bg-purple" />
+        </el-col>
+        <el-col :span="4">
+          <div class="grid-content ep-bg-purple-light" />
+        </el-col>
+      </el-row>
     </el-row>
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-         <calender :Year="year" />
+            <calender :Year="year" />
           </div>
         </div>
       </el-col>
@@ -49,39 +54,44 @@
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <linechart  />
+            <linechart />
           </div>
         </div>
       </el-col>
     </el-row>
-
-
 
     <el-row :gutter="32">
       <el-col :xs="14" :sm="24" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <piechart  />
+            <code_num @func="getMsgFromcode" />
           </div>
         </div>
       </el-col>
     </el-row>
-
+    <el-row :gutter="32">
+      <el-col :xs="14" :sm="24" :lg="15">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <contributor_cloudVue :msg="TimeOfContributor" />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
             <h2>Stargazers</h2>
           </div>
-
-          <sBubble />
+          <sBubble :dataAsJson="Star_bubble_data" :testData="ttt" />
         </div>
       </el-col>
       <el-col :xs="14" :sm="14" :lg="8">
         <List DataSource="dev-api/api/pytorch_star" />
       </el-col>
     </el-row>
-    
+
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
@@ -109,7 +119,7 @@
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <designVue  />
+            <designVue />
           </div>
         </div>
       </el-col>
@@ -123,18 +133,23 @@ import sBubble from './components/company_star.vue'
 import cBubble from './components/company_committer.vue'
 import List from './components/list.vue'
 import linechart from './components/linechart.vue'
-import piechart from './components/code_num.vue'
-import designVue  from './components/design.vue'
+import code_num from './components/code_num.vue'
+import designVue from './components/design.vue'
 import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
-
+import contributor_cloudVue from './components/contributor_cloud.vue'
+import { refreshData } from '@/api/pytorch'
+import * as d3 from 'd3'
 export default {
   name: 'Pytorch',
   data() {
     return {
       htmlTitle: 'Pytorch',
-      yearoption:[],
-      year:'2019',
+      yearoption: [],
+      year: '2019',
+      TimeOfContributor: null,
+      Star_bubble_data: Array,
+      ttt:0
     }
   },
   components: {
@@ -143,12 +158,11 @@ export default {
     cBubble,
     List,
     linechart,
-    piechart,
+    code_num,
     designVue,
     ins_del,
     calender,
-
-    
+    contributor_cloudVue
   },
   watch: {
     year: function (val) {
@@ -160,31 +174,57 @@ export default {
 
   mounted() {
     const msg = this.$route.query.name
-    console.log(msg)
-    this.yearoption = [{
-    value: '2015',
-    label: '2015',
-  },
-  {
-    value: '2016',
-    label: '2016',
-  },
-  {
-    value: '2017',
-    label: '2017',
-  },
-  {
-    value: '2018',
-    label: '2018',
-  },
-  {
-    value: '2019',
-    label: '2019',
-  },
-]
-  
+    this.getCompanyStarData()
+    this.yearoption = [
+      {
+        value: '2015',
+        label: '2015'
+      },
+      {
+        value: '2016',
+        label: '2016'
+      },
+      {
+        value: '2017',
+        label: '2017'
+      },
+      {
+        value: '2018',
+        label: '2018'
+      },
+      {
+        value: '2019',
+        label: '2019'
+      }
+    ]
   },
   methods: {
+    async getCompanyStarData() {
+      console.log('getCompanyStarData')
+      const res = await d3.csv('dev-api/api/pytorch_star')
+      this.Star_bubble_data = res
+      this.ttt=this.ttt+1
+      
+      return res
+    },
+
+    getMsgFromcode(msg) {
+      // 把msg传递给父组件中的TimeOfContributor
+      this.TimeOfContributor = msg
+    },
+    async refresh() {
+      refreshData().then(
+        // 刷新数据后重新渲染
+        // 消息提示
+        this.$message({
+          message: '刷新成功',
+          type: 'success'
+        }),
+        this.getCompanyStarData()
+
+      )
+      
+    }
   }
 }
 </script>
@@ -213,6 +253,7 @@ export default {
     padding: 8px;
   }
 }
+
 .bt-style {
   background-repeat: no-repeat;
   background-image: url('./images/download.png');
@@ -221,12 +262,24 @@ export default {
   background-color: transparent;
   border-style: none;
 }
+
+.svg-icon {
+  width: 1.2em;
+  height: 1.2em;
+  vertical-align: -0.15em;
+  // 229, 74, 37
+  fill: rgb(229, 74, 37);
+  overflow: hidden;
+}
+
 .el-row {
   margin-bottom: 20px;
 }
+
 .el-row:last-child {
   margin-bottom: 0;
 }
+
 .el-col {
   border-radius: 4px;
 }
