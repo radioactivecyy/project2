@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+  <div :class="className" :style="{ height: height, width:width }" />
 </template>
 
 <script>
@@ -28,6 +28,26 @@ export default {
     },
     chartData: {
       type: Object,
+      required: true
+    },
+    Mytitle: {
+      type: String,
+      required: true
+    },
+    dataSource: {
+      type: String,
+      required: true
+    },
+    color1: {
+      type: String,
+      required: true
+    },
+    color2: {
+      type: String,
+      required: true
+    },
+    color3: {
+      type: String,
       required: true
     }
   },
@@ -84,7 +104,7 @@ export default {
         },
         title: {
           left: 'center',
-          text: '社区发展速度'
+          text: this.Mytitle
         },
         toolbox: {
           feature: {
@@ -122,17 +142,17 @@ export default {
             symbol: 'none',
             sampling: 'lttb',
             itemStyle: {
-              color: 'rgb(255, 70, 131)'
+              color: this.color1
             },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
                 {
                   offset: 0,
-                  color: 'rgb(255, 158, 68)'
+                  color: this.color2
                 },
                 {
                   offset: 1,
-                  color: 'rgb(255, 70, 131)'
+                  color: this.color2
                 }
               ])
             },

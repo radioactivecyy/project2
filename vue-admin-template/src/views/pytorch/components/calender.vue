@@ -18,7 +18,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '250px'
     },
     autoResize: {
       type: Boolean,
@@ -28,16 +28,23 @@ export default {
     //   type: ,
     //   required: true
     // },
+   
     Year: {
       type: String,
       default: '2017'
+    },
+    MyTitle:{
+      type: String,
+      default: ''
     }
   },
+
   data() {
     return {
       chart: null
     }
   },
+  
   watch: {
     // watch Year if it changes, then update the chart
     Year:{
@@ -90,7 +97,7 @@ export default {
       const dayTime = 3600 * 24 * 1000
       const data = []
       for (let time = date; time < end; time += dayTime) {
-        data.push([echarts.format.formatTime('yyyy-MM-dd', time), Math.floor(Math.random() * 10000)])
+        data.push([echarts.format.formatTime('yyyy-MM-dd', time), Math.floor(Math.random() * 2000)])
       }
       return data
     },
@@ -105,7 +112,7 @@ export default {
         tooltip: {},
         visualMap: {
           min: 0,
-          max: 10000,
+          max: 2000,
           type: 'piecewise',
           orient: 'horizontal',
           left: 'center',

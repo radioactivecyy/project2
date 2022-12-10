@@ -1,6 +1,10 @@
 <template>
   <div class="dashboard-editor-container">
     <h1>Pytorch VS Pandas</h1>
+    <h2>社区发展速度</h2>
+    <h2>贡献者活跃情况</h2>
+    <h2>代码提交情况</h2>
+    <h2>Companies</h2>
     <el-row :gutter="32"
       ><el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
