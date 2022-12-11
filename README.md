@@ -1,2 +1,5 @@
 # 2022---xxyyz
-- front end
+```
+npm install --legacy-peer-deps
+npm run dev
+```
