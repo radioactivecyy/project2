@@ -1,5 +1,9 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+  <div>
+    <div id="co1" :style="{ height: height, width: width }" />
+
+    <div id="co2" :style="{ height: height, width: width }" />
+  </div>
 </template>
 
 <script>
@@ -22,16 +26,31 @@ export default {
       type: String,
       default: '400px'
     },
-    chartData:{
+    chartData: {
       type: Object,
       required: true
     },
-    
+
   },
   data() {
     return {
-      chart: null,
+      chart1: null,
+      chart2: null,
       msg: null
+    }
+  },
+  watch: {
+    chartData1: {
+      handler() {
+        this.initChart()
+      },
+      deep: true
+    },
+    chartData2: {
+      handler() {
+        this.initChart()
+      },
+      deep: true
     }
   },
   mounted() {
@@ -40,30 +59,43 @@ export default {
     })
   },
   beforeDestroy() {
-    if (!this.chart) {
+    if (!this.chart1) {
       return
     }
-    this.chart.dispose()
-    this.chart = null
+    if (!this.chart2) {
+      return
+    }
+    this.chart1.dispose()
+    this.chart2.dispose()
+    this.chart1 = null
+    this.chart2 = null
   },
   methods: {
     initChart() {
-      this.chart = echarts.init(this.$el, 'macarons')
+      this.chart1 = echarts.init(document.getElementById('co1'), 'macarons')
+      this.chart2 = echarts.init(document.getElementById('co2'), 'macarons')
+      var mydata1 = JSON.parse(JSON.stringify(this.chartData)).charData1
+      var mydata2 = JSON.parse(JSON.stringify(this.chartData)).charData2
+      var mysource1 = mydata1.x
+      var mysource2 = mydata1.y1
+      var mysource3 = mydata1.y2
+      // 将mysource1添加到mysource中
+      mysource1.push(mysource1)
+      // 将mysource2添加到mysource中
+      mysource1.push(mysource2)
+      // 将mysource3添加到mysource中
+      mysource1.push(mysource3)
+      mysource1= mydata2.x
+      mysource2 = mydata2.y1
+       mysource3 = mydata2.y2
+      // 将mysource1添加到mysource中
+      mysource2.push(mysource1)
+      // 将mysource2添加到mysource中
+      mysource2.push(mysource2)
+      // 将mysource3添加到mysource中
+      mysource2.push(mysource3)
       setTimeout(() => {
-        var mydata = JSON.parse(JSON.stringify(this.chartData))
-        // 遍历数据，
-        var mysource=[]
-        var mysource1=mydata.x
-        var mysource2=mydata.y1
-        var mysource3=mydata.y2
-        // 将mysource1添加到mysource中
-        mysource.push(mysource1)
-        // 将mysource2添加到mysource中
-        mysource.push(mysource2)
-        // 将mysource3添加到mysource中
-        mysource.push(mysource3)
-      
-        var option = {
+        var option1 = {
           legend: {
             orient: 'vertical',
             right: 10,
@@ -78,14 +110,7 @@ export default {
             }
           },
           dataset: {
-            // source: [
-             
-            //   ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            //   ['核心贡献者', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            //   ['其余贡献者', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-           
-            // ]
-            source: mysource
+            source: mysource1
           },
           title: {
             // 位置设置为底部
@@ -114,7 +139,7 @@ export default {
               seriesLayoutBy: 'row',
               emphasis: { focus: 'series' }
             },
-         
+
             {
               type: 'pie',
               id: 'pie',
@@ -124,7 +149,7 @@ export default {
                 focus: 'self'
               },
               label: {
-                formatter: '{b}: {@[' + 1 + ']} ({d}%)'
+                formatter: '{b}: {@'+1+'} ({d}%)'
               },
               encode: {
                 itemName: 0,
@@ -134,15 +159,18 @@ export default {
             }
           ]
         }
-        const C = this.chart
-        const T = this
-        this.chart.on('updateAxisPointer', function (event) {
+        var option2 = JSON.parse(JSON.stringify(option1))
+        option2.dataZoom.show = false
+        option2.dataset.source = mysource2
+        var C = this.chart1
+        var T = this
+        this.chart1.on('updateAxisPointer', function (event) {
           const xAxisInfo = event.axesInfo[0]
+
           if (xAxisInfo) {
             T.msg = xAxisInfo.value
             T.$emit('func', T.msg)
             const dimension = xAxisInfo.value + 1
-            console.log('dimension',dimension)
             C.setOption({
               series: {
                 id: 'pie',
@@ -157,7 +185,29 @@ export default {
             })
           }
         })
-        this.chart.setOption(option)
+        this.chart1.setOption(option1)
+        this.chart2.on('updateAxisPointer', function (event) {
+          const xAxisInfo = event.axesInfo[0]
+
+          if (xAxisInfo) {
+            T.msg = xAxisInfo.value
+            T.$emit('func', T.msg)
+            const dimension = xAxisInfo.value + 1
+            C.setOption({
+              series: {
+                id: 'pie',
+                label: {
+                  formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                },
+                encode: {
+                  value: dimension,
+                  tooltip: dimension
+                }
+              }
+            })
+          }
+        })
+        this.chart2.setOption(option2)
       }, 1000)
     }
   }

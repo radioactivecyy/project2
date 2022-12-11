@@ -8,125 +8,119 @@
     </p>
     <h2>社区发展速度</h2>
     <el-row>
-    <el-row >
-      <el-col :xs="10" :sm="10" :lg="12">
-        <div class="chart-wrapper">
-          <div>
-            <linechart Mytitle="issue" color1="rgb(50, 144, 212 )" color2="rgb(50, 144, 212 )" color3="rgb(50, 144, 212 )"/>
+      <el-row>
+        <el-col :xs="10" :sm="10" :lg="12">
+          <div class="chart-wrapper">
+            <div>
+              <linechart
+                Mytitle="issue"
+                color1="rgb(50, 144, 212 )"
+                color2="rgb(50, 144, 212 )"
+                color3="rgb(50, 144, 212 )"
+                :chartData="issueNumdata"
+              />
+            </div>
           </div>
-        </div>
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <linechart Mytitle="committer" color1="rgb(252, 93, 78 )" color2="rgb(244, 118, 105 )" color3="rgb(241, 79, 63 )"/>
+        </el-col>
+        <el-col :xs="14" :sm="14" :lg="12">
+          <div class="chart-wrapper">
+            <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+              <linechart
+                Mytitle="committer"
+                color1="rgb(252, 93, 78 )"
+                color2="rgb(244, 118, 105 )"
+                color3="rgb(241, 79, 63 )"
+                :chartData="commitNumdata"
+              />
+            </div>
           </div>
-        </div>
-      </el-col>
-    </el-row>
-   
-    <el-row >
-      <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <linechart Mytitle="star" color1="rgb(149, 229, 130 )" color2="rgb(159, 233, 141  )" color3="rgb(50, 144, 212 )"/>
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <linechart Mytitle="社区发展速度" color1="rgb(149, 229, 130 )" color2="rgb(159, 233, 141  )" color3="rgb(50, 144, 212 )"/>
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-  </el-row>
-    <h2>贡献者活跃情况</h2>
-    <el-row >
-      <el-col :span="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :span="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row >
-      <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <ins_del />
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-   
-      <h2>代码提交情况</h2>
-      <el-row :gutter="32">
-      <el-col :xs="14" :sm="24" :lg="15">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <code_num @func="getMsgFromcode" />
-          </div>
-        </div>
-      </el-col>
-   
-    <h2>Companies</h2>
-   
+        </el-col>
+      </el-row>
 
-    <!-- 按钮 -->
-  </el-row>
-        <el-col :span="4">
-          <div class="grid-content ep-bg-purple" />
+      <el-row>
+        <el-col :xs="14" :sm="14" :lg="12">
+          <div class="chart-wrapper">
+            <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+              <linechart
+                Mytitle="star"
+                color1="rgb(149, 229, 130 )"
+                color2="rgb(159, 233, 141  )"
+                color3="rgb(50, 144, 212 )"
+                :chartData="starNumdata"
+              />
+            </div>
+          </div>
         </el-col>
-        <el-col :span="4">
-          <div class="grid-content ep-bg-purple-light" />
-        </el-col>
-        <el-col :span="5">
-          <div class="grid-content ep-bg-purple" />
-        </el-col>
-        <el-col :span="2">
-          <div class="grid-content ep-bg-purple-light" />
-          <el-select v-model="year" class="m-2" placeholder="Select" size="small" @change="$forceUpdate()">
-            <el-option v-for="item in this.yearoption" :key="item.value" :label="item.label" :value="item.value" />
-          </el-select>
-        </el-col>
-        <el-col :span="4">
-          <div class="grid-content ep-bg-purple" />
-        </el-col>
-        <el-col :span="4">
-          <div class="grid-content ep-bg-purple-light" />
+        <el-col :xs="14" :sm="14" :lg="12">
+          <div class="chart-wrapper">
+            <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+              <linechart3
+                myTitle="社区发展速度"
+                color1_3="rgb(149, 229, 130 )"
+                color2_3="rgb(159, 233, 141  )"
+                color3_3="rgb(50, 144, 212 )"
+                color1_2="rgb(252, 93, 78 )"
+                color2_2="rgb(244, 118, 105 )"
+                color3_2="rgb(241, 79, 63 )"
+                color1_1="rgb(50, 144, 212 )"
+                color2_1="rgb(50, 144, 212 )"
+                color3_1="rgb(50, 144, 212 )"
+                :chartData1="issueNumdata"
+                :chartData2="starNumdata"
+                :chartData3="commitNumdata"
+              />
+            </div>
+          </div>
         </el-col>
       </el-row>
     </el-row>
-   
-   
+    <h2>贡献者活跃情况</h2>
+    <el-row>
+      <el-col :span="12">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <calender :Year="year" />
+          </div>
+        </div>
+      </el-col>
+      <el-col :span="12">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <calender :Year="year" />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+    <el-row>
+      <el-col :xs="14" :sm="14" :lg="12">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <calender :Year="year" />
+          </div>
+        </div>
+      </el-col>
+      <el-col :xs="14" :sm="14" :lg="12">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <ins_del :chartData="insDelData" lineTitle1="add" lineTitle2="delete" @func="getMsgFrominsDel" />
+          </div>
+        </div>
+      </el-col>
+    </el-row>
 
-   
+    <h2>代码提交情况</h2>
     <el-row :gutter="32">
       <el-col :xs="14" :sm="24" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <contributor_cloudVue :msg="TimeOfContributor" />
+            <code_num :chartData="contriData" @func="getMsgFromcode" />
           </div>
         </div>
       </el-col>
     </el-row>
+
+    <h2>Companies</h2>
+
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
@@ -145,7 +139,7 @@
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
-          <iBubble />
+          <iBubble :dataAsJson="Issue_bubble_data" />
         </div>
       </el-col>
       <el-col :xs="14" :sm="14" :lg="8">
@@ -157,7 +151,7 @@
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
-          <cBubble />
+          <cBubble :dataAsJson="Commit_bubble_data" />
         </div>
       </el-col>
       <el-col :xs="14" :sm="14" :lg="8">
@@ -169,11 +163,19 @@
       <el-col :span="22">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <designVue />
+            <linechart
+              Mytitle="design"
+              color1="rgb(50, 144, 212 )"
+              color2="rgb(50, 144, 212 )"
+              color3="rgb(50, 144, 212 )"
+              :chartData="designData"
+            />
           </div>
         </div>
       </el-col>
     </el-row>
+    <h2>cloud</h2>
+    <el-image style="width: 100px; height: 100px" :src="designcloud" :fit="fit" />
   </div>
 </template>
 
@@ -184,16 +186,19 @@ import cBubble from './components/company_committer.vue'
 import List from './components/list.vue'
 import linechart from './components/linechart.vue'
 import code_num from './components/code_num.vue'
-import designVue from './components/design.vue'
+
+import linechart3 from './components/linechart3.vue'
 
 import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
 import contributor_cloudVue from './components/contributor_cloud.vue'
+
+import * as dataapi from '@/api/getdata'
 import { refreshData } from '@/api/pytorch'
 import * as d3 from 'd3'
 export default {
   name: 'Pytorch',
-  
+
   data() {
     return {
       htmlTitle: 'Pytorch',
@@ -201,7 +206,19 @@ export default {
       year: '2019',
       TimeOfContributor: null,
       Star_bubble_data: Array,
-      ttt:0
+      Issue_bubble_data: Array,
+      Commit_bubble_data: Array,
+      ttt: 0,
+      issueNumdata: {},
+      starNumdata: {},
+      commitNumdata: {},
+      threeData: {},
+      insDelData: {},
+      startVal: -1,
+      endVal: -1,
+      contriData: {},
+      designData: {},
+      designcloud: String
     }
   },
   components: {
@@ -211,10 +228,12 @@ export default {
     List,
     linechart,
     code_num,
-    designVue,
+ 
     ins_del,
     calender,
-    contributor_cloudVue
+    // contributor_cloudVue,
+
+    linechart3
   },
   watch: {
     year: function (val) {
@@ -227,6 +246,9 @@ export default {
   mounted() {
     const msg = this.$route.query.name
     this.getCompanyStarData()
+    this.getCompanyIssueData()
+    this.getCompanyCommitData()
+    this.getDesignCloud()
     this.yearoption = [
       {
         value: '2015',
@@ -249,20 +271,111 @@ export default {
         label: '2019'
       }
     ]
+    this.getIssueLineData()
+    this.getStarLineData()
+    this.getCommitLineData()
+    // this.getThreeData()
+    this.getInsDelData()
+    this.getContribution()
+    this.getDesignData()
   },
   methods: {
+    async getDesignCloud(){
+      dataapi.getDesignCloud().then(res => {
+        this.designcloud= 'data:image/png;base64,' + res.data
+      })
+    },
     async getCompanyStarData() {
-      console.log('getCompanyStarData')
       const res = await d3.csv('dev-api/api/pytorch_star')
       this.Star_bubble_data = res
-      this.ttt=this.ttt+1
-      
-      return res
+    
     },
+    async getCompanyIssueData() {
+      const res = await d3.csv('dev-api/api/pytorch_issue')
+      this.Issue_bubble_data = res
+     
+    },
+    async getCompanyCommitData() {
+      console.log('getCompanyCommitData')
+      const res = await d3.csv('dev-api/api/pytorch_committer')
+      this.Commit_bubble_data = res
+      
+    },
+    async getIssueLineData() {
+      await dataapi.getIssueDevelop().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y'] = res.y
+        this.issueNumdata = JSON.parse(JSON.stringify(data))
+        this.threeData['x'] = this.issueNumdata.x
+        this.threeData['y1'] = this.issueNumdata.y
+      })
+    },
+    async getStarLineData() {
+      await dataapi.getStarDevelop().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y'] = res.y
+        this.starNumdata = JSON.parse(JSON.stringify(data))
+        this.threeData['y2'] = this.starNumdata.y
+      })
+    },
+    async getCommitLineData() {
+      await dataapi.getCommitDevelop().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y'] = res.y
+        this.commitNumdata = JSON.parse(JSON.stringify(data))
+        this.threeData['y3'] = this.commitNumdata.y
+      })
+    },
+    async getInsDelData() {
+      await dataapi.getInsDel(this.startVal, this.endVal).then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.y1
+        data['y2'] = res.y2
+        this.insDelData = JSON.parse(JSON.stringify(data))
+      })
+    },
+    async getContribution() {
+      await dataapi.getContribution().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.y1
+        data['y2'] = res.y2
+        this.contriData = JSON.parse(JSON.stringify(data))
+      })
+    },
+    async getDesign() {
+      await dataapi.getDesign().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y'] = res.y
 
+        this.designData = JSON.parse(JSON.stringify(data))
+      })
+    },
+    // async getThreeData() {
+
+    //   console.log('there')
+    //   console.log(this.threeData)
+    // },
     getMsgFromcode(msg) {
       // 把msg传递给父组件中的TimeOfContributor
       this.TimeOfContributor = msg
+    },
+    getMsgFrominsDel(msg) {
+      var d = JSON.parse(JSON.stringify(msg))
+      console.log('ddddddddddddddddd', d)
+      this.startVal = d.startVal
+      this.endVal = d.endVal
     },
     async refresh() {
       refreshData().then(
@@ -273,9 +386,7 @@ export default {
           type: 'success'
         }),
         this.getCompanyStarData()
-
       )
-      
     }
   }
 }

@@ -25,8 +25,7 @@
 import search from './components/search'
 import tcards from './components/repocard.vue' // github repo展示卡片
 import linechart from './components/linechart.vue' // 绘图
-// import piechart from './components/piechart.vue' // 绘饼图
-// import charts from "./components/charts.vue"
+
 export default {
   name: 'Dashboard',
   components: {

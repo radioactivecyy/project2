@@ -29,6 +29,30 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    Mytitle: {
+      type: String,
+      required: true
+    },
+    dataSource: {
+      type: String,
+      required: true
+    },
+    color1: {
+      type: String,
+      required: true
+    },
+    color2: {
+      type: String,
+      required: true
+    },
+    lineTitle1: {
+      type: String,
+      required: true
+    },
+    lineTitle2: {
+      type: String,
+      required: true
     }
   },
   data() {
@@ -65,16 +89,11 @@ export default {
     },
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
-      let base = +new Date(1968, 9, 3)
-      const oneDay = 24 * 3600 * 1000
-      this.date = []
-      this.data = [Math.random() * 300]
-      console.log('this.data', this.data)
-      for (let i = 1; i < 20000; i++) {
-        var now = new Date((base += oneDay))
-        this.date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'))
-        this.data.push(Math.round((Math.random() - 0.5) * 20 + this.data[i - 1]))
-      }
+      var mydata = JSON.parse(JSON.stringify(this.chartData))
+      this.date = mydata.x
+      this.data1 = mydata.pytorch
+      this.data2 = mydata.pandas
+
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -84,7 +103,7 @@ export default {
         },
         title: {
           left: 'center',
-          text: 'design'
+          text: this.Mytitle
         },
         toolbox: {
           feature: {
@@ -97,12 +116,10 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
           data: this.date
         },
         yAxis: {
-          type: 'value',
-          boundaryGap: [0, '100%']
+          type: 'value'
         },
         dataZoom: [
           {
@@ -117,26 +134,19 @@ export default {
         ],
         series: [
           {
-            name: 'Fake Data',
+            name: this.lineTitle1,
             type: 'line',
             symbol: 'none',
             sampling: 'lttb',
-            itemStyle: {
-              color: 'rgb(76, 136, 255)'
-            },
-            areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: 'rgb(146, 182, 237)'
-                },
-                {
-                  offset: 1,
-                  color: 'rgb(102, 152, 230)'
-                }
-              ])
-            },
-            data: this.data
+
+            data: this.data1
+          },
+          {
+            name: this.lineTitle2,
+            type: 'line',
+            symbol: 'none',
+
+            data: this.data2
           }
         ]
       })

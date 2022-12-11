@@ -29,15 +29,40 @@ export default {
     chartData: {
       type: Object,
       required: true
+    },
+    lineTitle1: {
+      type: String,
+      required: true
+    },
+    lineTitle2: {
+      type: String,
+      required: true
     }
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      x: [],
+      y1: [],
+      y2: [],
+      startVal: null,
+      endVal: null
     }
   },
   watch: {
     chartData: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
+    },
+    lineTitle1: {
+      deep: true,
+      handler(val) {
+        this.setOptions(val)
+      }
+    },
+    lineTitle2: {
       deep: true,
       handler(val) {
         this.setOptions(val)
@@ -62,9 +87,26 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
+      var mychart = this.chart
+      const T = this
+
+      this.chart.on('datazoom', function (params) {
+        this.endVal = mychart.getOption().dataZoom[0].endValue
+        this.startVal = mychart.getOption().dataZoom[0].startValue
+        console.log('eeeeeee', this.endVal, this.startVal)
+        // 向后端发送
+        T.$emit('func', { startVal: this.startVal, endVal: this.endVal })
+      })
     },
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
+      var mydata = JSON.parse(JSON.stringify(this.chartData))
+
+      this.x = mydata.x
+
+      this.y1 = mydata.y1
+      this.y2 = mydata.y2
+      this.$emit('func', { startVal: 0, endVal: this.x.length - 1 })
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
@@ -72,8 +114,26 @@ export default {
             type: 'shadow'
           }
         },
+        toolbox: {
+          feature: {
+            dataZoom: {
+              yAxisIndex: 'none'
+            }
+          }
+        },
+        dataZoom: [
+          {
+            type: 'inside',
+            start: 0,
+            end: 100
+          },
+          {
+            start: 0,
+            end: 100
+          }
+        ],
         legend: {
-          data: ['Profit', 'Expenses', 'Income']
+          data: ['add', 'delete']
         },
         grid: {
           left: '3%',
@@ -82,35 +142,22 @@ export default {
           containLabel: true
         },
         xAxis: [
-            {
+          {
             type: 'category',
             axisTick: {
               show: false
             },
-            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            data: this.x
           }
-         
         ],
         yAxis: [
-            {
+          {
             type: 'value'
           }
         ],
         series: [
-        //   {
-        //     name: 'Profit',
-        //     type: 'bar',
-        //     label: {
-        //       show: true,
-        //       position: 'inside'
-        //     },
-        //     emphasis: {
-        //       focus: 'series'
-        //     },
-        //     data: [200, 170, 240, 244, 200, 220, 210]
-        //   },
           {
-            name: 'Income',
+            name: 'add',
             type: 'bar',
             stack: 'Total',
             label: {
@@ -119,10 +166,10 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [320, 302, 341, 374, 390, 450, 420]
+            data: this.y1
           },
           {
-            name: 'Expenses',
+            name: 'delete',
             type: 'bar',
             stack: 'Total',
             label: {
@@ -132,7 +179,7 @@ export default {
             emphasis: {
               focus: 'series'
             },
-            data: [-120, -132, -101, -134, -190, -230, -210]
+            data: this.y2
           }
         ]
       })

@@ -29,10 +29,7 @@ export default {
     //   type: Boolean,
     //   default: true
     // },
-    // chartData: {
-    //   type: Object,
-    //   required: true
-    // }
+    
   },
   data() {
     return {
@@ -72,7 +69,7 @@ export default {
       // 设置两个chart 不重复
       this.chart1 = echarts.init(document.getElementById('main1'), 'macarons')
 
-      console.log('chart1')
+     
       this.chart2 = echarts.init(document.getElementById('main2'), 'macarons')
 
       var option1 = {
@@ -153,9 +150,7 @@ export default {
           }
         ]
       }
-      console.log('hhh')
-      console.log('this.chart1', this.chart1)
-      console.log('this.chart2', this.chart2)
+     
       this.chart1.setOption(option1) // 为myChart1对象加载数据
       this.chart2.setOption(option2) // 为myChart2对象加载数据
       // 多图表联动配置方法1：分别设置每个echarts对象的group值

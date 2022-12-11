@@ -53,7 +53,8 @@ export default {
   },
   data() {
     return {
-      chart: null
+      chart: null,
+      mydata:{},
     }
   },
   watch: {
@@ -85,21 +86,17 @@ export default {
     },
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
-      let base = +new Date(1968, 9, 3)
-      const oneDay = 24 * 3600 * 1000
-      this.date = []
-      this.data = [Math.random() * 300]
-      console.log('this.data', this.data)
-      for (let i = 1; i < 20000; i++) {
-        var now = new Date((base += oneDay))
-        this.date.push([now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/'))
-        this.data.push(Math.round((Math.random() - 0.5) * 20 + this.data[i - 1]))
-      }
+ 
+      var mydata = JSON.parse(JSON.stringify(this.chartData))
+
+      this.date = mydata.x
+     
+      this.data = mydata.y
       this.chart.setOption({
         tooltip: {
           trigger: 'axis',
           position: function (pt) {
-            return [pt[0], '10%']
+            return [pt[0], '100%']
           }
         },
         title: {
@@ -128,11 +125,11 @@ export default {
           {
             type: 'inside',
             start: 0,
-            end: 10
+            end: 100
           },
           {
             start: 0,
-            end: 10
+            end: 100
           }
         ],
         series: [

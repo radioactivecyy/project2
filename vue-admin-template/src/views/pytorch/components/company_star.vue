@@ -78,6 +78,7 @@ export default {
 
       return pack(this.flatNodeHeirarchy())
     },
+    
     async DrawCircle() {
 
       this.svg = d3

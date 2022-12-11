@@ -1,5 +1,6 @@
 <template>
-  <div :class="className" :style="{ height: height, width: width }" />
+
+  <div class="chart-wrapper" :style="{ height: height, width: width }" />
 </template>
 <script>
 import echarts from 'echarts'
@@ -23,6 +24,10 @@ export default {
     autoResize: {
       type: Boolean,
       default: true
+    },
+    MyTitle:{
+      type: String,
+      default: ''
     },
     // chartData: {
     //   type: ,
@@ -49,9 +54,7 @@ export default {
     // watch Year if it changes, then update the chart
     Year:{
       handler: function (val) {
-        // console.log('yyyyyyy',this.Year)
-        // this.chart.setOption()
-
+      
         this.chart.setOption({
           series: [{
             data: this.getVirtualData(this.Year)
@@ -99,6 +102,7 @@ export default {
       for (let time = date; time < end; time += dayTime) {
         data.push([echarts.format.formatTime('yyyy-MM-dd', time), Math.floor(Math.random() * 2000)])
       }
+     
       return data
     },
     // 设置图表数据
@@ -107,7 +111,7 @@ export default {
         title: {
           top: 30,
           left: 'center',
-          text: 'Code Contribution'
+          text: this.MyTitle
         },
         tooltip: {},
         visualMap: {
@@ -116,7 +120,10 @@ export default {
           type: 'piecewise',
           orient: 'horizontal',
           left: 'center',
-          top: 65
+          top: 65,
+          // inRange: {
+          //   color: ['#d94e5d', '#eac736', '#50a3ba'].reverse()
+          // }
         },
         calendar: {
           top: 120,
@@ -139,3 +146,10 @@ export default {
   }
 }
 </script>
+<style>
+.chart-wrapper {
+    background: #fff;
+    padding: 16px 16px 0;
+    margin-bottom: 32px;
+  }
+  </style>
