@@ -21,23 +21,10 @@ from django.urls import re_path as url
 from django.contrib import admin
 from django.urls import path
 from app import views
-from app import contribution
-from app import commit
 
 urlpatterns = [
-    path('', views.real_index),
     path('admin/', admin.site.urls),
-    path('contribution_from', contribution.Contribution_from),
-    path('index', views.index),
-    path('commit', views.commit),
-    path('home', views.real_index),
-    path('user', views.user),
-    path('real_index', views.real_index),
-
     path('about_us', views.about_us),
-    path('notfound', views.notfound),
-    path('intro', views.intro),
-    path('commit_from', commit.commit_from),
     path('pytorch_star', views.pytorch_star),
     path('star_gazer', views.star_gazer),
     path('issue', views.issue),
@@ -46,5 +33,4 @@ urlpatterns = [
     path('pytorch_committer', views.pytorch_committer),
     path('test_update', views.update),
     path('test1', views.pandas_update),
-
 ]
