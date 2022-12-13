@@ -86,10 +86,9 @@ WSGI_APPLICATION = 'djangoproject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        # 这一块需要连接自己本地的数据库
         'USER': 'root',
-        'PASSWORD': 'yjy20011216',
-        'NAME': 'test02',
+        'PASSWORD': 'yjy20011216',#填入自己的密码
+        'NAME': 'test02',#填入自己的database的名字
         'HOST': '',
         'PORT': 3306,
     }

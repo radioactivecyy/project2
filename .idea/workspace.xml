@@ -6,6 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/djangoproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -158,6 +160,9 @@
       <workItem from="1670331250135" duration="17000" />
       <workItem from="1670379170394" duration="488000" />
       <workItem from="1670381576257" duration="395000" />
+      <workItem from="1670922680506" duration="1618000" />
+      <workItem from="1670938781831" duration="1000" />
+      <workItem from="1670940285716" duration="849000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>
