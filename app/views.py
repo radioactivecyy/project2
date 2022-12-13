@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.views.generic import View
 from functools import cmp_to_key
 from django.http.response import HttpResponse
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import render
 import requests
 from datetime import datetime
@@ -23,6 +25,12 @@ import os
 headers = {"Authorization": "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"}
 
 
+
+def test_connect(request):
+    print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+    response = {}
+    response['status'] = 1
+    return JsonResponse(response)
 # Create your views here.
 def company_handle(info):
     name = re.sub('[\W_]+', '', info).upper()
@@ -1008,40 +1016,31 @@ def real_index(request):
 def about_us(request):
     commit_users = []
     commit_users.append({"name": "张济开", "user": "Zhangjk2000", "url": "https://github.com/Zhangjk2000",
-                         "a_url": "https://avatars.githubusercontent.com/u/85881886?v=4"})
+                        "a_url": "https://avatars.githubusercontent.com/u/85881886?v=4"})
     commit_users.append({"name": "温相龙", "user": "wwwxxxxlll", "url": "https://github.com/wwwxxxxlll",
-                         "a_url": "https://avatars.githubusercontent.com/u/84766861?v=4"})
+                        "a_url": "https://avatars.githubusercontent.com/u/84766861?v=4"})
     commit_users.append({"name": "罗云", "user": "12321231", "url": "https://github.com/12321231",
-                         "a_url": "https://avatars.githubusercontent.com/u/52814667?v=4"})
+                        "a_url": "https://avatars.githubusercontent.com/u/52814667?v=4"})
     commit_users.append({"name": "曲浩天", "user": "quhaotia", "url": "https://github.com/quhaotia",
-                         "a_url": "https://avatars.githubusercontent.com/u/91251905?v=4"})
+                        "a_url": "https://avatars.githubusercontent.com/u/91251905?v=4"})
     commit_users.append({"name": "董博", "user": "shenkongshiyi", "url": "https://github.com/shenkongshiyi",
-                         "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
+                        "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
     commit_users.append({"name": "陈奕宇", "user": "radioactivecyy", "url": "https://github.com/radioactivecyy",
                          "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
-    response = {}
-    response['us'] = commit_users
-    return JsonResponse(response)
+    # return JsonResponse(commit_users)
+    return render(request, 'about-us.html', {"us": commit_users})
 
 
 def notfound(request):
-    # return render(request,'404.html')
-    response = {}
-    return JsonResponse(response)
+    return render(request, '404.html')
 
 
 def intro(request):
-    # return render(request,'说明.html')
-    response = {}
-    return JsonResponse(response)
+    return render(request, '说明.html')
 
 
 def index(request):
-    # return render(request,'brief_info.html',{})
-    response = {}
-    return JsonResponse(response)
-
-
+    return render(request, 'brief_info.html', {})
 # 设置主页对应的页面 + 传到主页的数据内容
 
 
@@ -1076,6 +1075,7 @@ def commit(request):
             date_list = []
             for committer in api_ret:
                 date_it = committer['commit']['author']['date']
+                print(date_it)
                 date = list(date_it)
                 date.pop(10)
                 date.pop(18)
@@ -1136,20 +1136,7 @@ def commit(request):
             #         avatar_url_1 = user_info['avatar_url']
             #         commit_users.append({"user":sorted_dict[i][0],"url":commit_url,"a_url":avatar_url_1})
             #
-            response = {}
-            response['target'] = target
-            response['id'] = id
-            response['url'] = url
-            response['owner'] = owner
-            response['avatar_url'] = avatar_url
-            response['html_url'] = html_url
-            response['description'] = description
-            response['topics'] = topics
-            response['stargazers_count'] = stargazers_count
-            response['created_at'] = created_at
-            response['commit_users'] = commit_users
-            response['date_newest'] = date_newest
-            return JsonResponse(response)
+            return render(request, 'brief_info.html', {"target": target, "id": id, "url": url, "owner": owner, "avatar_url": avatar_url, "html_url": html_url, "description": description, "topics": topics, "stargazers_count": stargazers_count, "created_at": created_at, "commit_users": commit_users, "date_newest": date_newest})
 
 
 def user(request):
