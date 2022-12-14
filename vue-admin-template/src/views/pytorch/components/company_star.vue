@@ -20,6 +20,10 @@ export default {
       type: Array,
       default: null
     },
+    dataType: {
+      type: String,
+      default: null
+    },
     testData:{
 
       type: Number,
@@ -39,6 +43,12 @@ export default {
       }
       this.DrawCircle()
     },
+    dataType: function (val) {
+      if(val === null) {
+        return
+      }
+      this.DrawCircle()
+    },
     testData: function (val) {
       if(val === null) {
         return
@@ -47,8 +57,6 @@ export default {
     }
   },
   mounted() {
-    // this.data_as_array = this.BuildNameHeader()
-    this.CreateBubbleChart()
     this.DrawCircle()
   },
   methods: {
@@ -66,21 +74,11 @@ export default {
 
       return pack(this.flatNodeHeirarchy())
     },
-    async CreateBubbleChart() {
-    
-
-      // 初始化a的类型为Array
-    
-
-      const width = 930
-      const height = 930
-      const pack = d3.pack().size([width, height]).padding(3)
-
-      return pack(this.flatNodeHeirarchy())
-    },
+   
     
     async DrawCircle() {
-
+      // 先把svg清空
+      d3.select('#svgHTML_star').selectAll('*').remove()
       this.svg = d3
         .select('body')
         .select('#svgHTML_star')

@@ -1,6 +1,8 @@
 <template>
   <div class="dashboard-editor-container">
     <h1>Pytorch VS Pandas</h1>
+    <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
+
     <h2>社区发展速度</h2>
     <el-row>
       <el-row>
@@ -99,31 +101,19 @@
     <co_ins_delVue :chartData="insDelData" @func="getMsgFrominsDel" />
     <h2>代码提交情况</h2>
     <co_code_numVue :chartData="codeNumData" @func="getMsgFromcode" />
+    <el-image style="width: 100px; height: 100px" :src="contributorCloud_p" :fit="fit" />
+    <el-image style="width: 100px; height: 100px" :src="contributorCloud_o" :fit="fit" />
     <h2>Companies</h2>
 
-    <el-row :gutter="32"
-      ><el-col :xs="14" :sm="14" :lg="15">
+    <el-row :gutter="10">
+      <el-col :xs="14" :sm="14" :lg="19" :offset="1">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <bubble_starVue />
+            <el-button class="company-button" type="primary" @click="starBubble">star</el-button>
+            <el-button class="company-button" type="primary" @click="issueBubble"> issue </el-button>
+            <el-button class="company-button" type="primary" @click="commitBubble"> commit </el-button>
+            <bubble_starVue :dataAsJson="bubbleData" />
           </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="32">
-      <el-col :xs="14" :sm="14" :lg="15">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <bubble_issue />
-          </div>
-        </div>
-      </el-col>
-    </el-row>
-    <el-row :gutter="32">
-      <el-col :xs="14" :sm="14" :lg="15">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
-          <bubble_commit />
         </div>
       </el-col>
     </el-row>
@@ -136,19 +126,18 @@
 <script>
 import bubble_starVue from './components/bubble_star.vue'
 import linechart2 from './components/linechart2.vue'
-import bubble_commit from './components/bubble_commit.vue'
-import bubble_issue from './components/bubble_issue.vue'
 import calender from '../pytorch/components/calender.vue'
 import co_ins_delVue from './components/co_ins_del.vue'
 import co_code_numVue from './components/co_code_num.vue'
+import { refreshOther } from '@/api/getdata'
+import { refreshData } from '@/api/pytorch'
+import List from '../pytorch/components/list.vue'
 import * as dataapi from '@/api/getdata'
 import * as d3 from 'd3'
 export default {
   name: 'UserProfile',
   components: {
     bubble_starVue,
-    bubble_commit,
-    bubble_issue,
     calender,
     linechart2,
     co_ins_delVue,
@@ -165,9 +154,16 @@ export default {
       endVal: -1,
       contriData: {},
       designcloud1: String,
-      designcloud2: String
+      designcloud2: String,
+      ListData1: Object,
+      ListData2: Object,
+      bubbleData: Array,
+      contributorCloud_p: String,
+      contributorCloud_o: String,
+      TimeOfContributor: 0
     }
   },
+
   mounted() {
     const msg = this.$route.query.name
     this.getCompanyStarData()
@@ -175,25 +171,72 @@ export default {
     this.getIssueLineData()
     this.getStarLineData()
     this.getCommitLineData()
-    // this.getThreeData()
     this.getInsDelData()
     this.getContribution()
   },
   methods: {
+    async getcontribCloud_p() {
+      dataapi.getContribCloudP(this.TimeOfContributor).then(res => {
+        this.contributorCloud_p = 'data:image/png;base64,' + res.data
+      })
+    },
+    async getcontribCloud_o() {
+      dataapi.getContribCloudO(this.TimeOfContributor).then(res => {
+        this.contributorCloud_o = 'data:image/png;base64,' + res.data
+      })
+    },
+    starBubble: function (data) {
+      // console.log('starBubble')
+      this.getCompanyStarData().then(res => {
+        //  刷新该组件
+        this.companyDataType = 'star'
+      })
+    },
+    issueBubble: function (data) {
+      // console.log('issueBubble')
+      this.getCompanyIssueData().then(res => {
+        //  刷新该组件
+        this.companyDataType = 'issue'
+      })
+    },
+    commitBubble: function (data) {
+      // console.log('commitBubble')
+      this.getCompanyCommitData().then(res => {
+        //  刷新该组件
+        this.companyDataType = 'commit'
+      })
+    },
+    async getCompanyStarData() {
+      const res = await d3.csv('dev-api/api/star_gazer')
+      this.bubbleData = res
+      var data = JSON.parse(JSON.stringify(res))
+      // 遍历数组，如果元素的data.flag为0,加到ListData1中，否则加到ListData2中
+      this.ListData1 = data.filter(item => item.flag === '0')
+      this.ListData2 = data.filter(item => item.flag === '1')
+    },
+    async getCompanyIssueData() {
+      const res = await d3.csv('dev-api/api/issue')
+      this.bubbleData = res
+      var data = JSON.parse(JSON.stringify(res))
+      // 遍历数组，如果元素的data.flag为0,加到ListData1中，否则加到ListData2中
+      this.ListData1 = data.filter(item => item.flag === '0')
+      this.ListData2 = data.filter(item => item.flag === '1')
+    },
+    async getCompanyCommitData() {
+      const res = await d3.csv('dev-api/api/committer')
+      this.bubbleData = res
+      var data = JSON.parse(JSON.stringify(res))
+      // 遍历数组，如果元素的data.flag为0,加到ListData1中，否则加到ListData2中
+      this.ListData1 = data.filter(item => item.flag === '0')
+      this.ListData2 = data.filter(item => item.flag === '1')
+    },
     async getDesignCloud() {
       await dataapi.OgetDesignCloud().then(res => {
         this.designcloud1 = 'data:image/png;base64,' + res.cloud1
         this.designcloud2 = 'data:image/png;base64,' + res.cloud2
       })
     },
-    async getCompanyStarData() {
-      console.log('getCompanyStarData')
-      const res = await d3.csv('dev-api/api/pytorch_star')
-      this.Star_bubble_data = res
-      this.ttt = this.ttt + 1
 
-      return res
-    },
     async getIssueLineData() {
       await dataapi.OgetIssueDevelop().then(res => {
         // 把数组中的每个元素都push到data中
@@ -261,10 +304,45 @@ export default {
         // console.log('this.contriData', this.contriData)
       })
     },
+    async refresh() {
+      refreshData().then(
+        // 刷新数据后重新渲染
+        // 消息提示
+        this.$message({
+          message: '刷新成功',
+          type: 'success'
+        }),
+        this.getCompanyStarData(),
 
+        this.getDesignCloud(),
+        this.getIssueLineData(),
+        this.getStarLineData(),
+        this.getCommitLineData(),
+        // this.getThreeData()
+        this.getInsDelData(),
+        this.getContribution()
+      )
+      refreshOther().then(
+        this.$message({
+          message: '刷新成功',
+          type: 'success'
+        }),
+        this.getCompanyStarData(),
+
+        this.getDesignCloud(),
+        this.getIssueLineData(),
+        this.getStarLineData(),
+        this.getCommitLineData(),
+        // this.getThreeData()
+        this.getInsDelData(),
+        this.getContribution()
+      )
+    },
     getMsgFromcode(msg) {
       // 把msg传递给父组件中的TimeOfContributor
+   
       this.TimeOfContributor = msg
+     
     },
     getMsgFrominsDel(msg) {
       var d = JSON.parse(JSON.stringify(msg))
@@ -302,6 +380,18 @@ export default {
   .grid-content {
     border-radius: 2px;
     min-height: 20px;
+  }
+  .company-button {
+    background-color: #fff; /* Green */
+    border: none;
+    color: rgb(75, 140, 220);
+    padding: 15px 92px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+
+    // 设置字和底部的距离
   }
 }
 

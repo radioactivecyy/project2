@@ -2,8 +2,7 @@
   <div>
     <!-- <table /> -->
     <!-- <按钮 -->
-    <svg id="legend_s" height="100" widtn="332"></svg>
-    <svg width="332" height="330" id="svgHTML_star" />
+    <svg width="532" height="500" id="svgHTML_star" />
   </div>
 </template>
 <script>
@@ -13,18 +12,30 @@ let current_circle = undefined
 let draw_data = undefined
 export default {
   name: 'App',
-  props: {},
+  props: {
+    dataAsJson: {
+      type: Array,
+      default: null
+    }
+  },
   data() {
     return {
       // data是getdata()的返回结果
       data_as_array: [],
       // data_as_json是异步的，所以需要在mounted()中赋值
-      data_as_json: {},
+
       svg: undefined
     }
   },
+  watch: {
+    dataAsJson: function (val) {
+      if (val === null) {
+        return
+      }
+      this.DrawCircle()
+    }
+  },
   mounted() {
-    this.CreateBubbleChart()
     this.DrawCircle()
     this.DrawLegend()
   },
@@ -32,30 +43,22 @@ export default {
     // async 函数getdata()，用于获取数据
 
     flatNodeHeirarchy() {
-      const root = { children: this.data_as_json } // remove the first value from the dataset - which is an aggregate we don't need
+      const root = { children: this.dataAsJson } // remove the first value from the dataset - which is an aggregate we don't need
       return d3.hierarchy(root).sum(d => d.count)
     },
     packedData() {
-      const width = 570
-      const height = 570
+      const width = 670
+      const height = 670
 
       const pack = d3.pack().size([width, height]).padding(3)
 
       return pack(this.flatNodeHeirarchy())
     },
-    async CreateBubbleChart() {
-      // 初始化a的类型为Array
-      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
-      const width = 930
-      const height = 930
-      const pack = d3.pack().size([width, height]).padding(3)
 
-      return pack(this.flatNodeHeirarchy())
-    },
     async DrawCircle() {
-      this.data_as_json = await d3.csv('/dev-api/api/star_gazer')
-      draw_data = this.data_as_json
-   
+      d3.select('#svgHTML_star').selectAll('*').remove()
+      draw_data = this.dataAsJson
+
       // 给每条数据添加一个属性 asize
       this.svg = d3
         .select('body')
@@ -78,7 +81,6 @@ export default {
         .attr('r', d => d.r)
         // 根据下标判断是否是pytorch的数据，是的话就用红色，否则用蓝色
         .attr('fill', (d, i) => {
-        
           if (d.data.flag === '0') {
             return '#aaccff'
           } else {

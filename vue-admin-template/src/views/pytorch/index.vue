@@ -77,27 +77,15 @@
     <h2>贡献者活跃情况</h2>
     <el-row>
       <el-col :span="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
+        <calender :Year="year" MyTitle="star" />
       </el-col>
       <el-col :span="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
+        <calender :Year="year" MyTitle="issue" />
       </el-col>
     </el-row>
     <el-row>
       <el-col :xs="14" :sm="14" :lg="12">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <calender :Year="year" />
-          </div>
-        </div>
+        <calender :Year="year" MyTitle="commit" />
       </el-col>
       <el-col :xs="14" :sm="14" :lg="12">
         <div class="chart-wrapper">
@@ -124,40 +112,20 @@
     <el-row :gutter="32">
       <el-col :xs="14" :sm="14" :lg="15">
         <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <h2>Stargazers</h2>
-          </div>
-          <sBubble :dataAsJson="Star_bubble_data" :testData="ttt" />
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
+
+          <el-button class="company-button" type="primary" @click="starBubble">star</el-button>
+          <el-button class="company-button" type="primary" @click="issueBubble"> issue </el-button>
+          <el-button class="company-button" type="primary" @click="commitBubble"> commit </el-button>
+
+          <sBubble :dataAsJson="bubble_data" :testData="ttt" dataType="companyDataType" />
         </div>
       </el-col>
       <el-col :xs="14" :sm="14" :lg="8">
-        <List DataSource="dev-api/api/pytorch_star" />
+        <List :DataSource="ListData" />
       </el-col>
     </el-row>
 
-    <el-row :gutter="32">
-      <el-col :xs="14" :sm="14" :lg="15">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
-          <iBubble :dataAsJson="Issue_bubble_data" />
-        </div>
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="8">
-        <List DataSource="dev-api/api/pytorch_issue" />
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="32">
-      <el-col :xs="14" :sm="14" :lg="15">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
-          <cBubble :dataAsJson="Commit_bubble_data" />
-        </div>
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="8">
-        <List DataSource="dev-api/api/pytorch_committer" />
-      </el-col>
-    </el-row>
     <h2>设计讨论</h2>
     <el-row :gutter="32">
       <el-col :span="22">
@@ -180,9 +148,8 @@
 </template>
 
 <script>
-import iBubble from './components/company_issue.vue'
 import sBubble from './components/company_star.vue'
-import cBubble from './components/company_committer.vue'
+
 import List from './components/list.vue'
 import linechart from './components/linechart.vue'
 import code_num from './components/code_num.vue'
@@ -191,7 +158,6 @@ import linechart3 from './components/linechart3.vue'
 
 import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
-import contributor_cloudVue from './components/contributor_cloud.vue'
 
 import * as dataapi from '@/api/getdata'
 import { refreshData } from '@/api/pytorch'
@@ -208,6 +174,7 @@ export default {
       Star_bubble_data: Array,
       Issue_bubble_data: Array,
       Commit_bubble_data: Array,
+      bubble_data: Array,
       ttt: 0,
       issueNumdata: {},
       starNumdata: {},
@@ -218,17 +185,19 @@ export default {
       endVal: -1,
       contriData: {},
       designData: {},
-      designcloud: String
+      designcloud: String,
+      companyDataType: 'star',
+      ListData: 'dev-api/api/pytorch_star'
     }
   },
   components: {
-    iBubble,
+    // iBubble,
     sBubble,
-    cBubble,
+    // cBubble,
     List,
     linechart,
     code_num,
- 
+
     ins_del,
     calender,
     // contributor_cloudVue,
@@ -240,7 +209,8 @@ export default {
       // 重新渲染calender
       this.$forceUpdate()
       // console.log(val)
-    }
+    },
+
   },
 
   mounted() {
@@ -249,28 +219,7 @@ export default {
     this.getCompanyIssueData()
     this.getCompanyCommitData()
     this.getDesignCloud()
-    this.yearoption = [
-      {
-        value: '2015',
-        label: '2015'
-      },
-      {
-        value: '2016',
-        label: '2016'
-      },
-      {
-        value: '2017',
-        label: '2017'
-      },
-      {
-        value: '2018',
-        label: '2018'
-      },
-      {
-        value: '2019',
-        label: '2019'
-      }
-    ]
+
     this.getIssueLineData()
     this.getStarLineData()
     this.getCommitLineData()
@@ -280,26 +229,46 @@ export default {
     this.getDesignData()
   },
   methods: {
-    async getDesignCloud(){
+    starBubble: function (data) {
+      // console.log('starBubble')
+      this.getCompanyStarData().then(res => {
+        //  刷新该组件
+        console.log('starBubble')
+        this.companyDataType = 'star'
+      })
+    },
+    issueBubble: function (data) {
+      // console.log('issueBubble')
+      this.getCompanyIssueData().then(res => {
+        //  刷新该组件
+        this.companyDataType = 'issue'
+    })},
+    commitBubble: function (data) {
+      // console.log('commitBubble')
+      this.getCompanyCommitData().then(res => {
+        //  刷新该组件
+        this.companyDataType = 'commit'
+      })
+    },
+    async getDesignCloud() {
       dataapi.getDesignCloud().then(res => {
-        this.designcloud= 'data:image/png;base64,' + res.data
+        this.designcloud = 'data:image/png;base64,' + res.data
       })
     },
     async getCompanyStarData() {
       const res = await d3.csv('dev-api/api/pytorch_star')
-      this.Star_bubble_data = res
-    
+      this.bubble_data = res
+      this.ListData = JSON.parse(JSON.stringify(res))
     },
     async getCompanyIssueData() {
       const res = await d3.csv('dev-api/api/pytorch_issue')
-      this.Issue_bubble_data = res
-     
+      this.bubble_data = res
+      this.ListData = JSON.parse(JSON.stringify(res))
     },
     async getCompanyCommitData() {
-      console.log('getCompanyCommitData')
       const res = await d3.csv('dev-api/api/pytorch_committer')
-      this.Commit_bubble_data = res
-      
+      this.bubble_data = res
+      this.ListData = JSON.parse(JSON.stringify(res))
     },
     async getIssueLineData() {
       await dataapi.getIssueDevelop().then(res => {
@@ -450,5 +419,17 @@ export default {
 .grid-content {
   border-radius: 4px;
   min-height: 36px;
+}
+.company-button {
+  background-color: #fff; /* Green */
+  border: none;
+  color: rgb(75, 140, 220);
+  padding: 15px 72px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+
+  // 设置字和底部的距离
 }
 </style>

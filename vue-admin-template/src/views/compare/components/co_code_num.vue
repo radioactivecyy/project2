@@ -166,7 +166,7 @@ export default {
         var T = this
         this.chart1.on('updateAxisPointer', function (event) {
           const xAxisInfo = event.axesInfo[0]
-
+          
           if (xAxisInfo) {
             T.msg = xAxisInfo.value
             T.$emit('func', T.msg)

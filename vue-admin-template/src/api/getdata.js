@@ -115,3 +115,29 @@ export function OgetDesignCloud() {
     method: 'get'
   })
 }
+
+export function refreshOther() {
+  return request({
+    url: 'api/test1',
+    method: 'get'
+  })
+}
+
+export function getContribCloudP(index) {
+  return request({
+    url: 'api/contribcloudp',
+    method: 'get',
+    params: {
+      index: index
+    }
+  })
+}
+export function getContribCloudO(index) {
+  return request({
+    url: 'api/contribcloudo',
+    method: 'get',
+    params: {
+      index: index
+    }
+  })
+}
