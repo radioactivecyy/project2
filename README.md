@@ -12,7 +12,7 @@
 
   - 进入https://www.python.org/downloads/ 选择`Python 3.10.4`，并选择`Windows installer(64-bit)`，下载压缩包。
 
-  ![download_python](.\assets\download_python.png)
+  ![download_python](./assets/download_python.png)
 
   - 解压缩并保持默认选项一直选择下一步直至安装完成。
   - 验证安装——终端输入`python --version`，显示`Python`版本。
