@@ -17,14 +17,14 @@
   - 解压缩并保持默认选项一直选择下一步直至安装完成。
   - 验证安装——终端输入`python --version`，显示`Python`版本。
 
-  ![python_version](.\assets\python_version.png)
+  ![python_version](./assets/python_version.png)
 
 - 安装`Django`
 
   - 终端输入`python -m pip install django==3.2`。
   - 验证安装——终端输入`python`,再输入`import django`,最后输入`django.get_version()`，显示`Django`版本。
 
-  ![django_version](.\assets\django_version.png)
+  ![django_version](./assets/django_version.png)
 
 - 配置`Mysql`
 
@@ -32,7 +32,7 @@
   - 在`Mysql`中用`create database xxyyz`创建数据库（`xxyyz`任意填写）。
   - 修改项目中的`./djangoproject/setting.py`，填入自己的数据库名和密码。
 
-  ![Mysql_config](.\assets\Mysql_config.png)
+  ![Mysql_config](./assets/Mysql_config.png)
 
 - 运行后端
 
@@ -40,12 +40,12 @@
 
     - 在项目根目录运行终端，输入`python manage.py runserver`。
 
-    ![makemig](.\assets\makemig.png)
+    ![makemig](./assets/makemig.png)
 
     - 继续输入`python manage.py migrate`
 
-    ![mig](.\assets\mig.png)
+    ![mig](./assets/mig.png)
 
   - 在项目根目录运行终端，输入`python manage.py runserver`,出现如下图所示内容，即成功运行。
 
-![run](.\assets\run.png)
+![run](./assets/run.png)
