@@ -4,6 +4,7 @@ import os
 import time
 
 import numpy as np
+import numpy.array_api
 from PIL import Image
 from django.db.models import *
 from django.db.models.functions import *
@@ -18,12 +19,14 @@ import requests
 from datetime import datetime
 
 import wordcloud
+from matplotlib import pyplot as plt
 
 from .models import Contributors, Commits, date01, stargazer_company, issue_company, \
 	stargazer_company_statistic, committer_company_statistic, issue_company_statistic, committer_company, total, \
 	pandas_stargazer_company, \
 	pandas_issue_company, pandas_committer_company, \
-	pandas_total, commit_update, commit_history, commit_by_day, commit_contributors
+	pandas_total, commit_update, commit_history, commit_by_day, commit_contributors, pandas_commit_by_day, \
+	pandas_commit_contributors, pandas_commit_history, pandas_commit_update
 import json
 from django.http import JsonResponse
 from github import Github
@@ -1060,6 +1063,87 @@ def git_log_to_file(pytorch="/Users/ihsiao/Documents/SRE/pytorch",
 	os.chdir(prev_dir)
 
 
+def pandas_commit_git_log_parser(input_filename: str):
+	info_template = re.compile(r"@COMMIT@ (.*?) @AUTHOR@ (.*?) <(.*?)> @CONTENT@ (.*?) @TIME@ (.*?) @C_TIME@ (.*?) "
+	                           r"@COMMITTER@ (.*?) <(.*?)>")
+	del_template = re.compile(r"(\d+) deletion")
+	ins_template = re.compile(r"(\d+) insertion")
+	file_template = re.compile(r"(\d+) file")
+
+	infile = open(input_filename)
+	filebuf = infile.readlines()
+	filebuf_i = 0
+
+	finished_cnt = 0
+	while filebuf_i < len(filebuf):
+		info_resolved = re.findall(info_template, filebuf[filebuf_i])  # extract each fields
+		if info_resolved:  # if succeeded
+			pandas_commit_entry = pandas_commit_history()  # new entry to be inserted
+
+			# 更新/创建贡献者表单项
+			try:
+				author_entry = pandas_commit_contributors.objects.get(author=info_resolved[0][1])
+			except pandas_commit_contributors.DoesNotExist:
+				author_entry = pandas_commit_contributors(author=info_resolved[0][1])
+			# author_entry.save()
+
+			# 添加直接获取的信息
+			pandas_commit_entry.hash = info_resolved[0][0]
+			pandas_commit_entry.author = author_entry
+			pandas_commit_entry.author_email = info_resolved[0][2]
+			pandas_commit_entry.commit_intro = info_resolved[0][3][:500]
+			pandas_commit_entry.time_local = datetime.strptime(info_resolved[0][4][-19:-11], "%H:%M:%S")
+			pandas_commit_entry.commit_time = datetime.strptime(info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
+			pandas_commit_entry.committer = info_resolved[0][6]
+			pandas_commit_entry.committer_email = info_resolved[0][7]
+
+			# 分析是否是设计相关的讨论
+			pandas_commit_entry.if_design = check_if_design_related(info_resolved[0][3])
+			print(pandas_commit_entry.commit_time)
+			# 插入本次commit更改的统计数据（如有）
+			try:
+				if filebuf[filebuf_i + 1][0] == ' ':  # file change stat exists
+					filebuf_i += 3
+
+					# reading modification stats
+					modi_raw = filebuf[filebuf_i - 2]
+					if del_resolved := re.findall(del_template, modi_raw):
+						pandas_commit_entry.modi_del = int(del_resolved[0])
+					else:
+						pandas_commit_entry.modi_del = 0
+
+					if ins_resolved := re.findall(ins_template, modi_raw):
+						pandas_commit_entry.modi_ins = int(ins_resolved[0])
+					else:
+						pandas_commit_entry.modi_ins = 0
+
+					if file_resolved := re.findall(file_template, modi_raw):
+						pandas_commit_entry.modi_files = int(file_resolved[0])
+					else:
+						pandas_commit_entry.modi_files = 0
+
+				else:  # no file change
+					filebuf_i += 1
+					pandas_commit_entry.modi_del = 0
+					pandas_commit_entry.modi_ins = 0
+					pandas_commit_entry.modi_files = 0
+			except IndexError:
+				break
+
+			# 完成贡献者表单
+			author_entry.modi_ins += pandas_commit_entry.modi_ins
+			author_entry.modi_del += pandas_commit_entry.modi_del
+			author_entry.modi_files += pandas_commit_entry.modi_files
+			author_entry.save()
+
+			# 完成pandas_commit_history表单
+			pandas_commit_entry.save()
+			finished_cnt += 1
+		else:
+			filebuf_i += 1
+	infile.close()
+
+
 def commit_git_log_parser(input_filename: str):
 	info_template = re.compile(r"@COMMIT@ (.*?) @AUTHOR@ (.*?) <(.*?)> @CONTENT@ (.*?) @TIME@ (.*?) @C_TIME@ (.*?) "
 	                           r"@COMMITTER@ (.*?) <(.*?)>")
@@ -1077,11 +1161,18 @@ def commit_git_log_parser(input_filename: str):
 		if info_resolved:  # if succeeded
 			commit_entry = commit_history()  # new entry to be inserted
 
+			# 更新/创建贡献者表单项
+			try:
+				author_entry = commit_contributors.objects.get(author=info_resolved[0][1])
+			except commit_contributors.DoesNotExist:
+				author_entry = commit_contributors(author=info_resolved[0][1])
+			author_entry.save()
+
 			# 添加直接获取的信息
 			commit_entry.hash = info_resolved[0][0]
-			commit_entry.author = info_resolved[0][1]
+			commit_entry.author = author_entry
 			commit_entry.author_email = info_resolved[0][2]
-			commit_entry.commit_intro = info_resolved[0][3]
+			commit_entry.commit_intro = info_resolved[0][3][:500]
 			commit_entry.time_local = datetime.strptime(info_resolved[0][4][-19:-11], "%H:%M:%S")
 			commit_entry.commit_time = datetime.strptime(info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
 			commit_entry.committer = info_resolved[0][6]
@@ -1120,26 +1211,23 @@ def commit_git_log_parser(input_filename: str):
 			except IndexError:
 				break
 
-			# 更新贡献者表单
-			try:
-				author_entry = commit_contributors.objects.get(author=commit_entry.author)
-			except commit_contributors.DoesNotExist:
-				author_entry = commit_contributors()
-			author_entry.author = commit_entry.author
+			# 完成贡献者表单
 			author_entry.modi_ins += commit_entry.modi_ins
 			author_entry.modi_del += commit_entry.modi_del
 			author_entry.modi_files += commit_entry.modi_files
 			author_entry.save()
 
-			# insert into the database
+			# 完成commit_history表单
 			commit_entry.save()
 			finished_cnt += 1
+		else:
+			filebuf_i += 1
 	infile.close()
 
 
 def check_if_design_related(intro: str):
 	intro = intro.lower()
-	common_labels = "dynamo,reland,fsdp,primtorch,quant,executorch,api,functorch,onnx,dict,inductor,xnn,nnc,mps"
+	common_labels = "add,fix,er,better,func,dynamo,reland,fsdp,primtorch,quant,executorch,api,functorch,onnx,dict,inductor,xnn,nnc,mps"
 	platforms = "macos,os x,linux,ubuntu,centos,debian,gentoo,fedora,arch,opensuse,windows,dos,80486,i386,i486,i586," \
 	            "i686,x86,x64,arm,nvidia"
 	robustness = "robust,strong,vigorous,sturdy,tough,powerful,solidly,muscular,sinewy,rugged,hardy,danger,shield," \
@@ -1160,7 +1248,6 @@ def check_if_design_related(intro: str):
 
 
 def commit_update_main(request):
-	'''
 	# 检查更新记录
 	try:
 		# 存在更新记录，取得最新一条commit的时间
@@ -1169,18 +1256,21 @@ def commit_update_main(request):
 		last_upd = None
 	print(last_upd)
 	# 执行更新
+
 	# 此处将`_pytorch`更换为服务器中的pytorch仓库地址
-	_pytorch = "/Users/ihsiao/Documents/SRE/pytorch"
+	# _pytorch = "/Users/ihsiao/Documents/SRE/pytorch"
+
 	# 此处将`_outputdir`更换为输出文本文件的路径
-	_outputdir = "data/_amendment.txt"
+	# _outputdir = "data/_amendment.txt"
+
 	# 获得git log
 	# git_log_to_file(pytorch=_pytorch, from_time=last_upd, outputdir=_outputdir)
+
 	# 从文本文件读取git log，分析并存入数据库
 	# commit_git_log_parser("data/_amendment.txt")
-	'''
-	last_upd = datetime(2022, 11, 1)
+
 	# 重新计算从上一次的最后一条记录开始所有日期的统计数据
-	if not last_upd:    # 若是第一次更新，则全部重新计算
+	if not last_upd:  # 若是第一次更新，则全部重新计算
 		try:
 			last_upd = commit_history.objects.order_by('commit_time').first().commit_time
 		except commit_history.DoesNotExist:
@@ -1203,13 +1293,16 @@ def commit_update_main(request):
 
 	# 主要贡献者的上述三个值
 
-	_comm_cnt_core = commit_history.objects.filter(commit_time__gt=last_upd, commit_contributors__if_core=True).annotate(
+	_comm_cnt_core = commit_history.objects.filter(commit_time__gt=last_upd,
+	                                               author__if_core=True).annotate(
 		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
 
-	_desi_cnt_core = commit_history.objects.filter(commit_time__gt=last_upd, if_design=True, commit_contributors__if_core=True).annotate(
+	_desi_cnt_core = commit_history.objects.filter(commit_time__gt=last_upd, if_design=True,
+	                                               author__if_core=True).annotate(
 		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
 
-	_modi_files_core = commit_history.objects.filter(commit_time__gt=last_upd, commit_contributors__if_core=True).annotate(
+	_modi_files_core = commit_history.objects.filter(commit_time__gt=last_upd,
+	                                                 author__if_core=True).annotate(
 		date=TruncDate('commit_time')).values('date').annotate(nums=Sum('modi_files'))
 
 	# 遍历过程中的日期
@@ -1217,6 +1310,7 @@ def commit_update_main(request):
 	end_date = datetime.now()
 
 	while begin_date <= end_date:
+		print(begin_date)
 		try:
 			date_entry = commit_by_day.objects.get(date=begin_date)
 		except commit_by_day.DoesNotExist:
@@ -1240,6 +1334,69 @@ def commit_update_main(request):
 			date_entry.modi_files_core = 0
 			date_entry.modi_ins = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
 			date_entry.modi_del = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+		# 对分小时的数据进行统计，统计增加和减少的行数
+		#
+		# # 删除的行数
+		# del_set = commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+		# 	hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_del'))
+		# del_str = ""
+		# for _h in range(24):
+		# 	if _h is not 0:
+		# 		del_str += ","
+		# 	try:
+		# 		stat = del_set.get(hour=str(_h))['nums']
+		# 	except Exception:
+		# 		stat = 0
+		# 	del_str += str(stat)
+		# date_entry.modi_del = del_str
+		#
+		# # 添加的行数
+		# ins_set = commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+		# 	hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_ins'))
+		# ins_str = ""
+		# for _h in range(24):
+		# 	if _h is not 0:
+		# 		ins_str += ","
+		# 	try:
+		# 		stat = ins_set.get(hour=str(_h))['nums']
+		# 	except Exception:
+		# 		stat = 0
+		# 	ins_str += str(stat)
+		# date_entry.modi_ins = ins_str
+
+		# print(date_entry.date, date_entry.comm_cnt, date_entry.desi_cnt, date_entry.modi_files)
+
+		# 保存对每一项的更改
+		date_entry.save()
+		begin_date += dt.timedelta(days=1)
+
+	# 记录更新
+	current_upd = commit_update()
+	current_upd.time_update = datetime.now()
+	current_upd.time_last_record = commit_history.objects.latest('commit_time').commit_time
+	current_upd.save()
+	return JsonResponse({'current_upd': current_upd.time_update})
+
+
+def commit_update_byhour(_from: datetime):
+
+	# 对齐到当日00:00:00
+	last_upd = datetime(_from.year, _from.month, _from.day)
+
+	# 遍历过程中的日期
+	begin_date = last_upd
+	end_date = datetime.now()
+
+	while begin_date <= end_date:
+		print(begin_date)
+		try:
+			date_entry = commit_by_day.objects.get(date=begin_date)
+		except commit_by_day.DoesNotExist:
+			date_entry = commit_by_day()
+			date_entry.date = begin_date
+			date_entry.modi_ins = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+			date_entry.modi_del = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+
 		# 对分小时的数据进行统计，统计增加和减少的行数
 
 		# 删除的行数
@@ -1270,7 +1427,6 @@ def commit_update_main(request):
 			ins_str += str(stat)
 		date_entry.modi_ins = ins_str
 
-
 		# print(date_entry.date, date_entry.comm_cnt, date_entry.desi_cnt, date_entry.modi_files)
 
 		# 保存对每一项的更改
@@ -1281,21 +1437,215 @@ def commit_update_main(request):
 	current_upd = commit_update()
 	current_upd.time_update = datetime.now()
 	current_upd.time_last_record = commit_history.objects.latest('commit_time').commit_time
-	# current_upd.save()
+	current_upd.save()
+
+
+
+def pandas_commit_update_main(request):
+	# 检查更新记录
+	try:
+		# 存在更新记录，取得最新一条commit的时间
+		last_upd = pandas_commit_update.objects.order_by('time_last_record').last().time_last_record
+	except Exception:
+		last_upd = None
+	print(last_upd)
+	# 执行更新
+
+	# 此处将`_pytorch`更换为服务器中的pytorch仓库地址
+	# _pytorch = "/Users/ihsiao/Documents/SRE/pytorch"
+
+	# 此处将`_outputdir`更换为输出文本文件的路径
+	# _outputdir = "data/_amendment.txt"
+
+	# 获得git log
+	# git_log_to_file(pytorch=_pytorch, from_time=last_upd, outputdir=_outputdir)
+
+	# 从文本文件读取git log，分析并存入数据库
+	# pandas_commit_git_log_parser("data/_amendment.txt")
+
+	# 重新计算从上一次的最后一条记录开始所有日期的统计数据
+	if not last_upd:  # 若是第一次更新，则全部重新计算
+		try:
+			last_upd = pandas_commit_history.objects.order_by('commit_time').first().commit_time
+		except pandas_commit_history.DoesNotExist:
+			# 没有任何记录，返回
+			print("NO VALID RECORDS IN pandas_commit_HISTORY!")
+			return
+
+	# 对齐到当日00:00:00
+	last_upd = datetime(last_upd.year, last_upd.month, last_upd.day)
+
+	# 聚合搜索三个统计值，每日commit数、设计讨论数和总文件更改数量
+	_comm_cnt = pandas_commit_history.objects.filter(commit_time__gt=last_upd).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
+
+	_desi_cnt = pandas_commit_history.objects.filter(commit_time__gt=last_upd, if_design=True).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
+
+	_modi_files = pandas_commit_history.objects.filter(commit_time__gt=last_upd).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Sum('modi_files'))
+
+	# 主要贡献者的上述三个值
+
+	_comm_cnt_core = pandas_commit_history.objects.filter(commit_time__gt=last_upd,
+	                                               author__if_core=True).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
+
+	_desi_cnt_core = pandas_commit_history.objects.filter(commit_time__gt=last_upd, if_design=True,
+	                                               author__if_core=True).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Count('hash'))
+
+	_modi_files_core = pandas_commit_history.objects.filter(commit_time__gt=last_upd,
+	                                                 author__if_core=True).annotate(
+		date=TruncDate('commit_time')).values('date').annotate(nums=Sum('modi_files'))
+
+	# 遍历过程中的日期
+	begin_date = last_upd
+	end_date = datetime.now()
+
+	while begin_date <= end_date:
+		print(begin_date)
+		try:
+			date_entry = pandas_commit_by_day.objects.get(date=begin_date)
+		except pandas_commit_by_day.DoesNotExist:
+			date_entry = pandas_commit_by_day()
+			date_entry.date = begin_date
+		try:
+			# 在每个日期中分别添加三个聚合字典中的对应值
+			date_entry.comm_cnt = _comm_cnt.get(date=TruncDate(begin_date))['nums']
+			date_entry.desi_cnt = _desi_cnt.get(date=TruncDate(begin_date))['nums']
+			date_entry.modi_files = _modi_files.get(date=TruncDate(begin_date))['nums']
+			# 在每个日期中分别添加三个聚合字典中的对应值（核心贡献者）
+			date_entry.comm_cnt_core = _comm_cnt_core.get(date=TruncDate(begin_date))['nums']
+			date_entry.desi_cnt_core = _desi_cnt_core.get(date=TruncDate(begin_date))['nums']
+			date_entry.modi_files_core = _modi_files_core.get(date=TruncDate(begin_date))['nums']
+		except Exception:  # 缺少本日记录，计为0
+			date_entry.comm_cnt = 0
+			date_entry.desi_cnt = 0
+			date_entry.modi_files = 0
+			date_entry.comm_cnt_core = 0
+			date_entry.desi_cnt_core = 0
+			date_entry.modi_files_core = 0
+		date_entry.modi_ins = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+		date_entry.modi_del = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+		# 对分小时的数据进行统计，统计增加和减少的行数
+		#
+		# # 删除的行数
+		# del_set = pandas_commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+		# 	hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_del'))
+		# del_str = ""
+		# for _h in range(24):
+		# 	if _h is not 0:
+		# 		del_str += ","
+		# 	try:
+		# 		stat = del_set.get(hour=str(_h))['nums']
+		# 	except Exception:
+		# 		stat = 0
+		# 	del_str += str(stat)
+		# date_entry.modi_del = del_str
+		#
+		# # 添加的行数
+		# ins_set = pandas_commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+		# 	hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_ins'))
+		# ins_str = ""
+		# for _h in range(24):
+		# 	if _h is not 0:
+		# 		ins_str += ","
+		# 	try:
+		# 		stat = ins_set.get(hour=str(_h))['nums']
+		# 	except Exception:
+		# 		stat = 0
+		# 	ins_str += str(stat)
+		# date_entry.modi_ins = ins_str
+
+		# print(date_entry.date, date_entry.comm_cnt, date_entry.desi_cnt, date_entry.modi_files)
+
+		# 保存对每一项的更改
+		date_entry.save()
+		begin_date += dt.timedelta(days=1)
+
+	# 记录更新
+	current_upd = pandas_commit_update()
+	current_upd.time_update = datetime.now()
+	current_upd.time_last_record = pandas_commit_history.objects.latest('commit_time').commit_time
+	current_upd.save()
 	return JsonResponse({'current_upd': current_upd.time_update})
+
+
+
+def pandas_commit_update_byhour(_from: datetime):
+
+	# 对齐到当日00:00:00
+	last_upd = datetime(_from.year, _from.month, _from.day)
+
+	# 遍历过程中的日期
+	begin_date = last_upd
+	end_date = datetime.now()
+
+	while begin_date <= end_date:
+		print(begin_date)
+		try:
+			date_entry = pandas_commit_by_day.objects.get(date=begin_date)
+		except pandas_commit_by_day.DoesNotExist:
+			date_entry = pandas_commit_by_day()
+			date_entry.date = begin_date
+			date_entry.modi_ins = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+			date_entry.modi_del = '0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0'
+
+		# 对分小时的数据进行统计，统计增加和减少的行数
+
+		# 删除的行数
+		del_set = pandas_commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_del'))
+		del_str = ""
+		for _h in range(24):
+			if _h is not 0:
+				del_str += ","
+			try:
+				stat = del_set.get(hour=str(_h))['nums']
+			except Exception:
+				stat = 0
+			del_str += str(stat)
+		date_entry.modi_del = del_str
+
+		# 添加的行数
+		ins_set = pandas_commit_history.objects.annotate(date=TruncDate('commit_time')).filter(date=begin_date).annotate(
+			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_ins'))
+		ins_str = ""
+		for _h in range(24):
+			if _h is not 0:
+				ins_str += ","
+			try:
+				stat = ins_set.get(hour=str(_h))['nums']
+			except Exception:
+				stat = 0
+			ins_str += str(stat)
+		date_entry.modi_ins = ins_str
+
+		# print(date_entry.date, date_entry.comm_cnt, date_entry.desi_cnt, date_entry.modi_files)
+
+		# 保存对每一项的更改
+		date_entry.save()
+		begin_date += dt.timedelta(days=1)
+
+	# 记录更新
+	current_upd = pandas_commit_update()
+	current_upd.time_update = datetime.now()
+	current_upd.time_last_record = pandas_commit_history.objects.latest('commit_time').commit_time
+	current_upd.save()
 
 
 # 绘制设计讨论词云图，-> base64 str, utf-8
 def graph_commit_intro_word_cloud(request):
 	# 获取前端传回的起讫日期，传回词云图的base64字符串。
 	# 时间格式为"%Y-%m-%d"
-	# time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
-	# time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
-	time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
-	time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
+	time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+	time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
+	# time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
+	# time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
 	intro_source = commit_history.objects.filter(commit_time__gte=time_start,
 	                                             commit_time__lte=time_end,
-	                                             # if_design=True,
+	                                             if_design=True,
 	                                             ).values('commit_intro')
 
 	# 打开文本
@@ -1334,11 +1684,19 @@ def graph_commit_intro_word_cloud(request):
 	return JsonResponse(response)
 
 
-# 绘制主要贡献者词云图 -> base64 str, utf-8
-def graph_commit_contributor_word_cloud(request):
-	contributor_source = commit_contributors.objects.order_by('-modi_files')
-	total_contributor = contributor_source.count()
-	primary_contributor = contributor_source[:total_contributor / 10]
+# 绘制设计讨论词云图，-> base64 str, utf-8
+def pandas_graph_commit_intro_word_cloud(request):
+	# 获取前端传回的起讫日期，传回词云图的base64字符串。
+	# 时间格式为"%Y-%m-%d"
+	time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+	time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
+	# time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
+	# time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
+	intro_source = pandas_commit_history.objects.filter(commit_time__gte=time_start,
+	                                             commit_time__lte=time_end,
+	                                             if_design=True,
+	                                             ).values('commit_intro')
+
 	# 打开文本
 	# os.chdir("/Users/ihsiao/Documents/SRE/pt_als")
 	# with open("comments.txt", encoding="utf-8") as f:
@@ -1346,8 +1704,42 @@ def graph_commit_contributor_word_cloud(request):
 
 	# 生成输入字符串
 	intro_buf = ""
+	for i in intro_source:
+		intro_buf += i['commit_intro']
+
+	# # 生成对象
+	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
+	mask = np.array(img)  # 将图片转换为数组
+
+	stopwords = {"Fix", "Add", "Remove", "Use", "the", "py", "a", "in", "to", "for", "and", "of", "from", "with",
+	             "on", "test", "tests", "support", "revert", "dynamo"}
+	_wcloud = wordcloud.WordCloud(
+		mask=mask,
+		width=1100,
+		height=1100,
+		background_color='white',
+		max_words=200,
+		stopwords=stopwords,
+		colormap="spring")
+	_wc = _wcloud.generate(intro_buf)
+
+	# 生成png图片，储存在缓冲区中
+	_buffer = io.BytesIO()
+	_wc.to_image().save(_buffer, 'png')
+	# 生成base64字符串，并传回前端
+	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
+	response = {'base64_png': _base64_str}
+	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	return JsonResponse(response)
+
+
+# 绘制主要贡献者词云图 -> base64 str, utf-8
+def pandas_graph_commit_contributor_word_cloud(request):
+	primary_contributor = pandas_commit_contributors.objects.filter(if_core=True).values('author')
+	# 生成输入字符串
+	intro_buf = ""
 	for i in primary_contributor:
-		intro_buf += i['author']
+		intro_buf += i['author'] + " "
 
 	# # 生成对象
 	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
@@ -1359,7 +1751,38 @@ def graph_commit_contributor_word_cloud(request):
 		height=1100,
 		background_color='white',
 		max_words=200,
-		colormap="autumn")
+		colormap="summer")
+	_wc = _wcloud.generate(intro_buf)
+	# _wc.to_file("data/contributor.png") # 本地图片观察效果
+	# 生成png图片，储存在缓冲区中
+	_buffer = io.BytesIO()
+	_wc.to_image().save(_buffer, 'png')
+	# 生成base64字符串，并传回前端
+	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
+	response = {'base64_png': _base64_str}
+	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	return JsonResponse(response)
+
+
+# 绘制主要贡献者词云图 -> base64 str, utf-8
+def graph_commit_contributor_word_cloud(request):
+	primary_contributor = commit_contributors.objects.filter(if_core=True).values('author')
+	# 生成输入字符串
+	intro_buf = ""
+	for i in primary_contributor:
+		intro_buf += i['author'] + " "
+
+	# # 生成对象
+	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
+	mask = np.array(img)  # 将图片转换为数组
+
+	_wcloud = wordcloud.WordCloud(
+		mask=mask,
+		width=1100,
+		height=1100,
+		background_color='white',
+		max_words=200,
+		colormap="winter")
 	_wc = _wcloud.generate(intro_buf)
 
 	# 生成png图片，储存在缓冲区中
@@ -1378,32 +1801,32 @@ def graph_modi_time_of_day(request):
 	# response: {'x': [], 'add': [], 'del':[]}
 	# 获取前端传回的起讫日期，传回词云图的base64字符串。
 	# 时间格式为"%Y-%m-%d"
-	# time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
-	# time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
-	time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
-	time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
-	stat_source = commit_by_day.objects.filter(commit_time__gte=time_start,
-	                                           commit_time__lte=time_end,
+	time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+	time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
+	# time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
+	# time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
+	stat_source = commit_by_day.objects.filter(date__gte=time_start,
+	                                           date__lte=time_end,
 	                                           ).values('modi_ins', 'modi_del')
 	x_list = list(range(24))
-	add_list = np.zeros(24, int)
-	del_list = np.zeros(24, int)
+	add_list = np.zeros(24)
+	del_list = np.zeros(24)
 	for entry in stat_source:
 		try:
 			add_list += list(map(lambda x: int(x, 10), entry['modi_ins'].split(',')))
 			del_list += list(map(lambda x: int(x, 10), entry['modi_del'].split(',')))
 		except Exception:
 			continue
-	response = {'x': x_list, 'add': list(add_list), 'del': list(del_list)}
+	add_list = list(map(lambda x: int(x), add_list))
+	del_list = list(map(lambda x: int(x), del_list))
+	response = {'x': x_list, 'add': add_list, 'del': del_list}
 	return JsonResponse(response)
 
 
-# 绘制每日代码提交情况
+# 比较两仓库提交情况
 def graph_commit_by_day(request):
 	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
 	# 检查更新记录
-
-	response = {'x': [], 'pytorch_core': [], 'pytorch_else': [], 'o_core': [], 'o_else': []}
 
 	x_list = []
 	pc_list = []
@@ -1414,21 +1837,178 @@ def graph_commit_by_day(request):
 	try:
 		last_day = commit_by_day.objects.order_by('date').last().date
 		first_day = commit_by_day.objects.order_by('date').first().date
+		while first_day <= last_day:
+
+			x_list.append(first_day.strftime("%Y-%m-%d"))
+
+			_pc = commit_by_day.objects.get(date=first_day).comm_cnt_core
+			_pa = commit_by_day.objects.get(date=first_day).comm_cnt
+			_oc = pandas_commit_by_day.objects.get(date=first_day).comm_cnt_core
+			_oa = pandas_commit_by_day.objects.get(date=first_day).comm_cnt
+			pc_list.append(_pc)
+			pe_list.append(_pa - _pc)
+			oc_list.append(_pc)
+			oe_list.append(_oa - _oc)
+
+			first_day += dt.timedelta(days=1)
+
 	except commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
-		return JsonResponse(response)
-
-	while first_day <= last_day:
-		x_list.append(first_day.strftime("%Y-%m-%d"))
-		pc_list.append()
-		first_day += dt.timedelta(days=1)
+		pass
+	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
 
 
-def test(response):
+def graph_design_by_day(request):
+	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
+	# 检查更新记录
+
+	x_list = []
+	pc_list = []
+	pe_list = []
+	oc_list = []
+	oe_list = []
+
+	try:
+		last_day = commit_by_day.objects.order_by('date').last().date
+		first_day = commit_by_day.objects.order_by('date').first().date
+		while first_day <= last_day:
+
+			x_list.append(first_day.strftime("%Y-%m-%d"))
+
+			_pc = commit_by_day.objects.get(date=first_day).desi_cnt_core
+			_pa = commit_by_day.objects.get(date=first_day).desi_cnt
+			_oc = pandas_commit_by_day.objects.get(date=first_day).desi_cnt_core
+			_oa = pandas_commit_by_day.objects.get(date=first_day).desi_cnt
+			pc_list.append(_pc)
+			pe_list.append(_pa - _pc)
+			oc_list.append(_pc)
+			oe_list.append(_oa - _oc)
+
+			first_day += dt.timedelta(days=1)
+
+	except commit_by_day.DoesNotExist:
+		# 不存在记录，无法画图
+		pass
+	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
+
+
+def graph_file_by_day(request):
+	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
+	# 检查更新记录
+
+	x_list = []
+	pc_list = []
+	pe_list = []
+	oc_list = []
+	oe_list = []
+
+	try:
+		last_day = commit_by_day.objects.order_by('date').last().date
+		first_day = commit_by_day.objects.order_by('date').first().date
+		while first_day <= last_day:
+
+			x_list.append(first_day.strftime("%Y-%m-%d"))
+
+			_pc = commit_by_day.objects.get(date=first_day).modi_files_core
+			_pa = commit_by_day.objects.get(date=first_day).modi_files
+			_oc = pandas_commit_by_day.objects.get(date=first_day).modi_files_core
+			_oa = pandas_commit_by_day.objects.get(date=first_day).modi_files
+			pc_list.append(_pc)
+			pe_list.append(_pa - _pc)
+			oc_list.append(_pc)
+			oe_list.append(_oa - _oc)
+
+			first_day += dt.timedelta(days=1)
+
+	except commit_by_day.DoesNotExist:
+		# 不存在记录，无法画图
+		pass
+	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
+
+
+# 绘制复合饼图
+def compound_pie_chart_commit(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in commit_by_day.objects.values('date', 'comm_cnt', 'comm_cnt_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['comm_cnt_core'])
+		else_list.append(i['comm_cnt']-i['comm_cnt_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+def compound_pie_chart_design(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in commit_by_day.objects.values('date', 'desi_cnt', 'desi_cnt_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['desi_cnt_core'])
+		else_list.append(i['desi_cnt']-i['desi_cnt_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+def compound_pie_chart_file(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in commit_by_day.objects.values('date', 'modi_files', 'modi_files_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['modi_files_core'])
+		else_list.append(i['modi_files']-i['modi_files_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+# 绘制pandas的复合饼图
+def pandas_compound_pie_chart_commit(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in pandas_commit_by_day.objects.values('date', 'comm_cnt', 'comm_cnt_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['comm_cnt_core'])
+		else_list.append(i['comm_cnt']-i['comm_cnt_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+def pandas_compound_pie_chart_design(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in pandas_commit_by_day.objects.values('date', 'desi_cnt', 'desi_cnt_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['desi_cnt_core'])
+		else_list.append(i['desi_cnt']-i['desi_cnt_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+def pandas_compound_pie_chart_file(request):
+	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
+	x_list = []
+	core_list = []
+	else_list = []
+	for i in pandas_commit_by_day.objects.values('date', 'modi_files', 'modi_files_core'):
+		x_list.append(i['date'].strftime("%Y-%m-%d"))
+		core_list.append(i['modi_files_core'])
+		else_list.append(i['modi_files']-i['modi_files_core'])
+	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+def test(request):
+	############################
+	# 初始化pytorch
+	############################
+
 	# 使用data/_new.txt初始化数据库
 	# 插入2022-12-25日以前的备份数据
 	# git_log_to_file()
 	commit_git_log_parser("data/_new.txt")
+
 	# 取前10 % 的开发者为主要贡献者
 	contributor_source = commit_contributors.objects.order_by('-modi_files')
 	total_contributor = contributor_source.count()
@@ -1436,8 +2016,35 @@ def test(response):
 	for i in primary_contributor:
 		i.if_core = True
 		i.save()
+	print("pytorch primary developers set!")
+
+	# 更新by_day表的数据
+	commit_update_main(request=request)
+
+	# 计算2022-11-1之后的分小时提交详情
+	commit_update_byhour(dt.datetime(2022, 10, 1))
+	print("pytorch by_day set!")
+
+	############################
+	# 初始化pandas
+	############################
+	pandas_commit_git_log_parser("data/pandas_log.txt")
+	print("pandas log read!")
+
+	# 取前10 % 的开发者为主要贡献者
+	contributor_source = pandas_commit_contributors.objects.order_by('-modi_files')
+	total_contributor = contributor_source.count()
+	primary_contributor = contributor_source[:total_contributor / 10]
+	for i in primary_contributor:
+		i.if_core = True
+		i.save()
+	print("pandas primary developers set!")
+
+	# 更新by_day表的数据
+	pandas_commit_update_main(request=request)
+
+	# 计算2022-11-1之后的分小时提交详情
+	pandas_commit_update_byhour(dt.datetime(2022, 11, 1))
+	print("pandas by_day set!")
 	return JsonResponse({'init': 'completed!'})
 
-#
-# def tmp():
-# 	# 利用此
