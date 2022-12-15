@@ -87,10 +87,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
-        'PASSWORD': 'yjy20011216',#填入自己的密码
+        # 'PASSWORD': 'yjy20011216',#填入自己的密码
+        'PASSWORD': '00000000',#填入自己的密码
         'NAME': 'test02',#填入自己的database的名字
         'HOST': '',
         'PORT': 3306,
+        'OPTIONS': {'charset': 'utf8mb4'}  # 扩展utf-8支持，修复中文插入失败的bug
     }
 }
 

@@ -33,4 +33,11 @@ urlpatterns = [
     path('pytorch_committer', views.pytorch_committer),
     path('test_update', views.update),
     path('test1', views.pandas_update),
+    path('intro_wordcloud', views.graph_commit_intro_word_cloud),
+    path('contributor_wordcloud', views.graph_commit_contributor_word_cloud),
+    path('commit_update', views.commit_update_main),
+    path('tttt', views.test),
+    path('uuuu', views.commit_update_main),
+
+
 ]
