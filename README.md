@@ -49,3 +49,26 @@
   - 在项目根目录运行终端，输入`python manage.py runserver`,出现如下图所示内容，即成功运行。
 
 ![run](./assets/run.png)
+
+### 前端安装及运行
+
+#### 安装（以windows 10 x64 为例）
+
++ 安装`nodejs` 和`npm`该项目`node`版本为`v16.17.1 ` 	`npm`版本为`8.15.0  `
+
++ 进入项目`vue-admin-template`文件夹中
+
+  + 输入如下命令
+
+  ```
+  npm install --legacy-peer-deps
+  npm run dev
+  ```
+
+  ​			看到显示
+
+  ![image-20221215202824469](./assets/image-20221215202824469.png)
+
+  即为成功运行
+
++ 可以点击上述链接进入项目
