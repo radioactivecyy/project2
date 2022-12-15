@@ -76,18 +76,18 @@
     </el-row>
     <h2>贡献者活跃情况</h2>
     <el-row>
-      <el-col :span="12">
+      <el-col :span="20">
         <calender :Year="year" MyTitle="star" />
       </el-col>
-      <el-col :span="12">
+      <!-- <el-col :span="12">
         <calender :Year="year" MyTitle="issue" />
-      </el-col>
+      </el-col> -->
     </el-row>
     <el-row>
-      <el-col :xs="14" :sm="14" :lg="12">
+      <!-- <el-col :xs="14" :sm="14" :lg="12">
         <calender :Year="year" MyTitle="commit" />
-      </el-col>
-      <el-col :xs="14" :sm="14" :lg="12">
+      </el-col> -->
+      <el-col :xs="14" :sm="14" :lg="23">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
             <ins_del :chartData="insDelData" lineTitle1="add" lineTitle2="delete" @func="getMsgFrominsDel" />
@@ -105,6 +105,7 @@
           </div>
         </div>
       </el-col>
+      <el-image style="width: 600px; height: 600px" :src="contirbcloud" :fit="fit" />
     </el-row>
 
     <h2>Companies</h2>
@@ -143,7 +144,8 @@
       </el-col>
     </el-row>
     <h2>cloud</h2>
-    <el-image style="width: 100px; height: 100px" :src="designcloud" :fit="fit" />
+    
+    <el-image style="width: 600px; height: 600px" :src="designcloud" :fit="fit" />
   </div>
 </template>
 
@@ -186,6 +188,8 @@ export default {
       contriData: {},
       designData: {},
       designcloud: String,
+      contirbcloud: String,
+
       companyDataType: 'star',
       ListData: 'dev-api/api/pytorch_star'
     }
@@ -219,7 +223,7 @@ export default {
     this.getCompanyIssueData()
     this.getCompanyCommitData()
     this.getDesignCloud()
-
+    this.getContribCloud()
     this.getIssueLineData()
     this.getStarLineData()
     this.getCommitLineData()
@@ -244,17 +248,25 @@ export default {
         this.companyDataType = 'issue'
     })},
     commitBubble: function (data) {
-      // console.log('commitBubble')
       this.getCompanyCommitData().then(res => {
         //  刷新该组件
         this.companyDataType = 'commit'
       })
     },
     async getDesignCloud() {
+     
       dataapi.getDesignCloud().then(res => {
-        this.designcloud = 'data:image/png;base64,' + res.data
+        this.designcloud = 'data:image/png;base64,' + res.base64_png
+     
       })
     },
+    async getContribCloud() {
+     console.log('getContribCloud')
+     dataapi.getContributionCloud().then(res => {
+       this.contirbcloud = 'data:image/png;base64,' + res.base64_png
+       
+     })
+   },
     async getCompanyStarData() {
       const res = await d3.csv('dev-api/api/pytorch_star')
       this.bubble_data = res

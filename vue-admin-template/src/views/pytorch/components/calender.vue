@@ -15,11 +15,11 @@ export default {
     },
     width: {
       type: String,
-      default: '100%'
+      default: '110%'
     },
     height: {
       type: String,
-      default: '250px'
+      default: '260px'
     },
     autoResize: {
       type: Boolean,

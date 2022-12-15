@@ -36,13 +36,11 @@ export function getContribution() {
   })
 }
 // post
-export function getContributionCloud(index) {
+export function getContributionCloud() {
   return request({
-    url: 'api/contributionCloud',
+    url: 'api/contributor_wordcloud',
     method: 'get',
-    params: {
-      index: index
-    }
+    
   })
 }
 export function getDesign() {
@@ -53,7 +51,7 @@ export function getDesign() {
 }
 export function getDesignCloud() {
   return request({
-    url: 'api/designcloud',
+    url: 'api/intro_wordcloud',
     method: 'get'
   })
 }
