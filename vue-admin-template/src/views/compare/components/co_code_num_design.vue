@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div id="co1" :style="{ height: height, width: width }" />
+    <div id="co1_design" :style="{ height: height, width: width }" />
 
-    <div id="co2" :style="{ height: height, width: width }" />
+    <div id="co2_design" :style="{ height: height, width: width }" />
   </div>
 </template>
 
@@ -30,18 +30,16 @@ export default {
       type: Object,
       required: true
     },
-    mytitle:{
+    mytitle: {
+      type: String,
+      required: true,
+      default: 'title'
+    },
+    mytitle2: {
       type: String,
       required: true,
       default: 'title'
     }
-    ,
-    mytitle2:{
-      type: String,
-      required: true,
-      default: 'title'
-    }
-
   },
   data() {
     return {
@@ -56,8 +54,7 @@ export default {
         this.initChart()
       },
       deep: true
-    },
-    
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -78,13 +75,13 @@ export default {
   },
   methods: {
     initChart() {
-      console.log('this.chartDataaaa',this.chartData)
-      this.chart1 = echarts.init(document.getElementById('co1'), 'macarons')
-      this.chart2 = echarts.init(document.getElementById('co2'), 'macarons')
+      console.log('this.chartDataaaa', this.chartData)
+      this.chart1 = echarts.init(document.getElementById('co1_design'), 'macarons')
+      this.chart2 = echarts.init(document.getElementById('co2_design'), 'macarons')
 
       var mydata1 = JSON.parse(JSON.stringify(this.chartData)).chartData1
       var mydata2 = JSON.parse(JSON.stringify(this.chartData)).chartData2
-      console.log('mydata1',mydata1)
+      console.log('mydata1', mydata1)
       var mysource1_1 = mydata1.x
       var mysource2_1 = mydata1.y1
       var mysource3_1 = mydata1.y2
@@ -95,10 +92,10 @@ export default {
       mysource1.push(mysource2_1)
       // 将mysource3添加到mysource中
       mysource1.push(mysource3_1)
-      mysource1_1= mydata2.x
+      mysource1_1 = mydata2.x
       mysource2_1 = mydata2.y1
       mysource3_1 = mydata2.y2
-      var mysource2=[]
+      var mysource2 = []
       // 将mysource1添加到mysource中
       mysource2.push(mysource1_1)
       // 将mysource2添加到mysource中
@@ -160,7 +157,7 @@ export default {
                 focus: 'self'
               },
               label: {
-                formatter: '{b}: {@'+1+'} ({d}%)'
+                formatter: '{b}: {@' + 1 + '} ({d}%)'
               },
               encode: {
                 itemName: 0,
@@ -178,7 +175,7 @@ export default {
         var T = this
         this.chart1.on('updateAxisPointer', function (event) {
           const xAxisInfo = event.axesInfo[0]
-          
+
           if (xAxisInfo) {
             T.msg = xAxisInfo.value
             T.$emit('func', T.msg)

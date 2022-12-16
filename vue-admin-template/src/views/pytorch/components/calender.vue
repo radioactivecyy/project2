@@ -36,7 +36,7 @@ export default {
    
     Year: {
       type: String,
-      default: '2017'
+      default: '2019'
     },
     MyTitle:{
       type: String,
@@ -102,7 +102,6 @@ export default {
       for (let time = date; time < end; time += dayTime) {
         data.push([echarts.format.formatTime('yyyy-MM-dd', time), Math.floor(Math.random() * 2000)])
       }
-     
       return data
     },
     // 设置图表数据

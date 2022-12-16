@@ -35,8 +35,8 @@
           </div>
         </el-col>
       </el-row>
-
-      <el-row>
+</el-row>
+      <!-- <el-row>
         <el-col :xs="14" :sm="14" :lg="12">
           <div class="chart-wrapper">
             <div class="flex justify-space-between mb-4 flex-wrap gap-4">
@@ -70,9 +70,9 @@
           </div>
         </el-col>
       </el-row>
-    </el-row>
+    </el-row> -->
     <h2>贡献者活跃情况</h2>
-    <el-row>
+    <!-- <el-row>
       <el-col span="12">
         <calender :Year="year" MyTitle="star" />
       </el-col>
@@ -87,22 +87,45 @@
       <el-col span="12">
         <calender :Year="year" MyTitle="issue" />
       </el-col>
-    </el-row>
-
+    </el-row> -->
+<!-- 
     <el-row>
-      <el-col span="12">
+      <el-col span="20">
         <calender :Year="year" MyTitle="commit" />
       </el-col>
-      <el-col span="12">
-        <calender :Year="year" MyTitle="commit" />
-      </el-col>
+     
     </el-row>
+    <el-row>
+      <el-col span="20">
+        <calender :Year="year" MyTitle="commit" />
+      </el-col>
+      </el-row>  -->
 
     <co_ins_delVue :chartData="insDelData" @func="getMsgFrominsDel" />
     <h2>代码提交情况</h2>
-    <co_code_numVue :chartData="codeNumData" @func="getMsgFromcode" />
-    <el-image style="width: 100px; height: 100px" :src="contributorCloud_p" :fit="fit" />
-    <el-image style="width: 100px; height: 100px" :src="contributorCloud_o" :fit="fit" />
+    <el-row :gutter="22">
+    <el-col :xs="14" :sm="24" :lg="15">
+      <div class="chart-wrapper">
+    <co_code_numVue :chartData="codeNumData" @func="getMsgFromcode" mytitle="commit" mytitle2="pandas commit" /></div>
+  </el-col>
+    <el-col :span="5">
+    <el-image style="width: 400px; height: 400px" :src="contributorCloud_p" :fit="fit" />
+    <el-image style="width: 400px; height: 400px" :src="contributorCloud_o" :fit="fit" /></el-col></el-row>
+    <el-row :gutter="22">
+    <el-col :xs="14" :sm="24" :lg="22">
+      <div class="chart-wrapper">
+    <co_code_num_designVue :chartData="contriDesign" mytitle="design" mytitle2="pandas design"/></div>
+  </el-col>
+   
+    </el-row>
+    <el-row :gutter="22">
+    <el-col :xs="14" :sm="24" :lg="22">
+      <div class="chart-wrapper">
+    <co_code_num_fileVue :chartData="contriFile" mytitle="file" mytitle2="pandas file"/></div>
+  </el-col>
+   
+    </el-row>
+  
     <h2>Companies</h2>
 
     <el-row :gutter="10">
@@ -118,9 +141,19 @@
       </el-col>
     </el-row>
     <h2>design</h2>
-    <linechart2> </linechart2>
-    <el-image style="width: 100px; height: 100px" :src="designcloud1" :fit="fit" />
-    <el-image style="width: 100px; height: 100px" :src="designcloud2" :fit="fit" />
+    <linechart2
+    Mytitle="design"
+                color1="rgb(149, 229, 130 )"
+                color2="rgb(159, 233, 141  )"
+                lineTitle1="Pytorch"
+                lineTitle2="Pandas"
+                :chartData="designNumdata"
+    /> 
+    <el-row :gutter="30">
+    <el-col :span="10" :offset="1">
+    <el-image style="width: 450px; height: 450px" :src="designcloud1" :fit="fit" /></el-col>
+    <el-col :span="10"></el-col><el-image style="width: 450px; height: 450px" :src="designcloud2" :fit="fit" /></el-col>
+  </el-row>
   </div>
 </template>
 <script>
@@ -129,6 +162,8 @@ import linechart2 from './components/linechart2.vue'
 import calender from '../pytorch/components/calender.vue'
 import co_ins_delVue from './components/co_ins_del.vue'
 import co_code_numVue from './components/co_code_num.vue'
+import co_code_num_designVue from './components/co_code_num_design.vue'
+import co_code_num_fileVue from './components/co_code_num_file.vue'
 import { refreshOther } from '@/api/getdata'
 import { refreshData } from '@/api/pytorch'
 import List from '../pytorch/components/list.vue'
@@ -141,7 +176,9 @@ export default {
     calender,
     linechart2,
     co_ins_delVue,
-    co_code_numVue
+    co_code_numVue,
+    co_code_num_designVue,
+    co_code_num_fileVue,
   },
   data() {
     return {
@@ -153,6 +190,7 @@ export default {
       startVal: -1,
       endVal: -1,
       contriData: {},
+      designNumdata: {},
       designcloud1: String,
       designcloud2: String,
       ListData1: Object,
@@ -167,22 +205,68 @@ export default {
   mounted() {
     const msg = this.$route.query.name
     this.getCompanyStarData()
+    this.getcontribCloud_p()
+    this.getcontribCloud_o()
+    this.getContributionFile()
+    this.getContributionDesign()
     this.getDesignCloud()
     this.getIssueLineData()
     this.getStarLineData()
     this.getCommitLineData()
     this.getInsDelData()
     this.getContribution()
+  
+  },
+  watch: {
+    // designcloud1: {
+    //   handler: function (val, oldVal) {
+     
+    //     this.getDesignCloud()
+    //   },
+    //   deep: true
+    // },
+    
+      // designcloud2: {
+      //   handler: function (val, oldVal) {
+      //     this.getDesignCloud()
+      //   },
+      //   deep: true
+      // },
+      // contributorCloud_p: {
+      //   handler: function (val, oldVal) {
+      //     this.getcontribCloud_p()
+      //   },
+      //   deep: true
+      // },
+      // contributorCloud_o: {
+      //   handler: function (val, oldVal) {
+      //     this.getcontribCloud_o()
+      //   },
+      //   deep: true
+      // },
+     
+    
+      
   },
   methods: {
+    async getDesignNum(){
+      dataapi.OgetDesign().then(res => {
+        this.designNumdata = res
+      })
+    },
+    
     async getcontribCloud_p() {
-      dataapi.getContribCloudP(this.TimeOfContributor).then(res => {
-        this.contributorCloud_p = 'data:image/png;base64,' + res.data
+      console.log('getcontribCloud_p')
+      dataapi.getContributionCloud().then(res => {
+        this.contributorCloud_p = 'data:image/png;base64,' + res.base64_png
+     
       })
     },
     async getcontribCloud_o() {
-      dataapi.getContribCloudO(this.TimeOfContributor).then(res => {
-        this.contributorCloud_o = 'data:image/png;base64,' + res.data
+      console.log('getcontribCloud_o')
+      dataapi.getContribCloudO().then(res => {
+        console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+        this.contributorCloud_o = 'data:image/png;base64,' + res.base64_png
       })
     },
     starBubble: function (data) {
@@ -231,9 +315,12 @@ export default {
       this.ListData2 = data.filter(item => item.flag === '1')
     },
     async getDesignCloud() {
+      
+      await dataapi.getDesignCloud().then(res => {
+        this.designcloud1 = 'data:image/png;base64,' + res.base64_png})
       await dataapi.OgetDesignCloud().then(res => {
-        this.designcloud1 = 'data:image/png;base64,' + res.cloud1
-        this.designcloud2 = 'data:image/png;base64,' + res.cloud2
+        
+        this.designcloud2 = 'data:image/png;base64,' + res.base64_png
       })
     },
 
@@ -290,20 +377,66 @@ export default {
       })
     },
     async getContribution() {
+
       await dataapi.OgetContribution().then(res => {
         // 把数组中的每个元素都push到data中
+     
         var data = { chartData1: {}, chartData2: {} }
         data['chartData1']['x'] = res.x
         data['chartData2']['x'] = res.x
         data['chartData1']['y1'] = res.pytorch_core
         data['chartData1']['y2'] = res.pytorch_else
-        data['chartData2']['y1'] = res.pandas_core
-        data['chartData1']['y2'] = res.pandas_else
+        data['chartData2']['y1'] = res.o_core
+        data['chartData2']['y2'] = res.o_else
         // data['y2'] = res.y2
-        this.contriData = JSON.parse(JSON.stringify(data))
-        // console.log('this.contriData', this.contriData)
+      
+        data=JSON.parse(JSON.stringify(data))
+        this.codeNumData = JSON.parse(JSON.stringify(data))
+       
+        console.log('codenumdata',this.codeNumData)
       })
     },
+    async getContributionDesign() {
+    
+await dataapi.OgetContributionDesign().then(res => {
+  // 把数组中的每个元素都push到data中
+
+  var data = { chartData1: {}, chartData2: {} }
+  data['chartData1']['x'] = res.x
+  data['chartData2']['x'] = res.x
+  data['chartData1']['y1'] = res.pytorch_core
+  data['chartData1']['y2'] = res.pytorch_else
+  data['chartData2']['y1'] = res.o_core
+  data['chartData2']['y2'] = res.o_else
+  // data['y2'] = res.y2
+
+  data=JSON.parse(JSON.stringify(data))
+
+  this.contriDesign = JSON.parse(JSON.stringify(data))
+  console.log('this.contriData', this.contriDesign)
+})
+},
+async getContributionFile() {
+
+await dataapi.OgetContributionFile().then(res => {
+  // 把数组中的每个元素都push到data中
+
+  var data = { chartData1: {}, chartData2: {} }
+  data['chartData1']['x'] = res.x
+  data['chartData2']['x'] = res.x
+  data['chartData1']['y1'] = res.pytorch_core
+  data['chartData1']['y2'] = res.pytorch_else
+  data['chartData2']['y1'] = res.o_core
+  data['chartData2']['y2'] = res.o_else
+  // data['y2'] = res.y2
+
+  data=JSON.parse(JSON.stringify(data))
+  console.log('data', data)
+  this.contriFile = JSON.parse(JSON.stringify(data))
+ 
+  // console.log('this.contriData', this.contriData)
+})
+},
     async refresh() {
       refreshData().then(
         // 刷新数据后重新渲染

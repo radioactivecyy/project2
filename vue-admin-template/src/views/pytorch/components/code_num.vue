@@ -26,7 +26,12 @@ export default {
       type: Object,
       required: true
     },
-    
+    myTitle:{
+      type: String,
+      required: true,
+      default: '贡献者'
+    }
+
   },
   data() {
     return {
@@ -38,6 +43,15 @@ export default {
     this.$nextTick(() => {
       this.initChart()
     })
+  },
+  watch: {
+    chartData: {
+      deep: true,
+      handler(val) {
+        this.initChart(val)
+      }
+    },
+
   },
   beforeDestroy() {
     if (!this.chart) {
@@ -51,6 +65,7 @@ export default {
       this.chart = echarts.init(this.$el, 'macarons')
       setTimeout(() => {
         var mydata = JSON.parse(JSON.stringify(this.chartData))
+        console.log('mydata',mydata)
         // 遍历数据，
         var mysource=[]
         var mysource1=mydata.x
@@ -62,7 +77,7 @@ export default {
         mysource.push(mysource2)
         // 将mysource3添加到mysource中
         mysource.push(mysource3)
-      
+      console.log('mysource',mysource)
         var option = {
           legend: {
             orient: 'vertical',
@@ -78,20 +93,14 @@ export default {
             }
           },
           dataset: {
-            // source: [
-             
-            //   ['product', '2012', '2013', '2014', '2015', '2016', '2017'],
-            //   ['核心贡献者', 56.5, 82.1, 88.7, 70.1, 53.4, 85.1],
-            //   ['其余贡献者', 51.1, 51.4, 55.1, 53.3, 73.8, 68.7],
-           
-            // ]
+
             source: mysource
           },
           title: {
             // 位置设置为底部
 
             left: 'center',
-            text: '贡献者'
+            text: this.myTitle
           },
           dataZoom: {
             type: 'slider',
@@ -114,7 +123,7 @@ export default {
               seriesLayoutBy: 'row',
               emphasis: { focus: 'series' }
             },
-         
+
             {
               type: 'pie',
               id: 'pie',

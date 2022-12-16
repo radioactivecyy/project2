@@ -114,19 +114,22 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
           data: this.date
         },
         yAxis: {
+        
+          // 取整  
+          
+          
+          // max: Math.ceil(this.data[this.data.length-1]/1000)*1000,
           type: 'value',
-          boundaryGap: [0, '100%']
+          // boundaryGap: [0, '100%']
         },
         dataZoom: [
-          {
+        {
             type: 'inside',
             start: 0,
-            end: 100
-          },
+            end: 100},
           {
             start: 0,
             end: 100
@@ -134,26 +137,27 @@ export default {
         ],
         series: [
           {
-            name: 'Fake Data',
+            name: this.Mytitle,
             type: 'line',
             symbol: 'none',
             sampling: 'lttb',
-            itemStyle: {
-              color: this.color1
-            },
-            areaStyle: {
-              color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                {
-                  offset: 0,
-                  color: this.color2
-                },
-                {
-                  offset: 1,
-                  color: this.color2
-                }
-              ])
-            },
+
             data: this.data
+                 // itemStyle: {
+            //   color: this.color1
+            // },
+            // areaStyle: {
+            //   color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            //     {
+            //       offset: 0,
+            //       color: this.color2
+            //     },
+            //     {
+            //       offset: 1,
+            //       color: this.color2
+            //     }
+            //   ])
+            // },
           }
         ]
       })

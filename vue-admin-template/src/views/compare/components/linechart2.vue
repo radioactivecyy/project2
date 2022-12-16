@@ -121,15 +121,19 @@ export default {
         yAxis: {
           type: 'value'
         },
+        legend: {
+          data: [this.lineTitle1, this.lineTitle2],
+          top: 30
+        },
         dataZoom: [
           {
             type: 'inside',
             start: 0,
-            end: 10
+            end: 100
           },
           {
             start: 0,
-            end: 10
+            end: 100
           }
         ],
         series: [

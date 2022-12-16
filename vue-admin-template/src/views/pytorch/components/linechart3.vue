@@ -132,18 +132,16 @@ export default {
     },
     // 设置图表数据
     setOptions({ expectedData, actualData } = {}) {
-      console.log('mmmmmmmmmmmmmmmmmmmmm')
+     
       var mydata1 = JSON.parse(JSON.stringify(this.chartData1))
       var mydata2 = JSON.parse(JSON.stringify(this.chartData2))
       var mydata3 = JSON.parse(JSON.stringify(this.chartData3))
-      console.log(mydata1)
+     
       this.date = mydata1.x
       this.data1 = mydata1.y
       this.data2 = mydata2.y
       this.data3 = mydata3.y
-     console.log(this.data1)
-     console.log(this.data2)
-      console.log(this.data3)
+  
      
      
       this.chart.setOption({
@@ -176,11 +174,7 @@ export default {
           boundaryGap: [0, '100%']
         },
         dataZoom: [
-          {
-            type: 'inside',
-            start: 0,
-            end: 100
-          },
+         
           {
             start: 0,
             end: 100

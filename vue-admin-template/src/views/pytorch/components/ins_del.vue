@@ -10,6 +10,8 @@ import resize from '../mixins/resize'
 export default {
   mixins: [resize],
   props: {
+
+    
     className: {
       type: String,
       default: 'chart'
@@ -85,6 +87,8 @@ export default {
   methods: {
     // 初始化图表
     initChart() {
+    
+     
       this.chart = echarts.init(this.$el, 'macarons')
       this.setOptions(this.chartData)
       var mychart = this.chart
@@ -93,7 +97,7 @@ export default {
       this.chart.on('datazoom', function (params) {
         this.endVal = mychart.getOption().dataZoom[0].endValue
         this.startVal = mychart.getOption().dataZoom[0].startValue
-        console.log('eeeeeee', this.endVal, this.startVal)
+        
         // 向后端发送
         T.$emit('func', { startVal: this.startVal, endVal: this.endVal })
       })
@@ -117,7 +121,9 @@ export default {
         toolbox: {
           feature: {
             dataZoom: {
-              yAxisIndex: 'none'
+              yAxisIndex: 'none',
+              // 是否显示数据缩放视图
+            
             }
           }
         },

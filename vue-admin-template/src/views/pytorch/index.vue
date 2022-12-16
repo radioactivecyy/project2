@@ -1,5 +1,6 @@
 <template>
   <div class="dashboard-editor-container" id="pdfDom">
+  <getStar />
     <h1><svg-icon icon-class="pytorch" /> Pytorch</h1>
     <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
     <p>
@@ -38,7 +39,7 @@
       </el-row>
 
       <el-row>
-        <el-col :xs="14" :sm="14" :lg="12">
+        <!-- <el-col :xs="14" :sm="14" :lg="12">
           <div class="chart-wrapper">
             <div class="flex justify-space-between mb-4 flex-wrap gap-4">
               <linechart
@@ -50,8 +51,8 @@
               />
             </div>
           </div>
-        </el-col>
-        <el-col :xs="14" :sm="14" :lg="12">
+        </el-col> -->
+        <el-col :xs="14" :sm="14" :lg="22">
           <div class="chart-wrapper">
             <div class="flex justify-space-between mb-4 flex-wrap gap-4">
               <linechart3
@@ -76,9 +77,9 @@
     </el-row>
     <h2>贡献者活跃情况</h2>
     <el-row>
-      <el-col :span="20">
-        <calender :Year="year" MyTitle="star" />
-      </el-col>
+      <!-- <el-col :span="20">
+        <calender :Year="year" MyTitle="star" /> -->
+      <!-- </el-col> -->
       <!-- <el-col :span="12">
         <calender :Year="year" MyTitle="issue" />
       </el-col> -->
@@ -95,18 +96,50 @@
         </div>
       </el-col>
     </el-row>
-
+<el-row>
+  <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <ins_del :chartData="insDelDatabyHour" lineTitle1="add" lineTitle2="delete" height="550px" hasDataZoom="false" />
+          </div>
+        </div>
+</el-row>
     <h2>代码提交情况</h2>
-    <el-row :gutter="32">
+    <el-row :gutter="22">
       <el-col :xs="14" :sm="24" :lg="15">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <code_num :chartData="contriData" @func="getMsgFromcode" />
+            <code_num :chartData="contriData" @func="getMsgFromcode" myTitle="commit贡献"/>
           </div>
         </div>
       </el-col>
-      <el-image style="width: 600px; height: 600px" :src="contirbcloud" :fit="fit" />
+      <el-col :span="5">
+      <el-image style="width: 400px; height: 400px" :src="contirbcloud" :fit="fit" /></el-col>
     </el-row>
+
+    <el-row :gutter="22">
+      <el-col :xs="14" :sm="24" :lg="22">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <code_num :chartData="contriDesignData" @func="getMsgFromcode" myTitle="design贡献"/>
+          </div>
+        </div>
+      </el-col>
+      
+   
+    </el-row>
+    
+    <el-row :gutter="22">
+      <el-col :xs="14" :sm="24" :lg="22">
+        <div class="chart-wrapper">
+          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
+            <code_num :chartData="contriFileData" @func="getMsgFromcode" myTitle="file贡献"/>
+          </div>
+        </div>
+      </el-col>
+      
+   
+    </el-row>
+
 
     <h2>Companies</h2>
 
@@ -162,6 +195,7 @@ import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
 
 import * as dataapi from '@/api/getdata'
+import getStar from './components/getStar'
 import { refreshData } from '@/api/pytorch'
 import * as d3 from 'd3'
 export default {
@@ -183,9 +217,12 @@ export default {
       commitNumdata: {},
       threeData: {},
       insDelData: {},
+      insDelDatabyHour: {},
       startVal: -1,
       endVal: -1,
       contriData: {},
+      contriDesignData: {},
+      contriFileData: {},
       designData: {},
       designcloud: String,
       contirbcloud: String,
@@ -201,7 +238,7 @@ export default {
     List,
     linechart,
     code_num,
-
+    getStar,
     ins_del,
     calender,
     // contributor_cloudVue,
@@ -219,20 +256,28 @@ export default {
 
   mounted() {
     const msg = this.$route.query.name
+   
+    this.getInsDelDatabyHour()
     this.getCompanyStarData()
     this.getCompanyIssueData()
+    this.getContributionDesign()
+    this.getContributionFile()
     this.getCompanyCommitData()
     this.getDesignCloud()
     this.getContribCloud()
     this.getIssueLineData()
-    this.getStarLineData()
+    // this.getStarLineData()
     this.getCommitLineData()
     // this.getThreeData()
     this.getInsDelData()
     this.getContribution()
-    this.getDesignData()
+    this.getDesign()
+
+   
   },
   methods: {
+   
+    
     starBubble: function (data) {
       // console.log('starBubble')
       this.getCompanyStarData().then(res => {
@@ -323,14 +368,49 @@ export default {
         this.insDelData = JSON.parse(JSON.stringify(data))
       })
     },
-    async getContribution() {
-      await dataapi.getContribution().then(res => {
+    async getInsDelDatabyHour() {
+      console.log('getInsDelDatabyHour')
+      await dataapi.getInsDelbyHour().then(res => {
         // 把数组中的每个元素都push到data中
         var data = {}
         data['x'] = res.x
-        data['y1'] = res.y1
-        data['y2'] = res.y2
+        data['y1'] = res.add
+        data['y2'] = res.del
+        this.insDelDatabyHour = JSON.parse(JSON.stringify(data))
+      })
+    },
+    async getContribution() {
+      await dataapi.PgetContribution().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.core
+        data['y2'] = res.else
+        data=JSON.parse(JSON.stringify(data))
         this.contriData = JSON.parse(JSON.stringify(data))
+      })
+    },
+    async getContributionDesign() {
+      console.log('getContributionDesign')
+      await dataapi.PgetContributionDesign().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.core
+        data['y2'] = res.else
+        data=JSON.parse(JSON.stringify(data))
+        this.contriDesignData = JSON.parse(JSON.stringify(data))
+      })
+    },
+    async getContributionFile() {
+      await dataapi.PgetContributionFile().then(res => {
+        // 把数组中的每个元素都push到data中
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.core
+        data['y2'] = res.else
+        data=JSON.parse(JSON.stringify(data))
+        this.contriFileData = JSON.parse(JSON.stringify(data))
       })
     },
     async getDesign() {
@@ -338,16 +418,12 @@ export default {
         // 把数组中的每个元素都push到data中
         var data = {}
         data['x'] = res.x
-        data['y'] = res.y
+        data['y'] = res.design
 
         this.designData = JSON.parse(JSON.stringify(data))
       })
     },
-    // async getThreeData() {
 
-    //   console.log('there')
-    //   console.log(this.threeData)
-    // },
     getMsgFromcode(msg) {
       // 把msg传递给父组件中的TimeOfContributor
       this.TimeOfContributor = msg
