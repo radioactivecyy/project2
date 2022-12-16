@@ -1884,15 +1884,15 @@ def comp_commit_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pc_list = list(map(lambda x: x['core'], db_src))
-		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
+		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
 			week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
-		oc_list = list(map(lambda x: x['core'], pandas_db_src))
-		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
 	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
@@ -1917,14 +1917,14 @@ def comp_design_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pc_list = list(map(lambda x: x['core'], db_src))
-		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
+		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
-		oc_list = list(map(lambda x: x['core'], pandas_db_src))
-		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
 		pass
@@ -1951,15 +1951,15 @@ def comp_file_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pc_list = list(map(lambda x: x['core'], db_src))
-		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
+		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
 			week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
-		oc_list = list(map(lambda x: x['core'], pandas_db_src))
-		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
 
 	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
@@ -2052,6 +2052,31 @@ def graph_commit_by_week(request):
 	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
 	val_list = ['commit'] + list(map(lambda x: x['nums'], db_src))
 	return JsonResponse({'x': x_list, 'commit': val_list})
+
+
+def pandas_graph_design_by_week(request):
+	db_src = pandas_commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('desi_cnt')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['design'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'design': val_list})
+
+
+def pandas_graph_file_by_week(request):
+	db_src = pandas_commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('modi_files')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['file'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'files': val_list})
+
+
+def pandas_graph_commit_by_week(request):
+	db_src = pandas_commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('comm_cnt')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['commit'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'commit': val_list})
+
 
 def test(request):
 	############################

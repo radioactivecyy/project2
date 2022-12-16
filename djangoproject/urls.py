@@ -57,6 +57,10 @@ urlpatterns = [
     path('desi_week', views.graph_design_by_week),
     path('comm_week', views.graph_commit_by_week),
     path('file_week', views.graph_file_by_week),
+    # pandas的design讨论数量，按周）
+    path('pandas_desi_week', views.pandas_graph_design_by_week),
+    path('pandas_comm_week', views.pandas_graph_commit_by_week),
+    path('pandas_file_week', views.pandas_graph_file_by_week),
     # 更新仓库
     path('commit_update', views.commit_update_main),
     path('tttt', views.test),
