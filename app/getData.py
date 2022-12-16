@@ -90,36 +90,41 @@ def getIssue(token, name):
     issues = [sum(issues[:i + 1]) for i in range(len(issues))]
     df["issues"] = issues
     # 写到csv文件中
-    df.to_csv("pandas_issues.csv", index=False)
+    df.to_csv("issues_pytorch.csv", index=False)
 
 
-def getCommitsInsdel(token, name):
+def getCommitPerDay(token, name, filename):
+    # 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
+    g = Github(token)
+    # 获取仓库
+    # repo = g.get_repo("LBruyne/ZJU-SE-CourseMaterial")
+    repo = g.get_repo(name)
+    # 获取仓库的commits
+    commits = repo.get_commits()
+    # 根据commits的时间进行排序
+    commits = sorted(commits, key=lambda x: x.commit.author.date)
+    # 获取每个commit的时间
+    commits = [x.commit.author.date for x in commits]
+    time = [x.strftime("%Y-%m-%d") for x in commits]
+    # 获取每个commit的时间的数量
+    commits = [commits.count(x) for x in commits]
+    df = pd.DataFrame(time, columns=["time"])
+    df["commits"] = commits
+    df = df.groupby("time").sum()
+    df = df.reset_index()
+    df["commits"] = commits
+    df.to_csv(filename, index=False)
+
+
+def getCommitsInsdel(token, name, filename, filename1):
     # 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
     g = Github(token)
     # 获取仓库
     repo = g.get_repo(name)
     # 获取仓库的commits
     commits = repo.get_commits()
-    # 获取ins和del
-    ins = []
-    dels = []
-    for commit in commits:
-        files = commit.files
-        for file in files:
-            ins.append(file.additions)
-            dels.append(file.deletions)
+    commits1 = commits
 
-    print(ins)
-    print(dels)
-
-
-def getCommitsInsdel(token, name):
-    # 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
-    g = Github(token)
-    # 获取仓库
-    repo = g.get_repo(name)
-    # 获取仓库的commits
-    commits = repo.get_commits()
     # 获取每个时间的ins和del
     ins = []
     dels = []
@@ -130,16 +135,33 @@ def getCommitsInsdel(token, name):
     # 写到csv文件中
     # 获取每个commit的时间
     commits = [x.commit.author.date for x in commits]
-    print(ins)
-    print(dels)
     time = [x.strftime("%Y-%m-%d") for x in commits]
 
     df = pd.DataFrame(time, columns=["time"])
-    df.to_csv("_commits_insdel_time.csv", index=False)
+
     df = pd.DataFrame(ins, columns=["ins"])
-    df.to_csv("commits_ins.csv", index=False)
-    df = pd.DataFrame(dels, columns=["dels"])
-    df.to_csv("commits_dels.csv", index=False)
+    df['ins'] = ins
+    df['dels'] = dels
+    df = df.groupby("time").sum()
+    df = df.reset_index()
+    # 按月份进行分组
+    df["time"] = df["time"].apply(lambda x: x[:7])
+
+    df.to_csv(filename, index=False)
+
+    commits = commits1
+    commits = sorted(commits, key=lambda x: x.commit.author.date)
+    # 获取每个commit的时间
+    commits = [x.commit.author.date for x in commits]
+    time = [x.strftime("%Y-%m-%d") for x in commits]
+    # 获取每个commit的时间的数量
+    commits = [commits.count(x) for x in commits]
+    df = pd.DataFrame(time, columns=["time"])
+    df["commits"] = commits
+    df = df.groupby("time").sum()
+    df = df.reset_index()
+    df["commits"] = commits
+    df.to_csv(filename1, index=False)
 # 处理stars
 
 
@@ -156,11 +178,41 @@ def handel_Stars():
 # 获取stars
 
 
+def analyse_Issue(name, token, filename):
+    # issue 按更新时间在时间轴上的分布
+    # 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
+    g = Github(token)
+    # 获取仓库
+    repo = g.get_repo(name)
+    # 获取仓库的issues
+    issues = repo.get_issues()
+    # 获取每个issue的开始时间
+    issues_start = [x.created_at for x in issues]
+    # 获取每个issue的结束
+    issues_end = [x.closed_at for x in issues]
+    # 获取每个issue的关键词
+    issues_key = [x.title for x in issues]
+    # 把时间转换成字符串
+    issues_start = [x.strftime("%Y-%m-%d") for x in issues_start]
+    issues_end = [x.strftime("%Y-%m-%d") for x in issues_end]
+    # 写到csv文件中
+    # 生成index
+    index = [i for i in range(len(issues_start))]
+    df = pd.DataFrame(index, columns=["index"])
+    df["start"] = issues_start
+    df["end"] = issues_end
+    df["key"] = issues_key
+    df.to_csv(filename, index=False)
+
+
 if __name__ == "__main__":
-    token = "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"
-    getIssue(token, "pandas-dev/pandas")
-    getCommit(token, "pandas-dev/pandas")
-    getStars(token, "pandas-dev/pandas")
-    getCommitsInsdel(token, "pandas-dev/pandas")
+    token = "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"
+
+    getCommitsInsdel(token, "pandas-dev/pandas",
+                     "commits_insdel_pandas.csv", "commits_PerDay_pandas.csv")
+    # getCommitPerDay(token, "pandas-dev/pandas", )
+    getCommitsInsdel(token, "pytorch/pytorch",
+                     "commits_insdel_pytorch.csv", "commits_PerDay_pytorch.csv")
+    # getCommitPerDay(token, "pytorch/pytorch", )
     # handel_Stars()
     # getCommit(token, "pandas-dev/pandas")
