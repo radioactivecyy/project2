@@ -53,6 +53,10 @@ urlpatterns = [
     path('comp_commit', views.comp_commit_by_week),
     path('comp_design', views.comp_design_by_week),
     path('comp_file', views.comp_file_by_week),
+    # 比较两个仓库，包括commit数量，设计讨论和文件修改数目三个维度
+    path('comp_commit_b', views.comp_commit_by_week_brief),
+    path('comp_design_b', views.comp_design_by_week_brief),
+    path('comp_file_b', views.comp_file_by_week_brief),
     # pytorch的design讨论数量，按周）
     path('desi_week', views.graph_design_by_week),
     path('comm_week', views.graph_commit_by_week),

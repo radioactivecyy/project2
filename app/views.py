@@ -1404,7 +1404,7 @@ def commit_update_byhour(_from: datetime):
 			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_del'))
 		del_str = ""
 		for _h in range(24):
-			if _h is not 0:
+			if _h != 0:
 				del_str += ","
 			try:
 				stat = del_set.get(hour=str(_h))['nums']
@@ -1418,7 +1418,7 @@ def commit_update_byhour(_from: datetime):
 			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_ins'))
 		ins_str = ""
 		for _h in range(24):
-			if _h is not 0:
+			if _h != 0:
 				ins_str += ","
 			try:
 				stat = ins_set.get(hour=str(_h))['nums']
@@ -1599,7 +1599,7 @@ def pandas_commit_update_byhour(_from: datetime):
 			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_del'))
 		del_str = ""
 		for _h in range(24):
-			if _h is not 0:
+			if _h != 0:
 				del_str += ","
 			try:
 				stat = del_set.get(hour=str(_h))['nums']
@@ -1613,7 +1613,7 @@ def pandas_commit_update_byhour(_from: datetime):
 			hour=ExtractHour('time_local')).values('hour').annotate(nums=Sum('modi_ins'))
 		ins_str = ""
 		for _h in range(24):
-			if _h is not 0:
+			if _h != 0:
 				ins_str += ","
 			try:
 				stat = ins_set.get(hour=str(_h))['nums']
@@ -1884,14 +1884,14 @@ def comp_commit_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
 		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
 			week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
-		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
 		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
 	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
@@ -1917,13 +1917,13 @@ def comp_design_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
 		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
-		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
 		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
@@ -1951,14 +1951,14 @@ def comp_file_by_week(request):
 		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
 		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
-		pe_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
+		pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
 		pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 
 		# pandas
 		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
 			week=TruncWeek('date')).values(
 			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
-		oe_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
+		oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
 		oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
 
@@ -1966,6 +1966,100 @@ def comp_file_by_week(request):
 		# 不存在记录，无法画图
 		pass
 	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
+
+
+def comp_commit_by_week_brief(request):
+	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
+	# 检查更新记录
+
+	x_list = []
+	p_list = []
+	o_list = []
+
+	try:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
+
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('comm_cnt')).values('week', 'all')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		p_list = ['pytorch'] + list(map(lambda x: x['all'], db_src))
+
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
+			week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('comm_cnt')).values('week', 'all')
+		o_list = ['pandas'] + list(map(lambda x: x['all'], pandas_db_src))
+
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
+		# 不存在记录，无法画图
+		pass
+	return JsonResponse({'x': x_list, 'pytorch': p_list, 'pandas': o_list})
+
+
+def comp_design_by_week_brief(request):
+	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
+	# 检查更新记录
+
+	x_list = []
+	p_list = []
+	o_list = []
+
+	try:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
+
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('desi_cnt')).values('week', 'all')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		p_list = ['pytorch'] + list(map(lambda x: x['all'], db_src))
+
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
+			week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('desi_cnt')).values('week', 'all')
+		o_list = ['pandas'] + list(map(lambda x: x['all'], pandas_db_src))
+
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
+		# 不存在记录，无法画图
+		pass
+	return JsonResponse({'x': x_list, 'pytorch': p_list, 'pandas': o_list})
+
+
+
+def comp_file_by_week_brief(request):
+	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
+	# 检查更新记录
+
+	x_list = []
+	p_list = []
+	o_list = []
+
+	try:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
+
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('modi_files')).values('week', 'all')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		p_list = ['p_core'] + list(map(lambda x: x['all'], db_src))
+
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
+			week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('modi_files')).values('week', 'all')
+		o_list = ['o_core'] + list(map(lambda x: x['all'], pandas_db_src))
+
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
+		# 不存在记录，无法画图
+		pass
+	return JsonResponse({'x': x_list, 'pytorch': p_list, 'pandas': o_list})
 
 
 # 绘制复合饼图
