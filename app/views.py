@@ -1070,7 +1070,7 @@ def pandas_commit_git_log_parser(input_filename: str):
 	ins_template = re.compile(r"(\d+) insertion")
 	file_template = re.compile(r"(\d+) file")
 
-	infile = open(input_filename)
+	infile = open(input_filename, encoding='utf-8')
 	filebuf = infile.readlines()
 	filebuf_i = 0
 
@@ -1151,7 +1151,7 @@ def commit_git_log_parser(input_filename: str):
 	ins_template = re.compile(r"(\d+) insertion")
 	file_template = re.compile(r"(\d+) file")
 
-	infile = open(input_filename)
+	infile = open(input_filename, encoding='utf-8')
 	filebuf = infile.readlines()
 	filebuf_i = 0
 
@@ -1654,9 +1654,7 @@ def graph_commit_intro_word_cloud(request):
 	# 	s = f.read()
 
 	# 生成输入字符串
-	intro_buf = ""
-	for i in intro_source:
-		intro_buf += i['commit_intro']
+	intro_buf = str(list(map(lambda x: x['commit_intro'], intro_source)))
 
 	# # 生成对象
 	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
@@ -1666,10 +1664,11 @@ def graph_commit_intro_word_cloud(request):
 	             "on", "test", "tests", "support", "revert", "dynamo"}
 	_wcloud = wordcloud.WordCloud(
 		mask=mask,
-		width=1100,
-		height=1100,
-		background_color='white',
-		max_words=200,
+		width=500,
+		height=500,
+		background_color=None,
+		mode='RGBA',
+		max_words=100,
 		stopwords=stopwords,
 		colormap="autumn")
 	_wc = _wcloud.generate(intro_buf)
@@ -1680,7 +1679,11 @@ def graph_commit_intro_word_cloud(request):
 	# 生成base64字符串，并传回前端
 	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
 	response = {'base64_png': _base64_str}
-	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# # 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# file_html = open("templates/render_base64.html", 'w', encoding='utf-8')
+	# file_html.write('<img src="data:image/png;base64, ' + response['base64_png'] + '"/>')
+	# file_html.close()
+	# return render(request, "render_base64.html")
 	return JsonResponse(response)
 
 
@@ -1703,9 +1706,7 @@ def pandas_graph_commit_intro_word_cloud(request):
 	# 	s = f.read()
 
 	# 生成输入字符串
-	intro_buf = ""
-	for i in intro_source:
-		intro_buf += i['commit_intro']
+	intro_buf = str(list(map(lambda x: x['commit_intro'], intro_source)))
 
 	# # 生成对象
 	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
@@ -1715,10 +1716,11 @@ def pandas_graph_commit_intro_word_cloud(request):
 	             "on", "test", "tests", "support", "revert", "dynamo"}
 	_wcloud = wordcloud.WordCloud(
 		mask=mask,
-		width=1100,
-		height=1100,
-		background_color='white',
-		max_words=200,
+		width=500,
+		height=500,
+		background_color=None,
+		mode='RGBA',
+		max_words=100,
 		stopwords=stopwords,
 		colormap="spring")
 	_wc = _wcloud.generate(intro_buf)
@@ -1729,7 +1731,11 @@ def pandas_graph_commit_intro_word_cloud(request):
 	# 生成base64字符串，并传回前端
 	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
 	response = {'base64_png': _base64_str}
-	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# # 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# file_html = open("templates/render_base64.html", 'w', encoding='utf-8')
+	# file_html.write('<img src="data:image/png;base64, ' + response['base64_png'] + '"/>')
+	# file_html.close()
+	# return render(request, "render_base64.html")
 	return JsonResponse(response)
 
 
@@ -1737,30 +1743,36 @@ def pandas_graph_commit_intro_word_cloud(request):
 def pandas_graph_commit_contributor_word_cloud(request):
 	primary_contributor = pandas_commit_contributors.objects.filter(if_core=True).values('author')
 	# 生成输入字符串
-	intro_buf = ""
-	for i in primary_contributor:
-		intro_buf += i['author'] + " "
 
-	# # 生成对象
+	intro_buf = str(list(map(lambda x: x['author'], primary_contributor)))
+	# intro_buf = ""
+	# for i in primary_contributor:
+	# 	intro_buf += i['author'] + " "
+	# 生成对象
 	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
 	mask = np.array(img)  # 将图片转换为数组
 
 	_wcloud = wordcloud.WordCloud(
 		mask=mask,
-		width=1100,
-		height=1100,
-		background_color='white',
-		max_words=200,
+		width=500,
+		height=500,
+		background_color=None,
+		mode='RGBA',
+		max_words=100,
 		colormap="summer")
 	_wc = _wcloud.generate(intro_buf)
-	# _wc.to_file("data/contributor.png") # 本地图片观察效果
+	_wc.to_file("data/pandas_contributor.png") # 本地图片观察效果
 	# 生成png图片，储存在缓冲区中
 	_buffer = io.BytesIO()
 	_wc.to_image().save(_buffer, 'png')
 	# 生成base64字符串，并传回前端
 	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
 	response = {'base64_png': _base64_str}
-	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# # 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# file_html = open("templates/render_base64.html", 'w', encoding='utf-8')
+	# file_html.write('<img src="data:image/png;base64, ' + response['base64_png'] + '"/>')
+	# file_html.close()
+	# return render(request, "render_base64.html")
 	return JsonResponse(response)
 
 
@@ -1768,9 +1780,7 @@ def pandas_graph_commit_contributor_word_cloud(request):
 def graph_commit_contributor_word_cloud(request):
 	primary_contributor = commit_contributors.objects.filter(if_core=True).values('author')
 	# 生成输入字符串
-	intro_buf = ""
-	for i in primary_contributor:
-		intro_buf += i['author'] + " "
+	intro_buf = str(list(map(lambda x: x['author'], primary_contributor)))
 
 	# # 生成对象
 	img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
@@ -1778,10 +1788,11 @@ def graph_commit_contributor_word_cloud(request):
 
 	_wcloud = wordcloud.WordCloud(
 		mask=mask,
-		width=1100,
-		height=1100,
-		background_color='white',
-		max_words=200,
+		width=500,
+		height=500,
+		background_color=None,
+		mode='RGBA',
+		max_words=100,
 		colormap="winter")
 	_wc = _wcloud.generate(intro_buf)
 
@@ -1791,11 +1802,15 @@ def graph_commit_contributor_word_cloud(request):
 	# 生成base64字符串，并传回前端
 	_base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
 	response = {'base64_png': _base64_str}
-	# 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# # 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+	# file_html = open("templates/render_base64.html", 'w', encoding='utf-8')
+	# file_html.write('<img src="data:image/png;base64, ' + response['base64_png'] + '"/>')
+	# file_html.close()
+	# return render(request, "render_base64.html")
 	return JsonResponse(response)
 
 
-# 绘制添加/删除行数的图
+# 绘制每天分小时添加/删除行数的图
 def graph_modi_time_of_day(request):
 	# request: {'start':'日期，'end':'日期'}
 	# response: {'x': [], 'add': [], 'del':[]}
@@ -1822,9 +1837,35 @@ def graph_modi_time_of_day(request):
 	response = {'x': x_list, 'add': add_list, 'del': del_list}
 	return JsonResponse(response)
 
+def pandas_graph_modi_time_of_day(request):
+	# request: {'start':'日期，'end':'日期'}
+	# response: {'x': [], 'add': [], 'del':[]}
+	# 获取前端传回的起讫日期，传回词云图的base64字符串。
+	# 时间格式为"%Y-%m-%d"
+	time_start = datetime.strptime("2022-11-01", "%Y-%m-%d")
+	time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
+	# time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
+	# time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
+	stat_source = pandas_commit_by_day.objects.filter(date__gte=time_start,
+	                                           date__lte=time_end,
+	                                           ).values('modi_ins', 'modi_del')
+	x_list = list(range(24))
+	add_list = np.zeros(24)
+	del_list = np.zeros(24)
+	for entry in stat_source:
+		try:
+			add_list += list(map(lambda x: int(x, 10), entry['modi_ins'].split(',')))
+			del_list += list(map(lambda x: int(x, 10), entry['modi_del'].split(',')))
+		except Exception:
+			continue
+	add_list = list(map(lambda x: int(x), add_list))
+	del_list = list(map(lambda x: int(x), del_list))
+	response = {'x': x_list, 'add': add_list, 'del': del_list}
+	return JsonResponse(response)
+
 
 # 比较两仓库提交情况
-def graph_commit_by_day(request):
+def comp_commit_by_week(request):
 	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
 	# 检查更新记录
 
@@ -1835,64 +1876,63 @@ def graph_commit_by_day(request):
 	oe_list = []
 
 	try:
-		last_day = commit_by_day.objects.order_by('date').last().date
-		first_day = commit_by_day.objects.order_by('date').first().date
-		while first_day <= last_day:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
 
-			x_list.append(first_day.strftime("%Y-%m-%d"))
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		pc_list = list(map(lambda x: x['core'], db_src))
+		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
 
-			_pc = commit_by_day.objects.get(date=first_day).comm_cnt_core
-			_pa = commit_by_day.objects.get(date=first_day).comm_cnt
-			_oc = pandas_commit_by_day.objects.get(date=first_day).comm_cnt_core
-			_oa = pandas_commit_by_day.objects.get(date=first_day).comm_cnt
-			pc_list.append(_pc)
-			pe_list.append(_pa - _pc)
-			oc_list.append(_pc)
-			oe_list.append(_oa - _oc)
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
+			week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
+		oc_list = list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
-			first_day += dt.timedelta(days=1)
-
-	except commit_by_day.DoesNotExist:
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
 		pass
 	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
 
 
-def graph_design_by_day(request):
+def comp_design_by_week(request):
 	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
-	# 检查更新记录
 
 	x_list = []
 	pc_list = []
 	pe_list = []
 	oc_list = []
 	oe_list = []
-
 	try:
-		last_day = commit_by_day.objects.order_by('date').last().date
-		first_day = commit_by_day.objects.order_by('date').first().date
-		while first_day <= last_day:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
 
-			x_list.append(first_day.strftime("%Y-%m-%d"))
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		pc_list = list(map(lambda x: x['core'], db_src))
+		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
 
-			_pc = commit_by_day.objects.get(date=first_day).desi_cnt_core
-			_pa = commit_by_day.objects.get(date=first_day).desi_cnt
-			_oc = pandas_commit_by_day.objects.get(date=first_day).desi_cnt_core
-			_oa = pandas_commit_by_day.objects.get(date=first_day).desi_cnt
-			pc_list.append(_pc)
-			pe_list.append(_pa - _pc)
-			oc_list.append(_pc)
-			oe_list.append(_oa - _oc)
-
-			first_day += dt.timedelta(days=1)
-
-	except commit_by_day.DoesNotExist:
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
+		oc_list = list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
 		pass
+
 	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
 
 
-def graph_file_by_day(request):
+def comp_file_by_week(request):
 	# {'x':[,,,横坐标上的label],'pytorch_core':[,,每个label 对应的值,],'pytorch_else':[],'o_core':[],'o_else':[]}
 	# 检查更新记录
 
@@ -1903,24 +1943,26 @@ def graph_file_by_day(request):
 	oe_list = []
 
 	try:
-		last_day = commit_by_day.objects.order_by('date').last().date
-		first_day = commit_by_day.objects.order_by('date').first().date
-		while first_day <= last_day:
+		# 选取两个仓库均有记录的日期开始比较
+		time_start = max(commit_by_day.objects.earliest('date').date,
+		                 pandas_commit_by_day.objects.earliest('date').date)
 
-			x_list.append(first_day.strftime("%Y-%m-%d"))
+		# pytorch
+		db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
+		x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+		pc_list = list(map(lambda x: x['core'], db_src))
+		pe_list = list(map(lambda x: x['all'] - x['core'], db_src))
 
-			_pc = commit_by_day.objects.get(date=first_day).modi_files_core
-			_pa = commit_by_day.objects.get(date=first_day).modi_files
-			_oc = pandas_commit_by_day.objects.get(date=first_day).modi_files_core
-			_oa = pandas_commit_by_day.objects.get(date=first_day).modi_files
-			pc_list.append(_pc)
-			pe_list.append(_pa - _pc)
-			oc_list.append(_pc)
-			oe_list.append(_oa - _oc)
+		# pandas
+		pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
+			week=TruncWeek('date')).values(
+			'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
+		oc_list = list(map(lambda x: x['core'], pandas_db_src))
+		oe_list = list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
-			first_day += dt.timedelta(days=1)
 
-	except commit_by_day.DoesNotExist:
+	except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
 		# 不存在记录，无法画图
 		pass
 	return JsonResponse({'x': x_list, 'pytorch_core': pc_list, 'pytorch_else': pe_list, 'o_core': oc_list, 'o_else': oe_list})
@@ -1929,75 +1971,87 @@ def graph_file_by_day(request):
 # 绘制复合饼图
 def compound_pie_chart_commit(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in commit_by_day.objects.values('date', 'comm_cnt', 'comm_cnt_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['comm_cnt_core'])
-		else_list.append(i['comm_cnt']-i['comm_cnt_core'])
+	db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
 
 
 def compound_pie_chart_design(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in commit_by_day.objects.values('date', 'desi_cnt', 'desi_cnt_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['desi_cnt_core'])
-		else_list.append(i['desi_cnt']-i['desi_cnt_core'])
+	db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
 
 
 def compound_pie_chart_file(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in commit_by_day.objects.values('date', 'modi_files', 'modi_files_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['modi_files_core'])
-		else_list.append(i['modi_files']-i['modi_files_core'])
+	db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
 
 
 # 绘制pandas的复合饼图
 def pandas_compound_pie_chart_commit(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in pandas_commit_by_day.objects.values('date', 'comm_cnt', 'comm_cnt_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['comm_cnt_core'])
-		else_list.append(i['comm_cnt']-i['comm_cnt_core'])
+	db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
 
 
 def pandas_compound_pie_chart_design(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in pandas_commit_by_day.objects.values('date', 'desi_cnt', 'desi_cnt_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['desi_cnt_core'])
-		else_list.append(i['desi_cnt']-i['desi_cnt_core'])
+	db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
 
 
 def pandas_compound_pie_chart_file(request):
 	# {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
-	x_list = []
-	core_list = []
-	else_list = []
-	for i in pandas_commit_by_day.objects.values('date', 'modi_files', 'modi_files_core'):
-		x_list.append(i['date'].strftime("%Y-%m-%d"))
-		core_list.append(i['modi_files_core'])
-		else_list.append(i['modi_files']-i['modi_files_core'])
+	db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
+		'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	core_list = ['core'] + list(map(lambda x: x['core'], db_src))
+	else_list = ['else'] + list(map(lambda x: x['all']-x['core'], db_src))
 	return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
+
+
+def graph_design_by_week(request):
+	db_src = commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('desi_cnt')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['design'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'design': val_list})
+
+
+def graph_file_by_week(request):
+	db_src = commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('modi_files')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['file'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'files': val_list})
+
+
+def graph_commit_by_week(request):
+	db_src = commit_by_day.objects.annotate(
+		week=TruncWeek('date')).values('week').annotate(nums=Sum('comm_cnt')).values('week', 'nums')
+	x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+	val_list = ['commit'] + list(map(lambda x: x['nums'], db_src))
+	return JsonResponse({'x': x_list, 'commit': val_list})
 
 def test(request):
 	############################
@@ -2044,7 +2098,7 @@ def test(request):
 	pandas_commit_update_main(request=request)
 
 	# 计算2022-11-1之后的分小时提交详情
-	pandas_commit_update_byhour(dt.datetime(2022, 11, 1))
+	pandas_commit_update_byhour(dt.datetime(2022, 10, 1))
 	print("pandas by_day set!")
 	return JsonResponse({'init': 'completed!'})
 

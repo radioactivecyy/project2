@@ -48,11 +48,15 @@ urlpatterns = [
     path('pandas_compound_pie_file', views.pandas_compound_pie_chart_file),
     # 分时增删行数
     path('modi_hour', views.graph_modi_time_of_day),
+    path('pandas_modi_hour', views.pandas_graph_modi_time_of_day),
     # 比较两个仓库的核心和非核心，包括commit数量，设计讨论和文件修改数目三个维度
-    path('comp_commit', views.graph_commit_by_day),
-    path('comp_design', views.graph_design_by_day),
-    path('comp_file', views.graph_file_by_day),
-    # 比较两个仓库的活跃情况
+    path('comp_commit', views.comp_commit_by_week),
+    path('comp_design', views.comp_design_by_week),
+    path('comp_file', views.comp_file_by_week),
+    # pytorch的design讨论数量，按周）
+    path('desi_week', views.graph_design_by_week),
+    path('comm_week', views.graph_commit_by_week),
+    path('file_week', views.graph_file_by_week),
     # 更新仓库
     path('commit_update', views.commit_update_main),
     path('tttt', views.test),
