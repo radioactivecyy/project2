@@ -36,8 +36,9 @@ urlpatterns = [
     # 词云图
     path('intro_wordcloud', views.graph_commit_intro_word_cloud),
     path('contributor_wordcloud', views.graph_commit_contributor_word_cloud),
-    path('pandas_intro_wordcloud', views.pandas_graph_commit_intro_word_cloud),
-    path('pandas_contributor_wordcloud', views.pandas_graph_commit_contributor_word_cloud),
+    path('p_introcloud', views.pandas_graph_commit_intro_word_cloud),
+    path('pandas_contricloud',
+         views.pandas_graph_commit_contributor_word_cloud),
     # 复合饼图
     path('compound_pie_commit', views.compound_pie_chart_commit),
     path('compound_pie_design', views.compound_pie_chart_design),
@@ -65,4 +66,12 @@ urlpatterns = [
     path('commit_update', views.commit_update_main),
     path('tttt', views.test),
     path('uuuu', views.commit_update_main),
+    path('issuedev', views.pytorch_issue_time),
+    path('commitdev', views.pytorch_commit_time),
+    # 时间变化的star数目
+    path('commit_both', views.commit_both),
+    path('star_both', views.star_both),
+    path('issue_both', views.issue_both),
+    # 年commit数目
+    # path('commit_year', views.commit_year),
 ]
