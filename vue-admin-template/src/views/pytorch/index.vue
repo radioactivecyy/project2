@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-editor-container" id="pdfDom">
-  <getStar />
+  
     <h1><svg-icon icon-class="pytorch" /> Pytorch</h1>
     <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
     <p>
@@ -76,26 +76,26 @@
       </el-row>
     </el-row>
     <h2>贡献者活跃情况</h2>
-    <el-row>
+   
       <!-- <el-col :span="20">
         <calender :Year="year" MyTitle="star" /> -->
       <!-- </el-col> -->
       <!-- <el-col :span="12">
         <calender :Year="year" MyTitle="issue" />
       </el-col> -->
-    </el-row>
-    <el-row>
+  
+    <!-- <el-row> -->
       <!-- <el-col :xs="14" :sm="14" :lg="12">
         <calender :Year="year" MyTitle="commit" />
       </el-col> -->
-      <el-col :xs="14" :sm="14" :lg="23">
+      <!-- <el-col :xs="14" :sm="14" :lg="23">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
             <ins_del :chartData="insDelData" lineTitle1="add" lineTitle2="delete" @func="getMsgFrominsDel" />
           </div>
         </div>
       </el-col>
-    </el-row>
+    </el-row> -->
 <el-row>
   <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
@@ -265,13 +265,15 @@ export default {
     this.getCompanyCommitData()
     this.getDesignCloud()
     this.getContribCloud()
+    this.getDesign()
+    this.getContribution()
     this.getIssueLineData()
     // this.getStarLineData()
     this.getCommitLineData()
     // this.getThreeData()
     this.getInsDelData()
-    this.getContribution()
-    this.getDesign()
+   
+
 
    
   },
@@ -358,18 +360,18 @@ export default {
         this.threeData['y3'] = this.commitNumdata.y
       })
     },
-    async getInsDelData() {
-      await dataapi.getInsDel(this.startVal, this.endVal).then(res => {
-        // 把数组中的每个元素都push到data中
-        var data = {}
-        data['x'] = res.x
-        data['y1'] = res.y1
-        data['y2'] = res.y2
-        this.insDelData = JSON.parse(JSON.stringify(data))
-      })
-    },
+    // async getInsDelData() {
+    //   await dataapi.getInsDel(this.startVal, this.endVal).then(res => {
+    //     // 把数组中的每个元素都push到data中
+    //     var data = {}
+    //     data['x'] = res.x
+    //     data['y1'] = res.y1
+    //     data['y2'] = res.y2
+    //     this.insDelData = JSON.parse(JSON.stringify(data))
+    //   })
+    // },
     async getInsDelDatabyHour() {
-      console.log('getInsDelDatabyHour')
+  
       await dataapi.getInsDelbyHour().then(res => {
         // 把数组中的每个元素都push到data中
         var data = {}

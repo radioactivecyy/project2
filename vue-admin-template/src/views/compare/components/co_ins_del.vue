@@ -29,7 +29,11 @@ export default {
       type: Boolean,
       default: true
     },
-    chartData: {
+    chartData1: {
+      type: Object,
+      required: true
+    },
+    chartData2: {
       type: Object,
       required: true
     }
@@ -47,10 +51,16 @@ export default {
     }
   },
   watch: {
-    chartData: {
+    chartData1: {
       deep: true,
       handler(val) {
-        this.setOptions(val)
+        this.initChart()
+      }
+    },
+    chartData2: {
+      deep: true,
+      handler(val) {
+        this.initChart()
       }
     }
   },
@@ -75,14 +85,19 @@ export default {
   methods: {
     // 初始化图表
     initChart() {
-      var mydata = JSON.parse(JSON.stringify(this.chartData))['chartData1']
-      this.x1 = mydata.x
-      this.y11 = mydata.y1
-      this.y12 = mydata.y2
-      mydata = JSON.parse(JSON.stringify(this.chartData))['chartData2']
-      this.x2 = mydata.x
-      this.y21 = mydata.y1
-      this.y22 = mydata.y2
+    
+      var mydata1 = JSON.parse(JSON.stringify(this.chartData1))
+
+      this.x1 = mydata1.x
+      this.y11 = mydata1.y1
+      this.y12 = mydata1.y2
+      console.log('this.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', this.chartData1)
+      console.log('this.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', this.chartData2)
+      var mydata2 = JSON.parse(JSON.stringify(this.chartData2))
+      this.x2 = mydata2.x
+      this.y21 = mydata2.y1
+      this.y22 = mydata2.y2
+      
       var option1 = {
         tooltip: {
           trigger: 'axis',
@@ -161,8 +176,7 @@ export default {
       option2.series[0].data = this.y21
       option2.series[1].data = this.y22
       option2.xAxis[0].data = this.x2
-      console.log('option1', option1)
-      console.log('option2', option2)
+    
       this.$emit('func', { startVal: 0, endVal: this.x1.length - 1  })
       this.chart1 = echarts.init(document.getElementById('ins1'), 'macarons')
       this.chart1.setOption(option1)

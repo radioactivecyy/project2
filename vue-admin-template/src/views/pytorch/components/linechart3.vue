@@ -182,7 +182,7 @@ export default {
         ],
         series: [
           {
-            name: 'star Data',
+            name: 'issue Data',
             type: 'line',
             symbol: 'none',
             sampling: 'lttb',

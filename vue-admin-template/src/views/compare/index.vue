@@ -1,8 +1,11 @@
 <template>
-  <div class="dashboard-editor-container">
+  <div class="dashboard-editor-container" id="pdfDom">
     <h1>Pytorch VS Pandas</h1>
     <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
-
+    <p>
+      company information about Stargazers, Issue creators, and Pull Request. Click here to download report
+      <el-button class="bt-style" @click="getPdf(htmlTitle)"></el-button>
+    </p>
     <h2>社区发展速度</h2>
     <el-row>
       <el-row>
@@ -101,7 +104,7 @@
       </el-col>
       </el-row>  -->
 
-    <co_ins_delVue :chartData="insDelData" @func="getMsgFrominsDel" />
+    <co_ins_delVue :chartData1="insDelData1" :chartData2="insDelData2" @func="getMsgFrominsDel"  />
     <h2>代码提交情况</h2>
     <el-row :gutter="22">
     <el-col :xs="14" :sm="24" :lg="15">
@@ -141,6 +144,7 @@
       </el-col>
     </el-row>
     <h2>design</h2>
+    <div class="chart-wrapper">
     <linechart2
     Mytitle="design"
                 color1="rgb(149, 229, 130 )"
@@ -149,6 +153,7 @@
                 lineTitle2="Pandas"
                 :chartData="designNumdata"
     /> 
+    </div>
     <el-row :gutter="30">
     <el-col :span="10" :offset="1">
     <el-image style="width: 450px; height: 450px" :src="designcloud1" :fit="fit" /></el-col>
@@ -182,11 +187,13 @@ export default {
   },
   data() {
     return {
+      htmlTitle:'compare',
       issueNumdata: {},
       starNumdata: {},
       commitNumdata: {},
       threeData: {},
-      insDelData: {},
+      insDelData1: {},
+      insDelData2: {},
       startVal: -1,
       endVal: -1,
       contriData: {},
@@ -207,15 +214,18 @@ export default {
     this.getCompanyStarData()
     this.getcontribCloud_p()
     this.getcontribCloud_o()
+    this.getCoInsDel()
     this.getContributionFile()
     this.getContributionDesign()
+    this.getContribution()
+    this.getDesignNum()
     this.getDesignCloud()
     this.getIssueLineData()
     this.getStarLineData()
     this.getCommitLineData()
     this.getInsDelData()
-    this.getContribution()
-  
+   
+
   },
   watch: {
     // designcloud1: {
@@ -249,23 +259,49 @@ export default {
       
   },
   methods: {
+    async getCoInsDel(){
+   
+      dataapi.getInsDelbyHour().then(res => {
+        var data={}
+        data['x']=res.x
+        data['y1']=res.add
+        data['y2']=res.del
+        this.insDelData1=JSON.parse(JSON.stringify(data))
+       console.log('insDelData1',this.insDelData1)
+      })
+      dataapi.OgetInsDelbyHour().then(res => {
+        var data={}
+        data['x']=res.x
+        data['y1']=res.add
+        data['y2']=res.del
+        this.insDelData2=JSON.parse(JSON.stringify(data))
+        console.log('insDelData2',this.insDelData2)
+      
+      })
+      
+    },
+    
     async getDesignNum(){
       dataapi.OgetDesign().then(res => {
-        this.designNumdata = res
+       var data={}
+       data['x']=res.pytorch
+       data['pytorch']=res.pytorch
+       data['pandas']=res.pandas
+        this.designNumdata=JSON.parse(JSON.stringify(data))
       })
     },
     
     async getcontribCloud_p() {
-      console.log('getcontribCloud_p')
+    
       dataapi.getContributionCloud().then(res => {
         this.contributorCloud_p = 'data:image/png;base64,' + res.base64_png
      
       })
     },
     async getcontribCloud_o() {
-      console.log('getcontribCloud_o')
+    
       dataapi.getContribCloudO().then(res => {
-        console.log('eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
+     
         this.contributorCloud_o = 'data:image/png;base64,' + res.base64_png
       })
     },
@@ -277,14 +313,14 @@ export default {
       })
     },
     issueBubble: function (data) {
-      // console.log('issueBubble')
+  
       this.getCompanyIssueData().then(res => {
         //  刷新该组件
         this.companyDataType = 'issue'
       })
     },
     commitBubble: function (data) {
-      // console.log('commitBubble')
+    
       this.getCompanyCommitData().then(res => {
         //  刷新该组件
         this.companyDataType = 'commit'
@@ -361,21 +397,21 @@ export default {
         this.threeData['pandas_y3'] = this.commitNumdata.pandas
       })
     },
-    async getInsDelData() {
-      await dataapi.OgetInsDel(this.startVal, this.endVal).then(res => {
-        // 把数组中的每个元素都push到data中
+    // async getInsDelData() {
+    //   await dataapi.OgetInsDel().then(res => {
+    //     // 把数组中的每个元素都push到data中
 
-        // data['y2'] = res.y2
-        var data = { chartData1: {}, chartData2: {} }
-        data['chartData1']['x'] = res.x
-        data['chartData1']['y1'] = res.pytorch_add
-        data['chartData1']['y2'] = res.pytorch_del
-        data['chartData2']['x'] = res.x
-        data['chartData2']['y1'] = res.pandas_add
-        data['chartData2']['y2'] = res.pandas_del
-        this.insDelData = JSON.parse(JSON.stringify(data))
-      })
-    },
+    //     // data['y2'] = res.y2
+    //     var data = { chartData1: {}, chartData2: {} }
+    //     data['chartData1']['x'] = res.x
+    //     data['chartData1']['y1'] = res.pytorch_add
+    //     data['chartData1']['y2'] = res.pytorch_del
+    //     data['chartData2']['x'] = res.x
+    //     data['chartData2']['y1'] = res.pandas_add
+    //     data['chartData2']['y2'] = res.pandas_del
+    //     this.insDelData = JSON.parse(JSON.stringify(data))
+    //   })
+    // },
     async getContribution() {
 
       await dataapi.OgetContribution().then(res => {
@@ -393,7 +429,7 @@ export default {
         data=JSON.parse(JSON.stringify(data))
         this.codeNumData = JSON.parse(JSON.stringify(data))
        
-        console.log('codenumdata',this.codeNumData)
+    
       })
     },
     async getContributionDesign() {
@@ -413,7 +449,7 @@ await dataapi.OgetContributionDesign().then(res => {
   data=JSON.parse(JSON.stringify(data))
 
   this.contriDesign = JSON.parse(JSON.stringify(data))
-  console.log('this.contriData', this.contriDesign)
+
 })
 },
 async getContributionFile() {
@@ -431,7 +467,7 @@ await dataapi.OgetContributionFile().then(res => {
   // data['y2'] = res.y2
 
   data=JSON.parse(JSON.stringify(data))
-  console.log('data', data)
+
   this.contriFile = JSON.parse(JSON.stringify(data))
  
   // console.log('this.contriData', this.contriData)
@@ -526,6 +562,15 @@ await dataapi.OgetContributionFile().then(res => {
 
     // 设置字和底部的距离
   }
+  .bt-style {
+  background-repeat: no-repeat;
+  background-image: url('./images/download.png');
+  width: 6em;
+  height: 3em;
+  background-color: transparent;
+  border-style: none;
+}
+
 }
 
 @media (max-width: 1024px) {

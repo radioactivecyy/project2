@@ -141,6 +141,12 @@ export function getInsDelbyHour() {
     method: 'get'
   })
 }
+export function OgetInsDelbyHour() {
+  return request({
+    url: 'api/pandas_modi_hour',
+    method: 'get'
+  })
+}
 export function OgetContribution() {
   return request({
     url: 'api/comp_commit',
@@ -150,7 +156,7 @@ export function OgetContribution() {
 
 export function OgetDesign() {
   return request({
-    url: 'api/pandas_desi_week',
+    url: 'api/comp_design_b',
     method: 'get'
   })
 }

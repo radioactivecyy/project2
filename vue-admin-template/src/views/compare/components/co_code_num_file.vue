@@ -81,7 +81,7 @@ export default {
 
       var mydata1 = JSON.parse(JSON.stringify(this.chartData)).chartData1
       var mydata2 = JSON.parse(JSON.stringify(this.chartData)).chartData2
-      console.log('mydata1', mydata1)
+    
       var mysource1_1 = mydata1.x
       var mysource2_1 = mydata1.y1
       var mysource3_1 = mydata1.y2
@@ -157,7 +157,7 @@ export default {
                 focus: 'self'
               },
               label: {
-                formatter: '{b}: {@' + 1 + '} ({d}%)'
+                formatter: '{b}: {@'+1+'} ({d}%)'
               },
               encode: {
                 itemName: 0,
@@ -167,18 +167,15 @@ export default {
             }
           ]
         }
-        var option2 = JSON.parse(JSON.stringify(option1))
-        option2.dataZoom.show = false
-        option2.dataset.source = mysource2
-        option2.title.text = this.mytitle2
+     
         var C = this.chart1
         var T = this
         this.chart1.on('updateAxisPointer', function (event) {
           const xAxisInfo = event.axesInfo[0]
-
+          console.log('xAxisInfo11111111111111111',xAxisInfo)
           if (xAxisInfo) {
             T.msg = xAxisInfo.value
-            T.$emit('func', T.msg)
+        
             const dimension = xAxisInfo.value + 1
             C.setOption({
               series: {
@@ -195,13 +192,88 @@ export default {
           }
         })
         this.chart1.setOption(option1)
-        this.chart2.on('updateAxisPointer', function (event) {
-          const xAxisInfo = event.axesInfo[0]
+       
+       
+      }, 1000)
+      setTimeout(() => {
+        var option2 = {
+          legend: {
+            orient: 'vertical',
+            right: 10,
+            top: 20,
+            bottom: 20
+          },
+          tooltip: {
+            trigger: 'axis',
+            showContent: false,
+            dataZoom: {
+              type: 'inside'
+            }
+          },
+          dataset: {
+            source: mysource1
+          },
+          title: {
+            // 位置设置为底部
 
+            left: 'center',
+            text: this.mytitle
+          },
+          dataZoom: {
+            type: 'slider',
+            start: 0,
+            end: 100
+          },
+          xAxis: { type: 'category' },
+          yAxis: { gridIndex: 0 },
+          grid: { top: '55%' },
+          series: [
+            {
+              type: 'line',
+              smooth: true,
+              seriesLayoutBy: 'row',
+              emphasis: { focus: 'series' }
+            },
+            {
+              type: 'line',
+              smooth: true,
+              seriesLayoutBy: 'row',
+              emphasis: { focus: 'series' }
+            },
+
+            {
+              type: 'pie',
+              id: 'pie',
+              radius: '30%',
+              center: ['50%', '25%'],
+              emphasis: {
+                focus: 'self'
+              },
+              label: {
+                formatter: '{b}: {@'+1+'} ({d}%)'
+              },
+              encode: {
+                itemName: 0,
+                value: 1,
+                tooltip: 1
+              }
+            }
+          ]
+        }
+        option2.dataZoom.show = false
+        option2.dataset.source = mysource2
+        option2.title.text = this.mytitle2
+         this.chart2.setOption(option2)
+        var C = this.chart2
+        this.chart2.on('updateAxisPointer', function (event) {
+       
+          const xAxisInfo = event.axesInfo[0]
+       
           if (xAxisInfo) {
-            T.msg = xAxisInfo.value
-            T.$emit('func', T.msg)
+         
+          
             const dimension = xAxisInfo.value + 1
+            console.log('dimension', dimension)
             C.setOption({
               series: {
                 id: 'pie',
@@ -216,7 +288,7 @@ export default {
             })
           }
         })
-        this.chart2.setOption(option2)
+       
       }, 1000)
     }
   }
