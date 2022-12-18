@@ -7,6 +7,105 @@
     <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/getData.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/getData.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/djangoproject/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.editorconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.env.development" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.env.development" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.env.production" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.env.staging" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.env.staging" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.eslintignore" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.eslintignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.eslintrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.prettierrc" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.prettierrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/.travis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/.travis.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/README-zh.md" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/README-zh.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/babel.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/babel.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/build/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/build/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/jest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/jest.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/jsconfig.json" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/jsconfig.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/mock/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/mock/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/mock/mock-server.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/mock/mock-server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/mock/table.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/mock/table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/mock/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/mock/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/mock/utils.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/mock/utils.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/postcss.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/postcss.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/App.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/api/bubble.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/api/bubble.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/api/search.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/api/search.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/api/table.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/api/table.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/api/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/api/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/components/Breadcrumb/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/components/Breadcrumb/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/components/Hamburger/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/components/Hamburger/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/components/SvgIcon/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/components/SvgIcon/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/downPNG.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/downPNG.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/downloadPDF.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/downloadPDF.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/icons/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/icons/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/icons/svgo.yml" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/icons/svgo.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/AppMain.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/AppMain.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Navbar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Navbar.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/FixiOSBug.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/FixiOSBug.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Item.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Item.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Link.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Link.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Logo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/Logo.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/SidebarItem.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/SidebarItem.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/Sidebar/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/components/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/layout/mixin/ResizeHandler.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/layout/mixin/ResizeHandler.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/permission.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/permission.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/router/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/settings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/store/getters.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/store/getters.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/store/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/store/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/store/modules/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/store/modules/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/store/modules/settings.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/store/modules/settings.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/store/modules/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/store/modules/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/element-ui.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/element-ui.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/index.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/index.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/mixin.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/mixin.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/sidebar.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/sidebar.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/transition.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/transition.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/styles/variables.scss" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/styles/variables.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/utils/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/utils/auth.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/utils/get-page-title.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/utils/get-page-title.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/utils/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/utils/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/utils/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/utils/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/utils/validate.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/utils/validate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/404.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/404.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/linechart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/linechart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/mixins/resize.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/mixins/resize.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/piechart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/piechart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/repocard.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/repocard.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/search.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/components/search.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/dashboard/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/login/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/login/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_committer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_committer.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_issue.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_issue.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_star.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/company_star.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/list.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/components/list.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/pytorch/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/linechart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/linechart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/mixins/resize.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/mixins/resize.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/piechart.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/components/piechart.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/src/views/repo-detail/index.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/src/views/user-profile/index.vue" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/.eslintrc.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/.eslintrc.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/Breadcrumb.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/Breadcrumb.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/Hamburger.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/Hamburger.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/SvgIcon.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/components/SvgIcon.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/formatTime.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/formatTime.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/param2Obj.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/param2Obj.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/parseTime.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/parseTime.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/validate.spec.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/tests/unit/utils/validate.spec.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue-admin-template/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue-admin-template/vue.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +159,7 @@
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -164,7 +264,13 @@
       <workItem from="1670940285716" duration="849000" />
       <workItem from="1670941148600" duration="164000" />
       <workItem from="1670942850980" duration="707000" />
-      <workItem from="1671024252413" duration="962000" />
+      <workItem from="1671024252413" duration="1160000" />
+      <workItem from="1671090909901" duration="4000" />
+      <workItem from="1671263605456" duration="2207000" />
+      <workItem from="1671266278328" duration="1316000" />
+      <workItem from="1671267904363" duration="10438000" />
+      <workItem from="1671284694988" duration="2490000" />
+      <workItem from="1671327763557" duration="8880000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>

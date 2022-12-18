@@ -60,7 +60,6 @@ export default {
     postData() {
       searchRepo()
         .then(res => {
-          console.log(res)
           this.test = res.data.status
         })
         .catch(err => {

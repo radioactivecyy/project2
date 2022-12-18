@@ -129,7 +129,7 @@ export default {
                 }
               }
             },
-            data: actualData,
+            data: [7, 6, 5, 4, 3, 2, 1],
             animationDuration: 2800,
             animationEasing: 'quadraticOut'
           }

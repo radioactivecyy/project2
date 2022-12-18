@@ -3,7 +3,6 @@ import pandas as pd
 
 
 def getStars(token, name):
-
     g = Github(token)
 
     # 获取仓库
@@ -162,6 +161,8 @@ def getCommitsInsdel(token, name, filename, filename1):
     df = df.reset_index()
     df["commits"] = commits
     df.to_csv(filename1, index=False)
+
+
 # 处理stars
 
 
@@ -175,6 +176,8 @@ def handel_Stars():
     commits = commits.reset_index()
     # 写到csv文件中
     commits.to_csv("pandas_commits_test.csv", index=False)
+
+
 # 获取stars
 
 

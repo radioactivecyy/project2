@@ -76,6 +76,8 @@ urlpatterns = [
     path('commit_both', views.commit_both),
     path('star_both', views.star_both),
     path('issue_both', views.issue_both),
+    path('issue_test',views.issue_content),
+    path('issue_test1',views.issue_content1),
     # 年commit数目
     # path('commit_year', views.commit_year),
 ]
