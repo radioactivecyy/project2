@@ -1,10 +1,12 @@
 import request from '../utils/request'
+
 export function getIssueDevelop() {
   return request({
     url: 'api/issuedev',
     method: 'get'
   })
 }
+
 export function PgetContributionDesign() {
   return request({
     url: 'api/compound_pie_design',
@@ -28,6 +30,7 @@ export function getYearCommit(year) {
     }
   })
 }
+
 export function getStar() {
   return request({
     // headers: {
@@ -37,18 +40,21 @@ export function getStar() {
     method: 'get'
   })
 }
+
 export function getStarDevelop() {
   return request({
     url: 'api/stardev',
     method: 'get'
   })
 }
+
 export function getCommitDevelop() {
   return request({
     url: 'api/commitdev',
     method: 'get'
   })
 }
+
 export function getInsDel(startindex, endindex) {
   return request({
     url: 'api/insdel',
@@ -61,24 +67,28 @@ export function getInsDel(startindex, endindex) {
     }
   })
 }
+
 export function PgetContribution() {
   return request({
     url: 'api/compound_pie_commit',
     method: 'get'
   })
 }
+
 export function getContribution() {
   return request({
     url: 'api/comp_commit',
     method: 'get'
   })
 }
+
 export function OgetContributionDesign() {
   return request({
     url: 'api/comp_design',
     method: 'get'
   })
 }
+
 export function OgetContributionFile() {
   return request({
     url: 'api/comp_file',
@@ -93,36 +103,42 @@ export function getContributionCloud() {
     method: 'get'
   })
 }
+
 export function getDesign() {
   return request({
     url: 'api/desi_week',
     method: 'get'
   })
 }
+
 export function getDesignCloud() {
   return request({
     url: 'api/intro_wordcloud',
     method: 'get'
   })
 }
+
 export function OgetIssueDevelop() {
   return request({
     url: 'api/issue_both',
     method: 'get'
   })
 }
+
 export function OgetStarDevelop() {
   return request({
     url: 'api/star_both',
     method: 'get'
   })
 }
+
 export function OgetCommitDevelop() {
   return request({
     url: 'api/commit_both',
     method: 'get'
   })
 }
+
 export function OgetInsDel(startindex, endindex) {
   return request({
     url: 'api/insdel',
@@ -135,18 +151,21 @@ export function OgetInsDel(startindex, endindex) {
     }
   })
 }
+
 export function getInsDelbyHour() {
   return request({
     url: 'api/modi_hour',
     method: 'get'
   })
 }
+
 export function OgetInsDelbyHour() {
   return request({
     url: 'api/pandas_modi_hour',
     method: 'get'
   })
 }
+
 export function OgetContribution() {
   return request({
     url: 'api/comp_commit',
@@ -160,6 +179,7 @@ export function OgetDesign() {
     method: 'get'
   })
 }
+
 export function OgetDesignCloud() {
   return request({
     url: 'api/p_introcloud',
@@ -183,6 +203,7 @@ export function getContribCloudP(index) {
     }
   })
 }
+
 export function getContribCloudO() {
   return request({
     url: 'api/pandas_contricloud',

@@ -1,5 +1,6 @@
 import html2Canvas from 'html2canvas'
 import JsPDF from 'jspdf'
+
 export default {
   install(Vue, options) {
     Vue.prototype.getPdf = function (name) {

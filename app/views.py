@@ -26,7 +26,7 @@ from .models import stargazer_company, issue_company, \
     pandas_stargazer_company, \
     pandas_issue_company, pandas_committer_company, \
     pandas_total, commit_update, commit_history, commit_by_day, commit_contributors, pandas_commit_by_day, \
-    pandas_commit_contributors, pandas_commit_history, pandas_commit_update, pandas_issues, pytorch_issues
+    pandas_commit_contributors, pandas_commit_history, pandas_commit_update, pytorch_issues, pandas_issues
 import json
 from django.http import JsonResponse
 from github import Github
@@ -39,7 +39,7 @@ import pandas as pd
 
 
 def issue_content(request):
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pandas项目相关信息
     issues = repo.get_issues()
     print(issues.totalCount)
@@ -55,10 +55,10 @@ def issue_content(request):
             print(issue.title)
             print(issue.updated_at)
             if issue.closed_at is None:
-                pytorch_issues.objects.create(id=issue.id,created_at=issue.created_at, updated_at=issue.updated_at,
+                pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                               comment_cnt=issue.comments, title=issue.title)
             else:
-                pytorch_issues.objects.create(id=issue.id,created_at=issue.created_at, updated_at=issue.updated_at,
+                pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                               closed_at=issue.closed_at,
                                               comment_cnt=issue.comments, title=issue.title)
     response = {}
@@ -66,7 +66,7 @@ def issue_content(request):
 
 
 def issue_content1(request):
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pandas-dev/pandas')  # 获取pandas项目相关信息
     issues = repo.get_issues()
     print(issues.totalCount)
@@ -272,8 +272,6 @@ def company_handle(info):
 
 
 def star_gazer(request):
-    # cyy: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
-    # jxx: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
     # -------------------------------获取39990条数据
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
@@ -405,8 +403,6 @@ def pytorch_issue(request):
 
 
 def committer(request):
-    # cyy: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
-    # jxx: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
     # ---------------------------------全部获取53127条记录并筛出有公司的记录
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
@@ -479,7 +475,7 @@ def pytorch_committer(request):
 
 def update(request):
     response = {}
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 填入自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
     now_time = dt.datetime.now().strftime('%F %T')
     # -------------------------------------------更新star_gazer的company信息
@@ -591,6 +587,7 @@ def update(request):
         i = i + 1
         print(i)
         if i > issue_now - issue_formal:
+            print("pytorch issue company update finish!")
             break
         if issue.assignee is None:
             a = 1
@@ -693,6 +690,7 @@ def update(request):
         i = i + 1
         print(i)
         if i > committer_now - committer_formal:
+            print("pytorch committer company update finish!")
             break
         else:
             if commit.author is None:
@@ -803,6 +801,27 @@ def update(request):
     # total.objects.filter(source='stargazer').update(total=stargazer_now)
     total.objects.filter(source='issue').update(total=issue_now)
     total.objects.filter(source='committer').update(total=committer_now)
+    # ---------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------更新issue除star以外的相关信息
+    issues = repo.get_issues().reversed
+    i = 0
+    for issue in issues:
+        i = i + 1
+        print(i)
+        if pytorch_issues.objects.filter(id=issue.id).exists:
+            print("pytorch issues data update finish!")
+            break
+        else:
+            print(issue.created_at)
+            print(issue.title)
+            if issue.closed_at is None:
+                pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
+                                              comment_cnt=issue.comments, title=issue.title)
+            else:
+                pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
+                                              closed_at=issue.closed_at,
+                                              comment_cnt=issue.comments, title=issue.title)
+    # ----------------------------------------------------------------------------------------------------
     return JsonResponse(response)
 
 
@@ -882,7 +901,7 @@ def pandas_committer(request):
 
 def pandas_update(request):
     response = {}
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pandas-dev/pandas')  # 获取pytorch项目相关信息
     now_time = dt.datetime.now().strftime('%F %T')
     # -------------------------------------------更新star_gazer的company信息
@@ -909,6 +928,7 @@ def pandas_update(request):
         i = i + 1
         print(i)
         if i > stargazer_now - stargazer_formal:
+            print("pandas stargazer company update finish!")
             break
         if people.company:
             print(company_handle(people.company))
@@ -1034,6 +1054,7 @@ def pandas_update(request):
         i = i + 1
         print(i)
         if i > issue_now - issue_formal:
+            print("pandas issue company update finish!")
             break
         if issue.assignee is None:
             a = 1
@@ -1117,6 +1138,7 @@ def pandas_update(request):
         i = i + 1
         print(i)
         if i > committer_now - committer_formal:
+            print("pandas committer company update finish!")
             break
         else:
             if commit.author is None:
@@ -1234,21 +1256,32 @@ def pandas_update(request):
     pandas_total.objects.filter(source='stargazer').update(total=stargazer_now)
     pandas_total.objects.filter(source='issue').update(total=issue_now)
     pandas_total.objects.filter(source='committer').update(total=committer_now)
+    # ---------------------------------------------------------------------------------------------------
+    # --------------------------------------------------------------更新issue除star以外的相关信息
+    issues = repo.get_issues().reversed
+    i = 0
+    for issue in issues:
+        i = i + 1
+        print(i)
+        if pandas_issues.objects.filter(id=issue.id).exists:
+            print("pandas issues data update finish!")
+            break
+        else:
+            print(issue.created_at)
+            print(issue.title)
+            if issue.closed_at is None:
+                pandas_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
+                                             comment_cnt=issue.comments, title=issue.title)
+            else:
+                pandas_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
+                                             closed_at=issue.closed_at,
+                                             comment_cnt=issue.comments, title=issue.title)
+    # ----------------------------------------------------------------------------------------------------
     return JsonResponse(response)
 
 
 def about_us(request):
     commit_users = []
-    commit_users.append({"name": "张济开", "user": "Zhangjk2000", "url": "https://github.com/Zhangjk2000",
-                         "a_url": "https://avatars.githubusercontent.com/u/85881886?v=4"})
-    commit_users.append({"name": "温相龙", "user": "wwwxxxxlll", "url": "https://github.com/wwwxxxxlll",
-                         "a_url": "https://avatars.githubusercontent.com/u/84766861?v=4"})
-    commit_users.append({"name": "罗云", "user": "12321231", "url": "https://github.com/12321231",
-                         "a_url": "https://avatars.githubusercontent.com/u/52814667?v=4"})
-    commit_users.append({"name": "曲浩天", "user": "quhaotia", "url": "https://github.com/quhaotia",
-                         "a_url": "https://avatars.githubusercontent.com/u/91251905?v=4"})
-    commit_users.append({"name": "董博", "user": "shenkongshiyi", "url": "https://github.com/shenkongshiyi",
-                         "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
     commit_users.append({"name": "陈奕宇", "user": "radioactivecyy", "url": "https://github.com/radioactivecyy",
                          "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
     # return JsonResponse(commit_users)

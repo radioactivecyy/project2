@@ -34,6 +34,16 @@
 
   ![Mysql_config](./assets/Mysql_config.png)
 
+- 获取并填入`Github Token`
+
+  - 个人主页->头像框settings->Developer settings->Personal access tokens，生成`Github Token`。
+
+  - 填入/app/views.py/update()以及同py文件中的pandas_update()中，用于从`Github API`获取数据。
+
+    ![token_position_1](./assets/token_position_1.png)
+
+    ![token_position_2](./assets/token_position_2.png)
+
 - 运行后端
 
   - 数据库建立与同步
@@ -58,7 +68,7 @@
 
 	如果无法初始化成功，也可以使用我们在2022-12-16的数据库备份，在根目录下的data目录中即可以看到所用数据库表的csv文件，手动导入即可。
 	
-	若需获取更新，请启动前端后访问http://127.0.0.1:8000/uuuu/ 
+	若需获取更新，请启动前端后访问http://127.0.0.1:8000/uuuu 
 	
 	注意需要本地有PyTorch和Pandas的完整克隆仓库，并将地址填写在`app/views.py`的对应函数`commit_update_main(request)`中“执行更新“段落。
 

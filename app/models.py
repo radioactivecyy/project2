@@ -177,17 +177,18 @@ class pandas_commit_history(models.Model):
 
 
 class pytorch_issues(models.Model):
-    id=models.IntegerField(default=0,primary_key=True)
-    created_at=models.DateTimeField(default=None)
-    updated_at = models.DateTimeField(null=True,default=None)
-    closed_at = models.DateTimeField(null=True,default=None)
-    comment_cnt=models.IntegerField(default=0)
-    title=models.CharField(max_length=512)
+    id = models.IntegerField(default=0, primary_key=True)
+    created_at = models.DateTimeField(default=None)
+    updated_at = models.DateTimeField(null=True, default=None)
+    closed_at = models.DateTimeField(null=True, default=None)
+    comment_cnt = models.IntegerField(default=0)
+    title = models.CharField(max_length=512)
+
 
 class pandas_issues(models.Model):
-    id=models.IntegerField(default=0,primary_key=True)
-    created_at=models.DateTimeField(default=None,primary_key=True)
-    updated_at = models.DateTimeField(null=True,default=None)
-    closed_at = models.DateTimeField(null=True,default=None)
-    comment_cnt=models.IntegerField(default=0)
-    title=models.CharField(max_length=512)
+    id = models.IntegerField(default=0, primary_key=True)
+    created_at = models.DateTimeField(default=None)
+    updated_at = models.DateTimeField(null=True, default=None)
+    closed_at = models.DateTimeField(null=True, default=None)
+    comment_cnt = models.IntegerField(default=0)
+    title = models.CharField(max_length=512)
