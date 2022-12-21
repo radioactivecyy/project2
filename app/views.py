@@ -26,7 +26,8 @@ from .models import stargazer_company, issue_company, \
     pandas_stargazer_company, \
     pandas_issue_company, pandas_committer_company, \
     pandas_total, commit_update, commit_history, commit_by_day, commit_contributors, pandas_commit_by_day, \
-    pandas_commit_contributors, pandas_commit_history, pandas_commit_update, pytorch_issues, pandas_issues
+    pandas_commit_contributors, pandas_commit_history, pandas_commit_update, pytorch_issues, pandas_issues, \
+    pytorch_issues_update_cnt, pandas_issues_update_cnt
 import json
 from django.http import JsonResponse
 from github import Github
@@ -39,8 +40,9 @@ import pandas as pd
 
 
 def issue_content(request):
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pandas项目相关信息
+    response = {}
     issues = repo.get_issues()
     print(issues.totalCount)
     i = 0
@@ -50,10 +52,11 @@ def issue_content(request):
         if i <= 0:
             continue
         else:
-            print(issue.created_at)
-            print(issue.comments)
-            print(issue.title)
-            print(issue.updated_at)
+            #date = issue.updated_at.strftime("%Y/%m/%d")
+            '''if date in response:
+                response[date] = response[date] + 1
+            else:
+                response[date] = 1'''
             if issue.closed_at is None:
                 pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                               comment_cnt=issue.comments, title=issue.title)
@@ -61,14 +64,16 @@ def issue_content(request):
                 pytorch_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                               closed_at=issue.closed_at,
                                               comment_cnt=issue.comments, title=issue.title)
-    response = {}
+    '''for key in response:
+        pytorch_issues_update_cnt.objects.create(update_date=key, cnt=response[key])'''
     return JsonResponse(response)
 
 
 def issue_content1(request):
-    g = Github("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")  # 自己获取的github token
+    g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pandas-dev/pandas')  # 获取pandas项目相关信息
     issues = repo.get_issues()
+    response = {}
     print(issues.totalCount)
     i = 0
     for issue in issues:
@@ -77,10 +82,11 @@ def issue_content1(request):
         if i <= 0:
             continue
         else:
-            print(issue.created_at)
-            print(issue.comments)
-            print(issue.title)
-            print(issue.updated_at)
+            #date = issue.updated_at.strftime("%Y/%m/%d")
+            '''if date in response:
+                response[date] = response[date] + 1
+            else:
+                response[date] = 1'''
             if issue.closed_at is None:
                 pandas_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                              comment_cnt=issue.comments, title=issue.title)
@@ -88,65 +94,29 @@ def issue_content1(request):
                 pandas_issues.objects.create(id=issue.id, created_at=issue.created_at, updated_at=issue.updated_at,
                                              closed_at=issue.closed_at,
                                              comment_cnt=issue.comments, title=issue.title)
-    response = {}
+    '''for key in response:
+        pandas_issues_update_cnt.objects.create(update_date=key, cnt=response[key])'''
     return JsonResponse(response)
 
 
-# def commit_year(request):
-#     if (request.method == 'GET'):
+def pytorch_issue_update_time(request):
+    df = pd.read_csv('data/pytorch_issues_update_cnt.csv')
+    x = df['update_date'].tolist()
+    x = x[::7]
+    y = df['cnt'].tolist()
+    y = y[::7]
+    return JsonResponse({'x': x, 'y': y})
 
-#         year = request.GET.get('year')
-#         year = '2022'
-#     else:
-#         year = '2022'
-#     df = pd.read_csv('data/commits_pytorch.csv')
-
-#     # 筛选以year开头的行
-#     df = df[df['time'].str.startswith(year)]
-#     # 按照365天补全
-#     for i in range(1, 366):
-#         # 日期:年-月-日
-#         # i按照月份和日期补全
-#         # 按照大小月补全
-#         if i <= 31:
-#             date = year + '-01-' + str(i)
-#         elif i <= 59:
-#             date = year + '-02-' + str(i - 31)
-#         elif i <= 90:
-#             date = year + '-03-' + str(i - 59)
-#         elif i <= 120:
-#             date = year + '-04-' + str(i - 90)
-#         elif i <= 151:
-#             date = year + '-05-' + str(i - 120)
-#         elif i <= 181:
-#             date = year + '-06-' + str(i - 151)
-#         elif i <= 212:
-#             date = year + '-07-' + str(i - 181)
-#         elif i <= 243:
-#             date = year + '-08-' + str(i - 212)
-#         elif i <= 273:
-#             date = year + '-09-' + str(i - 243)
-#         elif i <= 304:
-#             date = year + '-10-' + str(i - 273)
-#         elif i <= 334:
-#             date = year + '-11-' + str(i - 304)
-#         else:
-#             date = year + '-12-' + str(i - 334)
-
-#         # 如果不存在这一天
-#         if date not in df['time'].tolist():
-#             # 插入一行
-#             df.loc[len(df)] = [date, 0]
-#     # 读第一列
-#     # 去重
-#     df = df.drop_duplicates(subset=['time'], keep='first')
-#     x = df['time'].tolist()
-#     # 七天一个点
-#     y = df['commits'].tolist()
-
-#     return JsonResponse({'x': x, 'y': y})
+def pandas_issue_update_time(request):
+    df = pd.read_csv('data/pandas_issues_update_cnt.csv')
+    x = df['update_date'].tolist()
+    x = x[::7]
+    y = df['cnt'].tolist()
+    y = y[::7]
+    return JsonResponse({'x': x, 'y': y})
 
 
+# Create your views here.
 def pytorch_issue_time(request):
     # 读文件csv
     df = pd.read_csv('data/issues_pytorch.csv')
@@ -254,10 +224,6 @@ def commit_both(request):
     y1 = y1[::7]
     return JsonResponse({'x': x, 'pytorch': y, 'pandas': y1})
 
-
-# Create your views here.
-
-
 def test_connect(request):
     print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
     response = {}
@@ -272,7 +238,7 @@ def company_handle(info):
 
 
 def star_gazer(request):
-    # -------------------------------获取39990条数据
+    # -------------------------------获取数据
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
     starcount = repo.stargazers_count
@@ -338,8 +304,6 @@ def pytorch_star(request):
 def issue(request):
     # ------------------------------获取issue的assignee信息（可全部获取）
     '''
-    # cyy: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
-    # jxx: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
     g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
     issues = repo.get_issues()
@@ -827,8 +791,6 @@ def update(request):
 
 def pandas_issue(request):
     # ------------------------------获取issue的assignee信息（可全部获取）
-    # cyy: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
-    # jxx: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
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pandas-dev/pandas')  # 获取pandas项目相关信息
     issues = repo.get_issues()
@@ -863,8 +825,6 @@ def pandas_issue(request):
 
 
 def pandas_committer(request):
-    # cyy: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
-    # jxx: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
     '''g = Github("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")  # 自己获取的github token
     repo = g.get_repo('pandas-dev/pandas')  # 获取pandas项目相关信息
     commits = repo.get_commits().reversed
@@ -1286,20 +1246,6 @@ def about_us(request):
                          "a_url": "https://avatars.githubusercontent.com/u/81542105?v=4"})
     # return JsonResponse(commit_users)
     return render(request, 'about-us.html', {"us": commit_users})
-
-
-# class Contribution(View):
-#    def get(self,request):
-#        contribute_data = []
-#        conact = {}
-#        if request.POST:
-#            conact = request.POST.get('urn')
-#            print(conact)
-#            print("1")
-#            contribute_data = {'value': 0, 'name': '0'}
-#        else:
-#            contribute_data = {'value': 0, 'name': ''}
-#        return render(request,'contribution.html', {"contribute_data": contribute_data} )
 
 
 # the git log command used
@@ -2063,6 +2009,76 @@ def graph_commit_contributor_word_cloud(request):
     return JsonResponse(response)
 
 
+def pytorch_graph_issues_word_cloud(request):
+    time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+    time_end = datetime.strptime("2022-12-21", "%Y-%m-%d")
+    intro_source = pytorch_issues.objects.filter(updated_at__gte=time_start,
+                                                 updated_at__lte=time_end,
+                                                 ).values('title')
+    # 生成输入字符串
+    intro_buf = str(list(map(lambda x: x['title'], intro_source)))
+
+    # # 生成对象
+    img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
+    mask = np.array(img)  # 将图片转换为数组
+
+    stopwords = {"Fix", "Add", "Remove", "Use", "the", "py", "a", "in", "to", "for", "and", "of", "from", "with",
+                 "on", "test", "tests", "support", "revert", "dynamo"}
+    _wcloud = wordcloud.WordCloud(
+        mask=mask,
+        width=500,
+        height=500,
+        background_color=None,
+        mode='RGBA',
+        max_words=100,
+        stopwords=stopwords,
+        colormap="spring")
+    _wc = _wcloud.generate(intro_buf)
+
+    # 生成png图片，储存在缓冲区中
+    _buffer = io.BytesIO()
+    _wc.to_image().save(_buffer, 'png')
+    # 生成base64字符串，并传回前端
+    _base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
+    response = {'base64_png': _base64_str}
+    return JsonResponse(response)
+
+
+def pandas_graph_issues_word_cloud(request):
+    time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+    time_end = datetime.strptime("2022-12-21", "%Y-%m-%d")
+    intro_source = pandas_issues.objects.filter(updated_at__gte=time_start,
+                                                updated_at__lte=time_end,
+                                                ).values('title')
+    # 生成输入字符串
+    intro_buf = str(list(map(lambda x: x['title'], intro_source)))
+
+    # # 生成对象
+    img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
+    mask = np.array(img)  # 将图片转换为数组
+
+    stopwords = {"Fix", "Add", "Remove", "Use", "the", "py", "a", "in", "to", "for", "and", "of", "from", "with",
+                 "on", "test", "tests", "support", "revert", "dynamo"}
+    _wcloud = wordcloud.WordCloud(
+        mask=mask,
+        width=500,
+        height=500,
+        background_color=None,
+        mode='RGBA',
+        max_words=100,
+        stopwords=stopwords,
+        colormap="spring")
+    _wc = _wcloud.generate(intro_buf)
+
+    # 生成png图片，储存在缓冲区中
+    _buffer = io.BytesIO()
+    _wc.to_image().save(_buffer, 'png')
+    # 生成base64字符串，并传回前端
+    _base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
+    response = {'base64_png': _base64_str}
+    return JsonResponse(response)
+
+
 # 绘制每天分小时添加/删除行数的图
 def graph_modi_time_of_day(request):
     # request: {'start':'日期，'end':'日期'}
@@ -2088,6 +2104,57 @@ def graph_modi_time_of_day(request):
     add_list = list(map(lambda x: int(x), add_list))
     del_list = list(map(lambda x: int(x), del_list))
     response = {'x': x_list, 'add': add_list, 'del': del_list}
+    return JsonResponse(response)
+
+
+def pandas_graph_commit_intro_word_cloud(request):
+    # 获取前端传回的起讫日期，传回词云图的base64字符串。
+    # 时间格式为"%Y-%m-%d"
+    time_start = datetime.strptime("2022-10-01", "%Y-%m-%d")
+    time_end = datetime.strptime("2022-12-01", "%Y-%m-%d")
+    # time_start = datetime.strptime(request.POST['start'], "%Y-%m-%d")
+    # time_end = datetime.strptime(request.POST['end'], "%Y-%m-%d")
+    intro_source = pandas_commit_history.objects.filter(commit_time__gte=time_start,
+                                                        commit_time__lte=time_end,
+                                                        if_design=True,
+                                                        ).values('commit_intro')
+
+    # 打开文本
+    # os.chdir("/Users/ihsiao/Documents/SRE/pt_als")
+    # with open("comments.txt", encoding="utf-8") as f:
+    # 	s = f.read()
+
+    # 生成输入字符串
+    intro_buf = str(list(map(lambda x: x['commit_intro'], intro_source)))
+
+    # # 生成对象
+    img = Image.open("static/images/mask_cyy.jpeg")  # 打开遮罩图片
+    mask = np.array(img)  # 将图片转换为数组
+
+    stopwords = {"Fix", "Add", "Remove", "Use", "the", "py", "a", "in", "to", "for", "and", "of", "from", "with",
+                 "on", "test", "tests", "support", "revert", "dynamo"}
+    _wcloud = wordcloud.WordCloud(
+        mask=mask,
+        width=500,
+        height=500,
+        background_color=None,
+        mode='RGBA',
+        max_words=100,
+        stopwords=stopwords,
+        colormap="spring")
+    _wc = _wcloud.generate(intro_buf)
+
+    # 生成png图片，储存在缓冲区中
+    _buffer = io.BytesIO()
+    _wc.to_image().save(_buffer, 'png')
+    # 生成base64字符串，并传回前端
+    _base64_str = base64.b64encode(_buffer.getvalue()).decode(encoding="utf-8")
+    response = {'base64_png': _base64_str}
+    # # 显示方法：<img src="data:image/png;base64,"+response['base64_png']/>
+    # file_html = open("templates/render_base64.html", 'w', encoding='utf-8')
+    # file_html.write('<img src="data:image/png;base64, ' + response['base64_png'] + '"/>')
+    # file_html.close()
+    # return render(request, "render_base64.html")
     return JsonResponse(response)
 
 

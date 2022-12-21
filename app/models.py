@@ -192,3 +192,11 @@ class pandas_issues(models.Model):
     closed_at = models.DateTimeField(null=True, default=None)
     comment_cnt = models.IntegerField(default=0)
     title = models.CharField(max_length=512)
+
+class pytorch_issues_update_cnt(models.Model):
+    update_date = models.CharField(max_length=16,primary_key=True)
+    cnt=models.IntegerField(default=0)
+
+class pandas_issues_update_cnt(models.Model):
+    update_date = models.CharField(max_length=16,primary_key=True)
+    cnt=models.IntegerField(default=0)

@@ -34,3 +34,18 @@ cyy-11.3-commit:
 
 - 如pytorch一般新建了7个数据库表，并写了pandas的三种company来源的获取、更新函数，形式和pytorch差不多
 - 把从pandas获取到的所有数据放在了data文件夹中，带有pandas_前缀
+
+cyy-12.21-commit:
+
+- 词云图更新了两个函数，pytorch_graph_issues_word_cloud和pandas_graph_issues_word_cloud，信息从数据库中提取，所以需要导入pytorch_issues和pandas_issues两张表。
+
+- 分布更新了两个函数，pytorch_issue_update_time和pandas_issue_update_time，信息直接从csv中提取，可以直接使用。
+
+- urls配置为
+
+- ```python
+  path('pytorch_issue_wordcloud', views.pytorch_graph_issues_word_cloud),
+  path('pandas_issue_wordcloud',views.pandas_graph_issues_word_cloud),
+  path('pytorch_update_time', views.pytorch_issue_update_time),
+  path('pandas_update_time', views.pandas_issue_update_time),
+  ```
