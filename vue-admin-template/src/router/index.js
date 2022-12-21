@@ -52,7 +52,7 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: {title: 'Dashboard', icon: 'dashboard'}
+        meta: { title: 'Dashboard', icon: 'dashboard' }
       }
     ]
   },
@@ -65,11 +65,12 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/pytorch/index'),
         name: 'Pytorch',
-        meta: {title: 'Pytorch', icon: 'dashboard'}
+        meta: { title: 'Pytorch', icon: 'dashboard' }
       }
     ],
     hidden: false
   },
+
   {
     path: '/repo-detail',
     component: Layout,
@@ -92,7 +93,21 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/compare/index'),
         name: 'User Profile',
-        meta: {title: 'Compare', icon: 'example'}
+        meta: { title: 'Compare', icon: 'example' }
+      }
+    ],
+    hidden: false
+  },
+  {
+    path: '/about_us',
+    component: Layout,
+    redirect: '/about_us/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/about_us/index'),
+        name: 'AboutUs',
+        meta: { title: 'About Us', icon: 'user' }
       }
     ],
     hidden: false
@@ -203,13 +218,13 @@ export const constantRoutes = [
   // },
 
   // 404 page must be placed at the end !!!
-  {path: '*', redirect: '/404', hidden: true}
+  { path: '*', redirect: '/404', hidden: true }
 ]
 
 const createRouter = () =>
   new Router({
     // mode: 'history', // require service support
-    scrollBehavior: () => ({y: 0}),
+    scrollBehavior: () => ({ y: 0 }),
     routes: constantRoutes
   })
 
