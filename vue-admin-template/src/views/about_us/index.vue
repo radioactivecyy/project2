@@ -14,7 +14,7 @@
     <el-col :span="11" :offset="1"> <el-card class="box-card">
   <div slot="header" class="clearfix">
     <span> <div>
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      <el-avatar  :src="d1"></el-avatar>
     </div></el-item>陈奕宇</span>
      </div>
 <p>组长，后端开发</p>
@@ -24,7 +24,7 @@
 <el-card class="box-card">
   <div slot="header" class="clearfix">
     <span> <div>
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      <el-avatar  :src="d2"></el-avatar>
     </div></el-item>黄亦霄</span>
      </div>
 <p>后端开发</p>
@@ -37,7 +37,7 @@
 <el-card class="box-card">
   <div slot="header" class="clearfix">
     <span> <div>
-      <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+      <el-avatar :src="d3"></el-avatar>
     </div></el-item>江小小</span>
      </div>
 <p>前端开发</p>
@@ -54,7 +54,18 @@
     </div>
 </template>
 <script>
-
+import dd3 from './img/3.png'
+import dd2 from './img/2.png'
+import dd1 from './img/1.png'
+export default {
+  data() {
+    return {
+      d1: dd1,
+      d2: dd2,
+      d3: dd3
+    }
+  }
+}
 </script>
 
 

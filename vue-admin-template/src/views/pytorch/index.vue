@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container" id="pdfDom">
   
     <h1><svg-icon icon-class="pytorch" /> Pytorch</h1>
-    <a>数据获取时间为:若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
+    <a>若需要获取最新数据请点击:<el-button @click="refresh()">刷新</el-button></a>
     <p>
       company information about Stargazers, Issue creators, and Pull Request. Click here to download report
       <el-button class="bt-style" @click="getPdf(htmlTitle)"></el-button>
@@ -39,19 +39,7 @@
       </el-row>
 
       <el-row>
-        <!-- <el-col :xs="14" :sm="14" :lg="12">
-          <div class="chart-wrapper">
-            <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-              <linechart
-                Mytitle="star"
-                color1="rgb(149, 229, 130 )"
-                color2="rgb(159, 233, 141  )"
-                color3="rgb(50, 144, 212 )"
-                :chartData="starNumdata"
-              />
-            </div>
-          </div>
-        </el-col> -->
+      
         <el-col :xs="14" :sm="14" :lg="22">
           <div class="chart-wrapper">
             <div class="flex justify-space-between mb-4 flex-wrap gap-4">
@@ -77,25 +65,7 @@
     </el-row>
     <h2>贡献者活跃情况</h2>
    
-      <!-- <el-col :span="20">
-        <calender :Year="year" MyTitle="star" /> -->
-      <!-- </el-col> -->
-      <!-- <el-col :span="12">
-        <calender :Year="year" MyTitle="issue" />
-      </el-col> -->
-  
-    <!-- <el-row> -->
-      <!-- <el-col :xs="14" :sm="14" :lg="12">
-        <calender :Year="year" MyTitle="commit" />
-      </el-col> -->
-      <!-- <el-col :xs="14" :sm="14" :lg="23">
-        <div class="chart-wrapper">
-          <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <ins_del :chartData="insDelData" lineTitle1="add" lineTitle2="delete" @func="getMsgFrominsDel" />
-          </div>
-        </div>
-      </el-col>
-    </el-row> -->
+      
 <el-row>
   <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
@@ -115,7 +85,13 @@
       <el-col :span="5">
       <el-image style="width: 400px; height: 400px" :src="contirbcloud" :fit="fit" /></el-col>
     </el-row>
-
+    <el-row>
+    <el-col :span="22">
+    <div class="chart-wrapper">
+      <contrib_graphVue :chartData="contrigraphData"  Mytitle="pytorch贡献者代码提交量" />
+    </div>
+    </el-col>
+    </el-row>
     <el-row :gutter="22">
       <el-col :xs="14" :sm="24" :lg="22">
         <div class="chart-wrapper">
@@ -139,8 +115,17 @@
       
    
     </el-row>
+   
+  
 <h2>Issue</h2>
-<issue_line/>
+<el-row :gutter="20">
+<el-col :span="14">
+<div class="chart-wrapper">
+  <issue_line Mytitle="issue history" :chartData="issueUpdate"/></div></el-col>
+  <el-col :span="8">
+    <el-image style="width: 400px; height: 400px" :src="issueCloud" :fit="fit" /></el-col>
+</el-row>
+
 
     <h2>Companies</h2>
 
@@ -191,13 +176,14 @@ import linechart from './components/linechart.vue'
 import code_num from './components/code_num.vue'
 
 import linechart3 from './components/linechart3.vue'
-
+import co_IssueVue from '../compare/components/co_Issue.vue'
 import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
 import issue_line from './components/linechart_new.vue'
 import * as dataapi from '@/api/getdata'
 import getStar from './components/getStar'
 import { refreshData } from '@/api/pytorch'
+import contrib_graphVue from './components/contrib_graph.vue'
 import * as d3 from 'd3'
 export default {
   name: 'Pytorch',
@@ -213,12 +199,13 @@ export default {
       Commit_bubble_data: Array,
       bubble_data: Array,
       ttt: 0,
-  
+      issueUpdate:{},
       issueNumdata: {},
       starNumdata: {},
       commitNumdata: {},
       threeData: {},
       insDelData: {},
+      issueCloud: String,
       insDelDatabyHour: {},
       startVal: -1,
       endVal: -1,
@@ -228,7 +215,7 @@ export default {
       designData: {},
       designcloud: String,
       contirbcloud: String,
-
+      contrigraphData:{},
       companyDataType: 'star',
       ListData: 'dev-api/api/pytorch_star'
     }
@@ -236,7 +223,9 @@ export default {
   components: {
     // iBubble,
     sBubble,
+    contrib_graphVue,
     // cBubble,
+    co_IssueVue,
     issue_line,
     List,
     linechart,
@@ -259,15 +248,18 @@ export default {
 
   mounted() {
     const msg = this.$route.query.name
-   
+    this.getContribCloud()
     this.getInsDelDatabyHour()
     this.getCompanyStarData()
     this.getCompanyIssueData()
     this.getContributionDesign()
     this.getContributionFile()
     this.getCompanyCommitData()
+    this.getContribGraph()
+    this.getIssueUpdate()
     this.getDesignCloud()
-    this.getContribCloud()
+    
+    this.getIssueCloud()
     this.getDesign()
     this.getContribution()
     this.getIssueLineData()
@@ -276,13 +268,34 @@ export default {
     // this.getThreeData()
     this.getInsDelData()
    
-
+   
 
    
   },
   methods: {
+   async getContribGraph(){
+    await dataapi.getCommitGraph().then(res => {
+      var data = {}
+        data['x'] = res.x
+        data['y'] = res.y
+        this.contrigraphData = JSON.parse(JSON.stringify(data))
+      
+    })
+  
+   },
+    async getIssueUpdate() {
+      // console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+      const res = await dataapi.getPIssueUpdate().then(res => {
+        var data = {}
+        data['x'] = res.x
+        data['y1'] = res.y1
+        data['y2'] = res.y2
+        this.issueUpdate = JSON.parse(JSON.stringify(data))
+      
+        
+      })
    
-    
+    },
     starBubble: function (data) {
       // console.log('starBubble')
       this.getCompanyStarData().then(res => {
@@ -305,14 +318,21 @@ export default {
     },
     async getDesignCloud() {
      
-      dataapi.getDesignCloud().then(res => {
+      await dataapi.getDesignCloud().then(res => {
         this.designcloud = 'data:image/png;base64,' + res.base64_png
      
       })
     },
+    async getIssueCloud() {
+     
+     await dataapi.getPIssueCloud().then(res => {
+       this.issueCloud = 'data:image/png;base64,' + res.base64_png
+    
+     })
+   },
     async getContribCloud() {
-     console.log('getContribCloud')
-     dataapi.getContributionCloud().then(res => {
+     
+     await dataapi.getContributionCloud().then(res => {
        this.contirbcloud = 'data:image/png;base64,' + res.base64_png
        
      })
@@ -363,16 +383,7 @@ export default {
         this.threeData['y3'] = this.commitNumdata.y
       })
     },
-    // async getInsDelData() {
-    //   await dataapi.getInsDel(this.startVal, this.endVal).then(res => {
-    //     // 把数组中的每个元素都push到data中
-    //     var data = {}
-    //     data['x'] = res.x
-    //     data['y1'] = res.y1
-    //     data['y2'] = res.y2
-    //     this.insDelData = JSON.parse(JSON.stringify(data))
-    //   })
-    // },
+
     async getInsDelDatabyHour() {
   
       await dataapi.getInsDelbyHour().then(res => {
@@ -435,19 +446,36 @@ export default {
     },
     getMsgFrominsDel(msg) {
       var d = JSON.parse(JSON.stringify(msg))
-      console.log('ddddddddddddddddd', d)
       this.startVal = d.startVal
       this.endVal = d.endVal
     },
     async refresh() {
-      refreshData().then(
+      await refreshData().then(
         // 刷新数据后重新渲染
         // 消息提示
         this.$message({
           message: '刷新成功',
           type: 'success'
         }),
-        this.getCompanyStarData()
+        this.getContribCloud(),
+    this.getInsDelDatabyHour(),
+    this.getCompanyStarData(),
+    this.getCompanyIssueData(),
+    this.getContributionDesign(),
+    this.getContributionFile(),
+    this.getCompanyCommitData(),
+    this.getContribGraph(),
+    this.getIssueUpdate(),
+    this.getDesignCloud(),
+    
+    this.getIssueCloud(),
+    this.getDesign(),
+    this.getContribution(),
+    this.getIssueLineData(),
+    // this.getStarLineData()
+    this.getCommitLineData(),
+    // this.getThreeData()
+    this.getInsDelData(),
       )
     }
   }

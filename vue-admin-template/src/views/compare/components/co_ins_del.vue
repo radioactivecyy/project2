@@ -91,9 +91,7 @@ export default {
       this.x1 = mydata1.x
       this.y11 = mydata1.y1
       this.y12 = mydata1.y2
-      console.log('this.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', this.chartData1)
-      console.log('this.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', this.chartData2)
-      var mydata2 = JSON.parse(JSON.stringify(this.chartData2))
+           var mydata2 = JSON.parse(JSON.stringify(this.chartData2))
       this.x2 = mydata2.x
       this.y21 = mydata2.y1
       this.y22 = mydata2.y2

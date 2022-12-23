@@ -32,6 +32,10 @@ export default {
     forks: {
       type: Number,
       default: 0
+    },
+    ppp:{
+      type: String,
+      default: '/pytorch'
     }
   },
   data() {
@@ -45,9 +49,8 @@ export default {
   },
   methods: {
     handle() {
-      // 路径path对应在router目录下  定义的path属性值
-      // , parmas: { 'name': this.name }
-      this.$router.push({ path: '/pytorch', query: { name: this.name }})
+   
+      this.$router.push({ path: this.ppp, query: { name: this.name }})
     }
   }
 }
@@ -73,7 +76,7 @@ export default {
 }
 
 .box-card {
-  width: 260px;
+  width: 240px;
 }
 </style>
 <style scoped>

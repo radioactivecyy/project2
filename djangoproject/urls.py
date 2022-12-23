@@ -81,10 +81,12 @@ urlpatterns = [
 
     path('pytorch_update_time', views.pytorch_issue_update_time),
     path('pandas_update_time', views.pandas_issue_update_time),
-
+    path('graph_comtrib', views.pytorch_Contrib_graph),
+    path('graph_comtrib_pandas', views.pandas_Contrib_graph),
     path('issue_test', views.issue_content),
     path('issue_test1', views.issue_content1),
-
+    path('update_pytorch', views.update_pytorch),
+    path('update_pandas', views.update_pandas),
     # 年commit数目
     # path('commit_year', views.commit_year),
 ]

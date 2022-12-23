@@ -6,13 +6,30 @@ export function getIssueDevelop() {
     method: 'get'
   })
 }
-export function aaPgetContributionDesign() {
+export function getPIssueUpdate() {
   return request({
-    url: 'api/compound_pie_design',
+    url: 'api/pytorch_update_time',
     method: 'get'
   })
 }
-
+export function getPIssueCloud() {
+  return request({
+    url: 'api/pytorch_issue_wordcloud',
+    method: 'get'
+  })
+}
+export function getOIssueCloud() {
+  return request({
+    url: 'api/pandas_issue_wordcloud',
+    method: 'get'
+  })
+}
+export function getOIssueUpdate() {
+  return request({
+    url: 'api/pandas_update_time',
+    method: 'get'
+  })
+}
 export function PgetContributionDesign() {
   return request({
     url: 'api/compound_pie_design',
@@ -60,7 +77,18 @@ export function getCommitDevelop() {
     method: 'get'
   })
 }
-
+export function getCommitGraph() {
+  return request({
+    url: 'api/graph_comtrib',
+    method: 'get'
+  })
+}
+export function getCommitGraphO() {
+  return request({
+    url: 'api/graph_comtrib_pandas',
+    method: 'get'
+  })
+}
 export function getInsDel(startindex, endindex) {
   return request({
     url: 'api/insdel',
@@ -130,14 +158,12 @@ export function OgetIssueDevelop() {
     method: 'get'
   })
 }
-
-export function OgetStarDevelop() {
+export function ORefreshData() {
   return request({
-    url: 'api/star_both',
+    url: 'api/update_pandas',
     method: 'get'
   })
 }
-
 export function OgetCommitDevelop() {
   return request({
     url: 'api/commit_both',

@@ -129,14 +129,14 @@ def pytorch_issue_update_time(request):
     y2 = [sum(y2[i:i + 7]) for i in range(0, len(y2), 7)]
     df = pd.read_csv('data/issues_pandas.csv')
     x3 = df['time'].tolist()
-    x3=x3[::7]
-    cnt=0
+    x3 = x3[::7]
+    cnt = 0
     for date in x3:
-        if date<"2016-10-01":
-            x.insert(cnt,date)
-            y.insert(cnt,0)
-            y2.insert(cnt,0)
-            cnt=cnt+1
+        if date < "2016-10-01":
+            x.insert(cnt, date)
+            y.insert(cnt, 0)
+            y2.insert(cnt, 0)
+            cnt = cnt+1
         else:
             break
     return JsonResponse({'x': x, 'y1': y, 'y2': y2})
@@ -198,20 +198,20 @@ def pytorch_issue_time(request):
     # 读第一列
     x = df['time'].tolist()
     # 七天一个点
-    x = x[::7]
+    x = x[::30]
     # 读第二列
     y = df['issues'].tolist()
     # 七天一个点
-    y = y[::7]
+    y = y[::30]
     return JsonResponse({'x': x, 'y': y})
 
 
 def pytorch_commit_time(request):
     df = pd.read_csv('data/commits_pytorch.csv')
     x = df['time'].tolist()
-    x = x[::7]
+    x = x[::30]
     y = df['commits'].tolist()
-    y = y[::7]
+    y = y[::30]
     return JsonResponse({'x': x, 'y': y})
 
 
@@ -244,9 +244,9 @@ def issue_both(request):
     else:
         for i in range(len(y1) - len(y)):
             y.insert(0, 0)
-    x = x[::7]
-    y = y[::7]
-    y1 = y1[::7]
+    x = x[::30]
+    y = y[::30]
+    y1 = y1[::30]
     return JsonResponse({'x': x, 'pytorch': y, 'pandas': y1})
 
 
@@ -278,9 +278,9 @@ def commit_both(request):
     else:
         for i in range(len(y1) - len(y)):
             y.insert(0, 0)
-    x = x[::7]
-    y = y[::7]
-    y1 = y1[::7]
+    x = x[::30]
+    y = y[::30]
+    y1 = y1[::30]
     return JsonResponse({'x': x, 'pytorch': y, 'pandas': y1})
 
 
@@ -2031,13 +2031,78 @@ def pandas_graph_commit_intro_word_cloud(request):
     return JsonResponse(response)
 
 
+def pytorch_Contrib_graph(request):
+    primary_contributor = commit_contributors.objects.filter(
+        if_core=True).values_list('author', 'modi_del', 'modi_ins')
+    # 计算贡献者的insertions和deletions
+
+    com = []
+    for i in primary_contributor:
+        com.append([i[0], i[1]+i[2], i[1], i[2]])
+
+    # 选取前十名
+    # 根据贡献者的insertions和deletions排序
+    # 将前十个贡献者的名字和insertions和deletions存入列表
+    com = sorted(com, key=lambda x: x[1], reverse=True)
+    com = com[:15]
+    x = []
+    y = []
+    for i in range(len(com)-1, -1, -1):
+        x.append(com[i][0])
+        y.append(com[i][1])
+    # x逆序
+
+    return JsonResponse({'x': x, 'y': y})
+
+
+def pandas_Contrib_graph(request):
+    primary_contributor = pandas_commit_contributors.objects.filter(
+        if_core=True).values_list('author', 'modi_del', 'modi_ins')
+    # 计算贡献者的insertions和deletions
+
+    com = []
+    for i in primary_contributor:
+        com.append([i[0], i[1]+i[2]])
+
+    # 选取前十名
+    # 根据贡献者的insertions和deletions排序
+    # 将前十个贡献者的名字和insertions和deletions存入列表
+    com = sorted(com, key=lambda x: x[1], reverse=True)
+    com = com[:15]
+    x = []
+    y = []
+    for i in range(len(com)-1, -1, -1):
+        x.append(com[i][0])
+        y.append(com[i][1])
+    return JsonResponse({'x': x, 'y': y})
 # 绘制主要贡献者词云图 -> base64 str, utf-8
+
+
+def update_pytorch(request):
+
+    test(request)
+    commit_update_main(request)
+    update(request)
+    issue_content(request)
+    return JsonResponse({'status': 'ok'})
+
+
+def update_pandas(request):
+    issue_content1(request)
+    test(request)
+    commit_update_main(request)
+    issue_content1(request)
+    return JsonResponse({'status': 'ok'})
+
+
 def pandas_graph_commit_contributor_word_cloud(request):
     primary_contributor = pandas_commit_contributors.objects.filter(
         if_core=True).values('author')
     # 生成输入字符串
-
+    for i in primary_contributor:
+        print(i['author'])
     intro_buf = str(list(map(lambda x: x['author'], primary_contributor)))
+
     # intro_buf = ""
     # for i in primary_contributor:
     # 	intro_buf += i['author'] + " "
