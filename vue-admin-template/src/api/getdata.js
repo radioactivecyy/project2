@@ -6,6 +6,12 @@ export function getIssueDevelop() {
     method: 'get'
   })
 }
+export function aaPgetContributionDesign() {
+  return request({
+    url: 'api/compound_pie_design',
+    method: 'get'
+  })
+}
 
 export function PgetContributionDesign() {
   return request({

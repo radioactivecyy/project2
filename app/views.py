@@ -44,7 +44,7 @@ def issue_content(request):
     repo = g.get_repo('pytorch/pytorch')  # 获取pandas项目相关信息
     response = {}
     issues = repo.get_issues()
-    print(issues.totalCount)
+
     i = 0
     for issue in issues:
         i = i + 1
@@ -74,11 +74,11 @@ def issue_content1(request):
     repo = g.get_repo('pandas-dev/pandas')  # 获取pandas项目相关信息
     issues = repo.get_issues()
     response = {}
-    print(issues.totalCount)
+
     i = 0
     for issue in issues:
         i = i + 1
-        print(i)
+
         if i <= 0:
             continue
         else:
@@ -100,20 +100,84 @@ def issue_content1(request):
 
 
 def pytorch_issue_update_time(request):
+    # 两条线
     df = pd.read_csv('data/pytorch_issues_update_cnt.csv')
-    x = df['update_date'].tolist()
+    x1 = df['update_date'].tolist()
+    # 把x的格式改成%Y-%m-%d
+    for i in range(len(x1)):
+        x1[i] = x1[i].replace('/', '-')
+
+    y1 = df['cnt'].tolist()
+
+    df = pd.read_csv('data/issues_pytorch.csv')
+    # 读第一列
+    x = df['time'].tolist()
+    # 七天一个点
+
+    # 读第二列
+    y = df['issues'].tolist()
+    # 七天一个点
+
+    # 把y1填充为和y一样的长度
+    y2 = [0 for i in range(len(y))]
+    for i in range(len(x1)):
+        if x1[i] in x:
+            y2[x.index(x1[i])] = y1[i]
     x = x[::7]
-    y = df['cnt'].tolist()
     y = y[::7]
-    return JsonResponse({'x': x, 'y': y})
+    # y2每7天累加一次
+    y2 = [sum(y2[i:i + 7]) for i in range(0, len(y2), 7)]
+
+    return JsonResponse({'x': x, 'y1': y, 'y2': y2})
+
 
 def pandas_issue_update_time(request):
+    # df = pd.read_csv('data/pandas_issues_update_cnt.csv')
+    # x = df['update_date'].tolist()
+    # x = x[::7]
+    # y = df['cnt'].tolist()
+    # y = y[::7]
+    # 两条线
     df = pd.read_csv('data/pandas_issues_update_cnt.csv')
-    x = df['update_date'].tolist()
+    x1 = df['update_date'].tolist()
+    # 把x的格式改成%Y-%m-%d
+    for i in range(len(x1)):
+        x1[i] = x1[i].replace('/', '-')
+
+    y1 = df['cnt'].tolist()
+
+    df = pd.read_csv('data/issues_pandas.csv')
+    # 读第一列
+    x = df['time'].tolist()
+    # 七天一个点
+
+    # 读第二列
+    y = df['issues'].tolist()
+    # 七天一个点
+
+    # 把y1填充为和y一样的长度
+    y2 = [0 for i in range(len(y))]
+    for i in range(len(x1)):
+        if x1[i] in x:
+            y2[x.index(x1[i])] = y1[i]
     x = x[::7]
-    y = df['cnt'].tolist()
     y = y[::7]
-    return JsonResponse({'x': x, 'y': y})
+    # y2每7天累加一次
+    y2 = [sum(y2[i:i + 7]) for i in range(0, len(y2), 7)]
+
+    return JsonResponse({'x': x, 'y1': y, 'y2': y2})
+
+
+#         # 如果不存在这一天
+#         if date not in df['time'].tolist():
+#             # 插入一行
+#             df.loc[len(df)] = [date, 0]
+#     # 读第一列
+#     # 去重
+#     df = df.drop_duplicates(subset=['time'], keep='first')
+#     x = df['time'].tolist()
+#     # 七天一个点
+#     y = df['commits'].tolist()
 
 
 # Create your views here.
@@ -137,22 +201,6 @@ def pytorch_commit_time(request):
     x = x[::7]
     y = df['commits'].tolist()
     y = y[::7]
-    return JsonResponse({'x': x, 'y': y})
-
-
-def star_both(request):
-    x = [0]
-    y = [0]
-    # # 读文件csv
-    # df = pd.read_csv('data/star_both.csv')
-    # # 读第一列
-    # x = df['time'].tolist()
-    # # 七天一个点
-    # x = x[::7]
-    # # 读第二列
-    # y = df['star'].tolist()
-    # # 七天一个点
-    # y = y[::7]
     return JsonResponse({'x': x, 'y': y})
 
 
@@ -223,6 +271,7 @@ def commit_both(request):
     y = y[::7]
     y1 = y1[::7]
     return JsonResponse({'x': x, 'pytorch': y, 'pandas': y1})
+
 
 def test_connect(request):
     print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
@@ -439,7 +488,8 @@ def pytorch_committer(request):
 
 def update(request):
     response = {}
-    g = Github("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")  # 填入自己获取的github token
+    # 填入自己获取的github token
+    g = Github("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")
     repo = g.get_repo('pytorch/pytorch')  # 获取pytorch项目相关信息
     now_time = dt.datetime.now().strftime('%F %T')
     # -------------------------------------------更新star_gazer的company信息
@@ -1255,7 +1305,8 @@ def git_log_to_file(pytorch="/Users/ihsiao/Documents/SRE/pytorch",
                     from_time=None):
     order_string = "git log " + instruction
     if from_time:
-        order_string += ''' --after="''' + from_time.strftime("%Y-%m-%d %H:%M:%S") + '" '
+        order_string += ''' --after="''' + \
+            from_time.strftime("%Y-%m-%d %H:%M:%S") + '" '
     order_string += " > " + os.path.join(os.getcwd(), outputdir)
     prev_dir = os.getcwd()
     os.chdir(pytorch)
@@ -1277,15 +1328,18 @@ def pandas_commit_git_log_parser(input_filename: str):
 
     finished_cnt = 0
     while filebuf_i < len(filebuf):
-        info_resolved = re.findall(info_template, filebuf[filebuf_i])  # extract each fields
+        info_resolved = re.findall(
+            info_template, filebuf[filebuf_i])  # extract each fields
         if info_resolved:  # if succeeded
             pandas_commit_entry = pandas_commit_history()  # new entry to be inserted
 
             # 更新/创建贡献者表单项
             try:
-                author_entry = pandas_commit_contributors.objects.get(author=info_resolved[0][1])
+                author_entry = pandas_commit_contributors.objects.get(
+                    author=info_resolved[0][1])
             except pandas_commit_contributors.DoesNotExist:
-                author_entry = pandas_commit_contributors(author=info_resolved[0][1])
+                author_entry = pandas_commit_contributors(
+                    author=info_resolved[0][1])
             # author_entry.save()
 
             # 添加直接获取的信息
@@ -1293,13 +1347,16 @@ def pandas_commit_git_log_parser(input_filename: str):
             pandas_commit_entry.author = author_entry
             pandas_commit_entry.author_email = info_resolved[0][2]
             pandas_commit_entry.commit_intro = info_resolved[0][3][:500]
-            pandas_commit_entry.time_local = datetime.strptime(info_resolved[0][4][-19:-11], "%H:%M:%S")
-            pandas_commit_entry.commit_time = datetime.strptime(info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
+            pandas_commit_entry.time_local = datetime.strptime(
+                info_resolved[0][4][-19:-11], "%H:%M:%S")
+            pandas_commit_entry.commit_time = datetime.strptime(
+                info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
             pandas_commit_entry.committer = info_resolved[0][6]
             pandas_commit_entry.committer_email = info_resolved[0][7]
 
             # 分析是否是设计相关的讨论
-            pandas_commit_entry.if_design = check_if_design_related(info_resolved[0][3])
+            pandas_commit_entry.if_design = check_if_design_related(
+                info_resolved[0][3])
             print(pandas_commit_entry.commit_time)
             # 插入本次commit更改的统计数据（如有）
             try:
@@ -1358,13 +1415,15 @@ def commit_git_log_parser(input_filename: str):
 
     finished_cnt = 0
     while filebuf_i < len(filebuf):
-        info_resolved = re.findall(info_template, filebuf[filebuf_i])  # extract each fields
+        info_resolved = re.findall(
+            info_template, filebuf[filebuf_i])  # extract each fields
         if info_resolved:  # if succeeded
             commit_entry = commit_history()  # new entry to be inserted
 
             # 更新/创建贡献者表单项
             try:
-                author_entry = commit_contributors.objects.get(author=info_resolved[0][1])
+                author_entry = commit_contributors.objects.get(
+                    author=info_resolved[0][1])
             except commit_contributors.DoesNotExist:
                 author_entry = commit_contributors(author=info_resolved[0][1])
             author_entry.save()
@@ -1374,13 +1433,16 @@ def commit_git_log_parser(input_filename: str):
             commit_entry.author = author_entry
             commit_entry.author_email = info_resolved[0][2]
             commit_entry.commit_intro = info_resolved[0][3][:500]
-            commit_entry.time_local = datetime.strptime(info_resolved[0][4][-19:-11], "%H:%M:%S")
-            commit_entry.commit_time = datetime.strptime(info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
+            commit_entry.time_local = datetime.strptime(
+                info_resolved[0][4][-19:-11], "%H:%M:%S")
+            commit_entry.commit_time = datetime.strptime(
+                info_resolved[0][5][:-6], "%a %b %d %H:%M:%S %Y")
             commit_entry.committer = info_resolved[0][6]
             commit_entry.committer_email = info_resolved[0][7]
 
             # 分析是否是设计相关的讨论
-            commit_entry.if_design = check_if_design_related(info_resolved[0][3])
+            commit_entry.if_design = check_if_design_related(
+                info_resolved[0][3])
 
             # 插入本次commit更改的统计数据（如有）
             try:
@@ -1452,7 +1514,8 @@ def commit_update_main(request):
     # 检查更新记录
     try:
         # 存在更新记录，取得最新一条commit的时间
-        last_upd = commit_update.objects.order_by('time_last_record').last().time_last_record
+        last_upd = commit_update.objects.order_by(
+            'time_last_record').last().time_last_record
     except Exception:
         last_upd = None
     print(last_upd)
@@ -1473,7 +1536,8 @@ def commit_update_main(request):
     # 重新计算从上一次的最后一条记录开始所有日期的统计数据
     if not last_upd:  # 若是第一次更新，则全部重新计算
         try:
-            last_upd = commit_history.objects.order_by('commit_time').first().commit_time
+            last_upd = commit_history.objects.order_by(
+                'commit_time').first().commit_time
         except commit_history.DoesNotExist:
             # 没有任何记录，返回
             print("NO VALID RECORDS IN COMMIT_HISTORY!")
@@ -1519,13 +1583,19 @@ def commit_update_main(request):
             date_entry.date = begin_date
         try:
             # 在每个日期中分别添加三个聚合字典中的对应值
-            date_entry.comm_cnt = _comm_cnt.get(date=TruncDate(begin_date))['nums']
-            date_entry.desi_cnt = _desi_cnt.get(date=TruncDate(begin_date))['nums']
-            date_entry.modi_files = _modi_files.get(date=TruncDate(begin_date))['nums']
+            date_entry.comm_cnt = _comm_cnt.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.desi_cnt = _desi_cnt.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.modi_files = _modi_files.get(
+                date=TruncDate(begin_date))['nums']
             # 在每个日期中分别添加三个聚合字典中的对应值（核心贡献者）
-            date_entry.comm_cnt_core = _comm_cnt_core.get(date=TruncDate(begin_date))['nums']
-            date_entry.desi_cnt_core = _desi_cnt_core.get(date=TruncDate(begin_date))['nums']
-            date_entry.modi_files_core = _modi_files_core.get(date=TruncDate(begin_date))['nums']
+            date_entry.comm_cnt_core = _comm_cnt_core.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.desi_cnt_core = _desi_cnt_core.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.modi_files_core = _modi_files_core.get(
+                date=TruncDate(begin_date))['nums']
         except Exception:  # 缺少本日记录，计为0
             date_entry.comm_cnt = 0
             date_entry.desi_cnt = 0
@@ -1574,7 +1644,8 @@ def commit_update_main(request):
     # 记录更新
     current_upd = commit_update()
     current_upd.time_update = datetime.now()
-    current_upd.time_last_record = commit_history.objects.latest('commit_time').commit_time
+    current_upd.time_last_record = commit_history.objects.latest(
+        'commit_time').commit_time
     current_upd.save()
     return JsonResponse({'current_upd': current_upd.time_update})
 
@@ -1636,7 +1707,8 @@ def commit_update_byhour(_from: datetime):
     # 记录更新
     current_upd = commit_update()
     current_upd.time_update = datetime.now()
-    current_upd.time_last_record = commit_history.objects.latest('commit_time').commit_time
+    current_upd.time_last_record = commit_history.objects.latest(
+        'commit_time').commit_time
     current_upd.save()
 
 
@@ -1644,7 +1716,8 @@ def pandas_commit_update_main(request):
     # 检查更新记录
     try:
         # 存在更新记录，取得最新一条commit的时间
-        last_upd = pandas_commit_update.objects.order_by('time_last_record').last().time_last_record
+        last_upd = pandas_commit_update.objects.order_by(
+            'time_last_record').last().time_last_record
     except Exception:
         last_upd = None
     print(last_upd)
@@ -1665,7 +1738,8 @@ def pandas_commit_update_main(request):
     # 重新计算从上一次的最后一条记录开始所有日期的统计数据
     if not last_upd:  # 若是第一次更新，则全部重新计算
         try:
-            last_upd = pandas_commit_history.objects.order_by('commit_time').first().commit_time
+            last_upd = pandas_commit_history.objects.order_by(
+                'commit_time').first().commit_time
         except pandas_commit_history.DoesNotExist:
             # 没有任何记录，返回
             print("NO VALID RECORDS IN pandas_commit_HISTORY!")
@@ -1711,13 +1785,19 @@ def pandas_commit_update_main(request):
             date_entry.date = begin_date
         try:
             # 在每个日期中分别添加三个聚合字典中的对应值
-            date_entry.comm_cnt = _comm_cnt.get(date=TruncDate(begin_date))['nums']
-            date_entry.desi_cnt = _desi_cnt.get(date=TruncDate(begin_date))['nums']
-            date_entry.modi_files = _modi_files.get(date=TruncDate(begin_date))['nums']
+            date_entry.comm_cnt = _comm_cnt.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.desi_cnt = _desi_cnt.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.modi_files = _modi_files.get(
+                date=TruncDate(begin_date))['nums']
             # 在每个日期中分别添加三个聚合字典中的对应值（核心贡献者）
-            date_entry.comm_cnt_core = _comm_cnt_core.get(date=TruncDate(begin_date))['nums']
-            date_entry.desi_cnt_core = _desi_cnt_core.get(date=TruncDate(begin_date))['nums']
-            date_entry.modi_files_core = _modi_files_core.get(date=TruncDate(begin_date))['nums']
+            date_entry.comm_cnt_core = _comm_cnt_core.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.desi_cnt_core = _desi_cnt_core.get(
+                date=TruncDate(begin_date))['nums']
+            date_entry.modi_files_core = _modi_files_core.get(
+                date=TruncDate(begin_date))['nums']
         except Exception:  # 缺少本日记录，计为0
             date_entry.comm_cnt = 0
             date_entry.desi_cnt = 0
@@ -1766,7 +1846,8 @@ def pandas_commit_update_main(request):
     # 记录更新
     current_upd = pandas_commit_update()
     current_upd.time_update = datetime.now()
-    current_upd.time_last_record = pandas_commit_history.objects.latest('commit_time').commit_time
+    current_upd.time_last_record = pandas_commit_history.objects.latest(
+        'commit_time').commit_time
     current_upd.save()
     return JsonResponse({'current_upd': current_upd.time_update})
 
@@ -1830,7 +1911,8 @@ def pandas_commit_update_byhour(_from: datetime):
     # 记录更新
     current_upd = pandas_commit_update()
     current_upd.time_update = datetime.now()
-    current_upd.time_last_record = pandas_commit_history.objects.latest('commit_time').commit_time
+    current_upd.time_last_record = pandas_commit_history.objects.latest(
+        'commit_time').commit_time
     current_upd.save()
 
 
@@ -1940,7 +2022,8 @@ def pandas_graph_commit_intro_word_cloud(request):
 
 # 绘制主要贡献者词云图 -> base64 str, utf-8
 def pandas_graph_commit_contributor_word_cloud(request):
-    primary_contributor = pandas_commit_contributors.objects.filter(if_core=True).values('author')
+    primary_contributor = pandas_commit_contributors.objects.filter(
+        if_core=True).values('author')
     # 生成输入字符串
 
     intro_buf = str(list(map(lambda x: x['author'], primary_contributor)))
@@ -1977,7 +2060,8 @@ def pandas_graph_commit_contributor_word_cloud(request):
 
 # 绘制主要贡献者词云图 -> base64 str, utf-8
 def graph_commit_contributor_word_cloud(request):
-    primary_contributor = commit_contributors.objects.filter(if_core=True).values('author')
+    primary_contributor = commit_contributors.objects.filter(
+        if_core=True).values('author')
     # 生成输入字符串
     intro_buf = str(list(map(lambda x: x['author'], primary_contributor)))
 
@@ -2097,8 +2181,10 @@ def graph_modi_time_of_day(request):
     del_list = np.zeros(24)
     for entry in stat_source:
         try:
-            add_list += list(map(lambda x: int(x, 10), entry['modi_ins'].split(',')))
-            del_list += list(map(lambda x: int(x, 10), entry['modi_del'].split(',')))
+            add_list += list(map(lambda x: int(x, 10),
+                             entry['modi_ins'].split(',')))
+            del_list += list(map(lambda x: int(x, 10),
+                             entry['modi_del'].split(',')))
         except Exception:
             continue
     add_list = list(map(lambda x: int(x), add_list))
@@ -2175,8 +2261,10 @@ def pandas_graph_modi_time_of_day(request):
     del_list = np.zeros(24)
     for entry in stat_source:
         try:
-            add_list += list(map(lambda x: int(x, 10), entry['modi_ins'].split(',')))
-            del_list += list(map(lambda x: int(x, 10), entry['modi_del'].split(',')))
+            add_list += list(map(lambda x: int(x, 10),
+                             entry['modi_ins'].split(',')))
+            del_list += list(map(lambda x: int(x, 10),
+                             entry['modi_del'].split(',')))
         except Exception:
             continue
     add_list = list(map(lambda x: int(x), add_list))
@@ -2204,16 +2292,19 @@ def comp_commit_by_week(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
-        pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
+        pe_list = ['p_else'] + \
+            list(map(lambda x: x['all'] - x['core'], db_src))
 
         # pandas
         pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
             week=TruncWeek('date')).values(
             'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
         oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
-        oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+        oe_list = ['o_else'] + \
+            list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
     except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
         # 不存在记录，无法画图
@@ -2238,16 +2329,19 @@ def comp_design_by_week(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
-        pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
+        pe_list = ['p_else'] + \
+            list(map(lambda x: x['all'] - x['core'], db_src))
 
         # pandas
         pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
             week=TruncWeek('date')).values(
             'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
         oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
-        oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
+        oe_list = ['o_else'] + \
+            list(map(lambda x: x['all'] - x['core'], pandas_db_src))
     except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
         # 不存在记录，无法画图
         pass
@@ -2274,17 +2368,19 @@ def comp_file_by_week(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         pc_list = ['p_core'] + list(map(lambda x: x['core'], db_src))
-        pe_list = ['p_else'] + list(map(lambda x: x['all'] - x['core'], db_src))
+        pe_list = ['p_else'] + \
+            list(map(lambda x: x['all'] - x['core'], db_src))
 
         # pandas
         pandas_db_src = pandas_commit_by_day.objects.filter(date__gte=time_start).annotate(
             week=TruncWeek('date')).values(
             'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
         oc_list = ['o_core'] + list(map(lambda x: x['core'], pandas_db_src))
-        oe_list = ['o_else'] + list(map(lambda x: x['all'] - x['core'], pandas_db_src))
-
+        oe_list = ['o_else'] + \
+            list(map(lambda x: x['all'] - x['core'], pandas_db_src))
 
     except commit_by_day.DoesNotExist or pandas_commit_by_day.DoesNotExist:
         # 不存在记录，无法画图
@@ -2309,7 +2405,8 @@ def comp_commit_by_week_brief(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('comm_cnt')).values('week', 'all')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         p_list = ['pytorch'] + list(map(lambda x: x['all'], db_src))
 
         # pandas
@@ -2340,7 +2437,8 @@ def comp_design_by_week_brief(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('desi_cnt')).values('week', 'all')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         p_list = ['pytorch'] + list(map(lambda x: x['all'], db_src))
 
         # pandas
@@ -2371,7 +2469,8 @@ def comp_file_by_week_brief(request):
         # pytorch
         db_src = commit_by_day.objects.filter(date__gte=time_start).annotate(week=TruncWeek('date')).values(
             'week').annotate(all=Sum('modi_files')).values('week', 'all')
-        x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+        x_list = ['date'] + \
+            list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
         p_list = ['p_core'] + list(map(lambda x: x['all'], db_src))
 
         # pandas
@@ -2391,7 +2490,8 @@ def compound_pie_chart_commit(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2401,7 +2501,8 @@ def compound_pie_chart_design(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2411,7 +2512,8 @@ def compound_pie_chart_file(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2422,7 +2524,8 @@ def pandas_compound_pie_chart_commit(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('comm_cnt')).annotate(core=Sum('comm_cnt_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2432,7 +2535,8 @@ def pandas_compound_pie_chart_design(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('desi_cnt')).annotate(core=Sum('desi_cnt_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2442,7 +2546,8 @@ def pandas_compound_pie_chart_file(request):
     # {'x': [,,, 横坐标上的label], 'core': [,, 每个label对应的值,], 'else':}
     db_src = pandas_commit_by_day.objects.annotate(week=TruncWeek('date')).values(
         'week').annotate(all=Sum('modi_files')).annotate(core=Sum('modi_files_core')).values('week', 'all', 'core')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     core_list = ['core'] + list(map(lambda x: x['core'], db_src))
     else_list = ['else'] + list(map(lambda x: x['all'] - x['core'], db_src))
     return JsonResponse({'x': x_list, 'core': core_list, 'else': else_list})
@@ -2451,7 +2556,8 @@ def pandas_compound_pie_chart_file(request):
 def graph_design_by_week(request):
     db_src = commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('desi_cnt')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['design'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'design': val_list})
 
@@ -2459,7 +2565,8 @@ def graph_design_by_week(request):
 def graph_file_by_week(request):
     db_src = commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('modi_files')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['file'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'files': val_list})
 
@@ -2467,7 +2574,8 @@ def graph_file_by_week(request):
 def graph_commit_by_week(request):
     db_src = commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('comm_cnt')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['commit'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'commit': val_list})
 
@@ -2475,7 +2583,8 @@ def graph_commit_by_week(request):
 def pandas_graph_design_by_week(request):
     db_src = pandas_commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('desi_cnt')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['design'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'design': val_list})
 
@@ -2483,7 +2592,8 @@ def pandas_graph_design_by_week(request):
 def pandas_graph_file_by_week(request):
     db_src = pandas_commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('modi_files')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['file'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'files': val_list})
 
@@ -2491,7 +2601,8 @@ def pandas_graph_file_by_week(request):
 def pandas_graph_commit_by_week(request):
     db_src = pandas_commit_by_day.objects.annotate(
         week=TruncWeek('date')).values('week').annotate(nums=Sum('comm_cnt')).values('week', 'nums')
-    x_list = ['date'] + list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
+    x_list = ['date'] + \
+        list(map(lambda x: x['week'].strftime("%Y-%m-%d"), db_src))
     val_list = ['commit'] + list(map(lambda x: x['nums'], db_src))
     return JsonResponse({'x': x_list, 'commit': val_list})
 
@@ -2529,7 +2640,8 @@ def test(request):
     print("pandas log read!")
 
     # 取前10 % 的开发者为主要贡献者
-    contributor_source = pandas_commit_contributors.objects.order_by('-modi_files')
+    contributor_source = pandas_commit_contributors.objects.order_by(
+        '-modi_files')
     total_contributor = contributor_source.count()
     primary_contributor = contributor_source[:total_contributor / 10]
     for i in primary_contributor:
