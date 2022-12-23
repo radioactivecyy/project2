@@ -6,40 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="bc97808c-2a4f-40f9-b3e7-b28f5518ed83" name="Default Changelist" comment="replace render by Jsonresponse">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/getData.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0002_stargazer_company.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0003_alter_stargazer_company_company.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0004_stargazer_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0005_issue_company.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0006_issue_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0007_committer_company.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0008_committer_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0009_total.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0010_allennlp_stargazer_company_allennlp_stargazer_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0011_auto_20221101_2250.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0012_pandas_issue_company_pandas_issue_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0013_pandas_committer_company_pandas_committer_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0014_pandas_total.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0015_auto_20221120_1636.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0016_auto_20221120_1703.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0017_committer_company_statistic_issue_company_statistic_stargazer_company_statistic.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0018_commit_by_day_commit_contributors_commit_history_and_more.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0019_auto_20221217_1625.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0020_auto_20221218_1043.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0021_rename_pytorch_issue_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0022_delete_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0023_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0024_delete_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0025_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0026_delete_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0027_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0028_pandas_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0029_auto_20221218_1311.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0030_pandas_issues_pytorch_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0031_delete_pandas_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0032_pandas_issues.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/pandas_contributor.png" beforeDir="false" afterPath="$PROJECT_DIR$/data/pandas_contributor.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/djangoproject/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/djangoproject/urls.py" afterDir="false" />
@@ -218,7 +184,10 @@
       <workItem from="1671606121900" duration="708000" />
       <workItem from="1671613905653" duration="1449000" />
       <workItem from="1671621896123" duration="1841000" />
-      <workItem from="1671623898319" duration="5418000" />
+      <workItem from="1671623898319" duration="5862000" />
+      <workItem from="1671762423216" duration="24000" />
+      <workItem from="1671785991267" duration="711000" />
+      <workItem from="1671787078508" duration="1877000" />
     </task>
     <task id="LOCAL-00001" summary="fix author bug">
       <created>1666021634554</created>
