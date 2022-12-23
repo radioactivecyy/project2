@@ -106,9 +106,9 @@
       <el-col :xs="14" :sm="14" :lg="19" :offset="1">
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4">
-            <el-button class="company-button" type="primary" @click="starBubble">star</el-button>
-            <el-button class="company-button" type="primary" @click="issueBubble"> issue </el-button>
-            <el-button class="company-button" type="primary" @click="commitBubble"> commit </el-button>
+            <el-button id="star" class="company-button" type="primary" @click="starBubble">star</el-button>
+            <el-button id="issue" class="company-button" type="primary" @click="issueBubble"> issue </el-button>
+            <el-button id="commit" class="company-button" type="primary" @click="commitBubble"> commit </el-button>
             <bubble_starVue :dataAsJson="bubbleData" />
           </div>
         </div>
@@ -200,6 +200,7 @@ export default {
     this.getIssue()
     this.getContributionFile()
     this.getContributionDesign()
+    this.getCommitLineData()
     this.getContribution()
     this.getDesignNum()
     this.getContribGraph()
@@ -208,7 +209,7 @@ export default {
     this.getDesignCloud()
     this.getIssueLineData()
     this.getStarLineData()
-    this.getCommitLineData()
+
     this.getInsDelData()
    
 
@@ -309,6 +310,10 @@ export default {
       this.getCompanyStarData().then(res => {
         //  刷新该组件
         this.companyDataType = 'star'
+        document.getElementById("star").className="company-button1"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("commit").className="company-button"
+        document.getElementById("issue").className="company-button"
       })
     },
     issueBubble: function (data) {
@@ -317,6 +322,10 @@ export default {
         //  刷新该组件
         this.companyDataType = 'issue'
       })
+      document.getElementById("star").className="company-button"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("commit").className="company-button"
+        document.getElementById("issue").className="company-button1"
     },
     commitBubble: function (data) {
     
@@ -324,6 +333,10 @@ export default {
         //  刷新该组件
         this.companyDataType = 'commit'
       })
+      document.getElementById("star").className="company-button"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("commit").className="company-button1"
+        document.getElementById("issue").className="company-button"
     },
     async getCompanyStarData() {
       const res = await d3.csv('dev-api/api/star_gazer')
@@ -381,8 +394,7 @@ export default {
         data['pytorch'] = res.pytorch
         data['pandas'] = res.pandas
         this.commitNumdata = JSON.parse(JSON.stringify(data))
-        this.threeData['pytorch_y3'] = this.commitNumdata.pytorch
-        this.threeData['pandas_y3'] = this.commitNumdata.pandas
+    
       })
     },
     
@@ -569,6 +581,16 @@ await dataapi.OgetContributionFile().then(res => {
   height: 3em;
   background-color: transparent;
   border-style: none;
+}
+.company-button1 {
+  background-color: #aaccff; /* Green */
+  border: none;
+  color: rgb(238, 245, 255);
+  padding: 15px 92px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
 }
 
 }

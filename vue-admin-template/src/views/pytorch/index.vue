@@ -134,9 +134,9 @@
         <div class="chart-wrapper">
           <div class="flex justify-space-between mb-4 flex-wrap gap-4"></div>
 
-          <el-button class="company-button" type="primary" @click="starBubble">star</el-button>
-          <el-button class="company-button" type="primary" @click="issueBubble"> issue </el-button>
-          <el-button class="company-button" type="primary" @click="commitBubble"> commit </el-button>
+          <el-button  id="star" class="company-button" type="primary" @click="starBubble">star</el-button>
+          <el-button id="issue" class="company-button" type="primary" @click="issueBubble"> issue </el-button>
+          <el-button id="company" class="company-button" type="primary" @click="commitBubble"> commit </el-button>
 
           <sBubble :dataAsJson="bubble_data" :testData="ttt" dataType="companyDataType" />
         </div>
@@ -199,6 +199,9 @@ export default {
       Commit_bubble_data: Array,
       bubble_data: Array,
       ttt: 0,
+      starbutton:'primary',
+      issuebutton:'',
+      commitbutton:'',
       issueUpdate:{},
       issueNumdata: {},
       starNumdata: {},
@@ -300,8 +303,12 @@ export default {
       // console.log('starBubble')
       this.getCompanyStarData().then(res => {
         //  刷新该组件
-        console.log('starBubble')
+    
         this.companyDataType = 'star'
+        document.getElementById("star").className="company-button1"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("company").className="company-button"
+        document.getElementById("issue").className="company-button"
       })
     },
     issueBubble: function (data) {
@@ -309,12 +316,23 @@ export default {
       this.getCompanyIssueData().then(res => {
         //  刷新该组件
         this.companyDataType = 'issue'
-    })},
+
+    })
+    document.getElementById("star").className="company-button"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("company").className="company-button"
+        document.getElementById("issue").className="company-button1"
+      },
     commitBubble: function (data) {
       this.getCompanyCommitData().then(res => {
         //  刷新该组件
         this.companyDataType = 'commit'
+       
       })
+      document.getElementById("star").className="company-button"
+        // document.getElementById("star").className="company-button"
+        document.getElementById("company").className="company-button1"
+        document.getElementById("issue").className="company-button"
     },
     async getDesignCloud() {
      
@@ -544,7 +562,7 @@ export default {
 .company-button {
   background-color: #fff; /* Green */
   border: none;
-  color: rgb(75, 140, 220);
+  color: rgb(146, 195, 255);
   padding: 15px 72px;
   text-align: center;
   text-decoration: none;
@@ -553,4 +571,16 @@ export default {
 
   // 设置字和底部的距离
 }
+
+.company-button1 {
+  background-color: #aaccff; /* Green */
+  border: none;
+  color: rgb(238, 245, 255);
+  padding: 15px 72px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+}
+  //
 </style>
