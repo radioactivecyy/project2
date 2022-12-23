@@ -127,18 +127,7 @@ def pytorch_issue_update_time(request):
     y = y[::7]
     # y2每7天累加一次
     y2 = [sum(y2[i:i + 7]) for i in range(0, len(y2), 7)]
-    df = pd.read_csv('data/issues_pandas.csv')
-    x3 = df['time'].tolist()
-    x3=x3[::7]
-    cnt=0
-    for date in x3:
-        if date<"2016-10-01":
-            x.insert(cnt,date)
-            y.insert(cnt,0)
-            y2.insert(cnt,0)
-            cnt=cnt+1
-        else:
-            break
+
     return JsonResponse({'x': x, 'y1': y, 'y2': y2})
 
 

@@ -139,7 +139,8 @@
       
    
     </el-row>
-
+<h2>Issue</h2>
+<issue_line/>
 
     <h2>Companies</h2>
 
@@ -193,7 +194,7 @@ import linechart3 from './components/linechart3.vue'
 
 import ins_del from './components/ins_del.vue'
 import calender from './components/calender.vue'
-
+import issue_line from './components/linechart_new.vue'
 import * as dataapi from '@/api/getdata'
 import getStar from './components/getStar'
 import { refreshData } from '@/api/pytorch'
@@ -212,6 +213,7 @@ export default {
       Commit_bubble_data: Array,
       bubble_data: Array,
       ttt: 0,
+  
       issueNumdata: {},
       starNumdata: {},
       commitNumdata: {},
@@ -235,6 +237,7 @@ export default {
     // iBubble,
     sBubble,
     // cBubble,
+    issue_line,
     List,
     linechart,
     code_num,
